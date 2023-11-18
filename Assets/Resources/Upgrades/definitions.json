@@ -1,0 +1,235 @@
+[
+  {
+    "Class": "DamageIncrease",
+    "Description": "Increases each shot's damage by {PercentageIncrease:0%}.",
+    "Name": "Increase Damage",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 5,
+        "Stats": {
+          "PercentageIncrease": 0.01
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 9,
+        "Stats": {
+          "PercentageIncrease": 0.05
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 20,
+        "Stats": {
+          "PercentageIncrease": 0.1
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 40,
+        "Stats": {
+          "PercentageIncrease": 0.25
+        }
+      }
+    ]
+  },
+  {
+    "Class": "CooldownDecrease",
+    "Description": "Decreases the time between each shot by {ValueDecrease} seconds.",
+    "Name": "Cooldown Reduction",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 3,
+        "Stats": {
+          "ValueDecrease": 0.01
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 12,
+        "Stats": {
+          "ValueDecrease": 0.05
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 20,
+        "Stats": {
+          "ValueDecrease": 0.08
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 35,
+        "Stats": {
+          "ValueDecrease": 0.1
+        }
+      }
+    ]
+  },
+  {
+    "Class": "SpinningWeapons",
+    "Description": "You summon a flurry of {Count} swords that spin around you, dealing {DamageEach} whenever striking an enemy.",
+    "Name": "Flurry Of Blades",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "WeaponCount": 3,
+          "DamageEach": 1,
+          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 50,
+        "Stats": {
+          "WeaponCount": 5,
+          "DamageEach": 1,
+          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 200,
+        "Stats": {
+          "WeaponCount": 6,
+          "DamageEach": 2,
+          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 400,
+        "Stats": {
+          "WeaponCount": 12,
+          "DamageEach": 2,
+          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
+        }
+      }
+    ]
+  },
+  {
+    "Class": "RandomBulletChance",
+    "Description": "Increases your chance by {Chance:0%} to shoot an additional grenade, exploding on impact and dealing 3 damage.",
+    "Name": "Explosive Drive",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 10,
+        "Stats": {
+          "Chance": 0.02,
+          "Path": "Upgrades/Bullets/GrenadeBullet"
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 25,
+        "Stats": {
+          "Chance": 0.04,
+          "Path": "Upgrades/Bullets/GrenadeBullet"
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 75,
+        "Stats": {
+          "Chance": 0.08,
+          "Path": "Upgrades/Bullets/GrenadeBullet"
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 200,
+        "Stats": {
+          "Chance": 0.1,
+          "Path": "Upgrades/Bullets/GrenadeBullet"
+        }
+      }
+    ]
+  },
+  {
+    "Class": "DropTurret",
+    "Description": "Every {DropTime} seconds you drop a rapid firing turret on the ground, up to {Number} turrets.",
+    "Name": "Sentry Turret",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 30,
+        "Stats": {
+          "DropTime": 30.0,
+          "Number": 3,
+          "Path": "Upgrades/Turret"
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 70,
+        "Stats": {
+          "DropTime": 30.0,
+          "Number": 3,
+          "Path": "Upgrades/Turret"
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 120,
+        "Stats": {
+          "DropTime": 30.0,
+          "Number": 5,
+          "Path": "Upgrades/Turret"
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 300,
+        "Stats": {
+          "DropTime": 30.0,
+          "Number": 10,
+          "Path": "Upgrades/Turret"
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "burning",
+    "Class": "ApplyStatus",
+    "Description": "Increases your chance by {ApplyChance:0%} for your each bullet to burn their target whenever hit.",
+    "Name": "Burning Hot",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "ApplyChance": 0.05
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 40,
+        "Stats": {
+          "ApplyChance": 0.08
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 80,
+        "Stats": {
+          "ApplyChance": 0.12
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 160,
+        "Stats": {
+          "ApplyChance": 0.18
+        }
+      }
+    ]
+  }
+]

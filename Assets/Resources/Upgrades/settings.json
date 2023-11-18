@@ -1,0 +1,8 @@
+{
+  "chances": {
+    "common": 80,
+    "uncommon": 50,
+    "rare": 20,
+    "legendary": 8
+  }
+}

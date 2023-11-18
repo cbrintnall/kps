@@ -1,0 +1,86 @@
+{
+  "targetrateincrease": 1.5,
+  "startvalue": 300,
+  "maxsequencesize": 10,
+  "minsequencesize": 3,
+  "minsequencesperround": 5,
+  "maxsequencesperround": 15,
+  "mincoefficient": 25.0,
+  "definitions": [
+    {
+      "value": 1,
+      "prefab": "Enemies/GroundEnemy",
+      "type": "GroundEnemy",
+      "primaryColor": "#3271a8",
+      "secondaryColor": "#a85c32",
+      "stats": {
+        "Health": 3,
+        "Damage": 1,
+        "MoveSpeed": 6.0
+      }
+    },
+    {
+      "value": 3,
+      "prefab": "Enemies/GroundEnemy",
+      "type": "GroundEnemy",
+      "primaryColor": "#8455bd",
+      "secondaryColor": "#fcee6a",
+      "stats": {
+        "Health": 6,
+        "Damage": 1,
+        "MoveSpeed": 3.2
+      }
+    },
+    {
+      "startsat": 2,
+      "value": 5,
+      "prefab": "Enemies/SingingEnemy",
+      "type": "SingingEnemy",
+      "stats": {
+        "Health": 3,
+        "Damage": 1,
+        "MoveSpeed": 5.0
+      }
+    },
+    {
+      "startsat": 5,
+      "value": 20,
+      "prefab": "Enemies/BomberEnemy",
+      "type": "BomberEnemy",
+      "primaryColor": "#232323",
+      "secondaryColor": "#BF0202",
+      "stats": {
+        "Health": 1,
+        "Damage": 6,
+        "MoveSpeed": 17.0
+      }
+    },
+    {
+      "startsat": 3,
+      "value": 10,
+      "prefab": "Enemies/GroundEnemy",
+      "type": "GroundEnemy",
+      "primaryColor": "#E3E3E3",
+      "secondaryColor": "#fcee6a",
+      "stats": {
+        "Health": 1,
+        "Damage": 3,
+        "MoveSpeed": 10.0
+      }
+    },
+    {
+      "startsat": 10,
+      "value": 30,
+      "prefab": "Enemies/GroundEnemy",
+      "type": "GroundEnemy",
+      "primaryColor": "#631010",
+      "secondaryColor": "#fcee6a",
+      "stats": {
+        "Health": 50,
+        "Damage": 10,
+        "MoveSpeed": 2.0,
+        "Scale": 0.5
+      }
+    }
+  ]
+}
