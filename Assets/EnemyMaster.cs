@@ -66,12 +66,13 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     TimeSince targetts;
     TimeSince spawnts;
     TimeSince killCounter;
-    List<Transform> spawns = new();
+    List<Spawn> spawns = new();
     int killedInLastSecond;
     public float killsPerSecond;
     int sequenceCount = 0;
     EnemySequence currentSequence;
     RoundManager roundManager;
+    Vector3 targetPoint;
 
     [IngameDebugConsole.ConsoleMethod("spawn", "Spawns monster with ID")]
     public static void ForceSpawn(string id)
@@ -176,7 +177,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
     void CollectSpawns()
     {
-        spawns.AddRange(GameObject.FindGameObjectsWithTag("spawn").Select(go => go.transform));
+        spawns.AddRange(FindObjectsOfType<Spawn>());
     }
 
     void IncrTarget()
@@ -216,7 +217,14 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
     void SpawnPayload(EnemyDefinition payload)
     {
-        var spawn = spawns.Random();
+        var spawn = spawns.Where(spawn => spawn.CanSpawn)?.Random();
+
+        if (spawn == null)
+        {
+            Debug.LogWarning($"Can't find a valid spawn!");
+            return;
+        }
+
         var enemy = Instantiate(payload.Prefab, spawn.transform.position, Quaternion.identity);
 
         var health = enemy.GetComponent<Health>();
@@ -250,9 +258,11 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
     void OnDrawGizmos()
     {
+        Gizmos.color = Color.blue;
+
         foreach (var spawn in spawns)
         {
-            Gizmos.DrawSphere(spawn.position, 0.25f);
+            Gizmos.DrawSphere(spawn.transform.position, 0.5f);
         }
     }
 

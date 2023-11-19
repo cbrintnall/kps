@@ -48,7 +48,7 @@ public class PlayerEquipmentController : MonoBehaviour
     #endregion
 
     public StatInt Money = 0;
-    public Gun Equipment;
+    public List<Gun> Equipment = new();
     public Animator Legs;
     public AnimationEventsHandler Handler;
     public StatBlock Stats = new();
