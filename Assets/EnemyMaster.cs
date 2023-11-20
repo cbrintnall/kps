@@ -154,8 +154,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
             killCounter = 0.0f;
             killedInLastSecond = 0;
         }
-
-        Debug.Log($"target={TargetValue}, current={CurrentValue}, time={SpawnCheckSeconds}");
     }
 
     void OnEnable()

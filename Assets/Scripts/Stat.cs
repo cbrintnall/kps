@@ -61,6 +61,18 @@ public class StatInt : Stat<int>
             NotifyChange(Current, Current - prior);
     }
 
+    public void Incr(
+        int amt,
+        out int change,
+        StatOperation operation = StatOperation.Percent,
+        bool fromBase = true
+    )
+    {
+        int current = Current;
+        Incr(amt, operation, fromBase);
+        change = Current - current;
+    }
+
     public void Set(int value)
     {
         int old = Current;
@@ -91,11 +103,25 @@ public class StatFloat : Stat<float>
     public StatFloat(float _base, float max, float min)
         : base(_base, max, min) { }
 
+    public override string ToString() => $"base={Base}, min={Min}, max={Max}, current={Current}";
+
     public void Set(float value)
     {
         float old = Current;
         Current = Mathf.Clamp(value, Min, Max);
         NotifyChange(Current, old - Current);
+    }
+
+    public void Incr(
+        float amt,
+        out float change,
+        StatOperation operation = StatOperation.Percent,
+        bool fromBase = true
+    )
+    {
+        float prior = Current;
+        Incr(amt, operation, fromBase);
+        change = prior - Current;
     }
 
     public void Incr(

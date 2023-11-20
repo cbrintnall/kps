@@ -6,8 +6,6 @@ class GameObjectConverter : JsonConverter
 {
     public override bool CanConvert(Type objectType)
     {
-        Debug.Log($"Type: {objectType.Name}");
-
         return objectType == typeof(GameObject) || objectType.IsSubclassOf(typeof(MonoBehaviour));
     }
 

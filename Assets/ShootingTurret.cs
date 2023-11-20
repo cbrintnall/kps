@@ -9,6 +9,7 @@ public class ShootingTurret : MonoBehaviour
     public StatInt Damage = 1;
     public StatFloat MonitorRadius = 10.0f;
     public AudioClip ShootSound;
+    public Faction Faction;
 
     TimeSince ts;
     Transform target;
@@ -77,13 +78,21 @@ public class ShootingTurret : MonoBehaviour
             var collider = hit.Collider ?? hit.Hit.collider;
             if (collider.TryGetComponent(out Health health))
             {
-                health.Damage(Damage);
+                health.Damage(new DamagePayload() { Owner = gameObject, Amount = GetDamage() });
             }
-            Debug.Log($"Hit: {collider}");
         };
 
         bullet.Shoot();
         this.PlayAtMe(ShootSound);
+    }
+
+    int GetDamage()
+    {
+        return (
+                (Faction.Alliances & Alliance.PLAYER) > 0
+                    ? PlayerEquipmentController.Instance.Stats.AllyDamageBonus
+                    : 0
+            ) + Damage;
     }
 
     void OnDrawGizmosSelected()

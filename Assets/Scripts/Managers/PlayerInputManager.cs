@@ -50,6 +50,7 @@ public class PlayerInputManager : MonoBehaviour
 {
     public PlayerBinaryAction OnInteract = new();
     public PlayerBinaryAction OnPrimaryAction = new();
+    public PlayerBinaryAction OnSecondaryAction = new();
     public PlayerBinaryAction Jumping = new();
     public PlayerBinaryAction StartRound = new();
     public Vector2 MoveDir;
@@ -57,11 +58,6 @@ public class PlayerInputManager : MonoBehaviour
 
     private System.Collections.Generic.Stack<CursorLockMode> CursorStack = new();
     private bool debug;
-
-    void Awake()
-    {
-        // FindObjectOfType<IngameDebugConsole.DebugLogManager>().gameObject.SetActive(false);
-    }
 
     public void PushCursor(CursorLockMode mode)
     {
@@ -81,6 +77,7 @@ public class PlayerInputManager : MonoBehaviour
             {
                 OnInteract.Reset();
                 OnPrimaryAction.Reset();
+                OnSecondaryAction.Reset();
                 Jumping.Reset();
                 StartRound.Reset();
             }
@@ -92,6 +89,7 @@ public class PlayerInputManager : MonoBehaviour
         LookDir = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         MoveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+        OnSecondaryAction.UpdateValue(Input.GetMouseButton(1));
         OnPrimaryAction.UpdateValue(Input.GetMouseButton(0));
         OnInteract.UpdateValue(Input.GetKeyDown(KeyCode.F));
         Jumping.UpdateValue(Input.GetKey(KeyCode.Space));

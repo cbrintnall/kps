@@ -65,7 +65,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void SubscribeToAnimationEvents(AnimationEventsHandler handler)
     {
-        handler.GetComponent<Animator>().SetBool("Holding", false);
+        handler?.GetComponent<Animator>().SetBool("Holding", false);
     }
 
     protected virtual void UpdateAtTarget() { }

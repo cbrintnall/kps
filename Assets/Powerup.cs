@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum PowerupType
@@ -19,7 +16,7 @@ public class Powerup : MonoBehaviour
 
     public int HealAmount = 1;
     public float SpeedDuration = 5.0f;
-    public float SpeedMultiplier = 2.0f;
+    public float SpeedMultiplier = 0.5f;
 
     void Start()
     {
@@ -40,17 +37,47 @@ public class Powerup : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        switch (Type)
+        if (collider.TryGetComponent(out PlayerEquipmentController controller))
         {
-            case PowerupType.SHOTSPEED:
-                break;
-            case PowerupType.HEAL:
-                break;
-        }
+            switch (Type)
+            {
+                case PowerupType.SHOTSPEED:
+                    controller.AddStatus(
+                        SpeedDuration,
+                        (controller) =>
+                        {
+                            var before = controller.Stats.PistolCooldown.Current;
+                            controller.Stats.PistolCooldown.Incr(
+                                -SpeedMultiplier,
+                                out float toRemove,
+                                StatOperation.Percent,
+                                false
+                            );
+                            var after = controller.Stats.PistolCooldown.Current;
 
-        SingletonLoader
-            .Get<AudioManager>()
-            .Play(new AudioPayload() { Clip = PickupSound, Location = transform.position });
+                            Debug.Log($"Before: {before}, after: {after}, to remove: {toRemove}");
+
+                            return toRemove;
+                        },
+                        (controller, toRemove) =>
+                        {
+                            Debug.Log("Removing");
+                            var before = controller.Stats.PistolCooldown.Current;
+                            controller.Stats.PistolCooldown.Incr(toRemove, StatOperation.Value);
+                            var after = controller.Stats.PistolCooldown.Current;
+                            Debug.Log($"Before: {before}, after: {after}, to remove: {toRemove}");
+                        }
+                    );
+                    break;
+                case PowerupType.HEAL:
+                    controller.Health.Heal(new HealPayload() { Amount = HealAmount });
+                    break;
+            }
+
+            SingletonLoader
+                .Get<AudioManager>()
+                .Play(new AudioPayload() { Clip = PickupSound, Location = transform.position });
+        }
 
         Destroy(gameObject);
     }

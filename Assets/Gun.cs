@@ -1,7 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Cinemachine;
+using Sirenix.OdinInspector;
 using UnityEngine;
+
+public class UsageData
+{
+    public float HoldTime;
+}
+
+public class ShootPayload
+{
+    public float ChargeTime = 0.0f;
+}
 
 [RequireComponent(typeof(BaseOnHitUpgrade))]
 public abstract class Gun : MonoBehaviour
@@ -10,6 +22,9 @@ public abstract class Gun : MonoBehaviour
     public event Action<Bullet> WillShootBullet;
     public event Action<Bullet> ShotBullet;
     #endregion
+
+    public StatFloat StageChargeTime = 2.0f;
+    public StatInt MaxChargeStage = 1;
 
     public PlayerEquipmentController Controller;
 
@@ -23,9 +38,14 @@ public abstract class Gun : MonoBehaviour
     [Header("Audio")]
     public AudioClip OnShoot;
 
+    [SerializeField]
+    private ChargeOrb chargeFX;
     private TimeSince ts;
     private AudioManager audioManager;
     private CinemachineImpulseSource impulseSource;
+
+    [Sirenix.OdinInspector.ReadOnly]
+    private float charge;
 
     void Awake()
     {
@@ -52,6 +72,18 @@ public abstract class Gun : MonoBehaviour
         OnShot();
     }
 
+    public void AlternateUse()
+    {
+        if (ts < Controller.Stats.PistolCooldown)
+            return;
+
+        charge = Mathf.Clamp(
+            charge + Controller.Stats.ChargeSpeed,
+            0.0f,
+            StageChargeTime * MaxChargeStage
+        );
+    }
+
     public void MonitorBullet(Bullet bullet)
     {
         bullet.Hit += (hit) =>
@@ -71,7 +103,11 @@ public abstract class Gun : MonoBehaviour
         };
     }
 
-    public virtual Bullet Shoot(Vector3 variance, Bullet overrideBullet = null)
+    public virtual Bullet Shoot(
+        Vector3 variance,
+        Bullet overrideBullet = null,
+        ShootPayload payload = null
+    )
     {
         var bullet = Instantiate(overrideBullet ?? Bullet);
         var mouseLook = MouseLook.Instance.LookData;
@@ -81,6 +117,7 @@ public abstract class Gun : MonoBehaviour
         bullet.Barrel = Barrel;
         bullet.transform.forward = mouseLook.Direction.normalized;
         bullet.transform.Rotate(variance);
+        bullet.ExtraData = payload;
 
         MonitorBullet(bullet);
 
@@ -91,7 +128,10 @@ public abstract class Gun : MonoBehaviour
         return bullet;
     }
 
-    protected abstract void OnShot();
+    protected virtual void OnShot()
+    {
+        charge = 0.0f;
+    }
 
     protected virtual void ShootFX()
     {
@@ -103,5 +143,16 @@ public abstract class Gun : MonoBehaviour
         }
 
         impulseSource.GenerateImpulse();
+    }
+
+    void Update()
+    {
+        chargeFX.Charge = charge;
+        chargeFX.MaxChargeValue = StageChargeTime * MaxChargeStage;
+    }
+
+    void FixedUpdate()
+    {
+        charge = Mathf.Max(charge - 0.005f, 0.0f);
     }
 }

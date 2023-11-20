@@ -7,9 +7,13 @@ public class Revolver : Gun
     int shot = -1;
     int pattern = 0;
 
-    public override Bullet Shoot(Vector3 variance, Bullet overridebullet = null)
+    public override Bullet Shoot(
+        Vector3 variance,
+        Bullet overridebullet = null,
+        ShootPayload payload = null
+    )
     {
-        var bullet = base.Shoot(variance, overridebullet);
+        var bullet = base.Shoot(variance, overridebullet, payload);
 
         shot = (shot + 1) % MAX_SHOT;
         Animator.SetInteger("BarrelIdx", shot);
@@ -19,6 +23,8 @@ public class Revolver : Gun
 
     protected override void OnShot()
     {
+        base.OnShot();
+
         if (ShootPatterns.Count == 0)
             return;
 

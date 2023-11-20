@@ -42,7 +42,14 @@ public class HitscanBullet : Bullet
                     )
             );
 
-            foreach (var hit in hits.Where(cast => cast.collider != null).Take(PierceAmount))
+            int extra =
+                Mathf.FloorToInt(ExtraData?.ChargeTime ?? 0.0f) >= 1
+                    ? Mathf.FloorToInt(ExtraData?.ChargeTime ?? 0.0f) + 1
+                    : 1;
+
+            foreach (
+                var hit in hits.Where(cast => cast.collider != null).Take(PierceAmount * extra)
+            )
             {
                 if ((1 << hit.collider.gameObject.layer & LayerMask.GetMask("Enemy")) == 0)
                 {

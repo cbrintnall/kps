@@ -1,13 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Cinemachine;
 using IngameDebugConsole;
 using Sirenix.Utilities;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public struct InteractionPayload
 {
@@ -119,6 +116,26 @@ public class PlayerEquipmentController : MonoBehaviour
         return Vector3.one;
     }
 
+    public void AddStatus<T>(
+        float time,
+        Func<PlayerEquipmentController, T> start,
+        Action<PlayerEquipmentController, T> end
+    )
+    {
+        StartCoroutine(StartStatus(time, start, end));
+    }
+
+    IEnumerator StartStatus<T>(
+        float time,
+        Func<PlayerEquipmentController, T> start,
+        Action<PlayerEquipmentController, T> end
+    )
+    {
+        var ret = start(this);
+        yield return new WaitForSeconds(time);
+        end(this, ret);
+    }
+
     void Awake()
     {
         Instance = this;
@@ -197,16 +214,13 @@ public class PlayerEquipmentController : MonoBehaviour
         {
             if (playerInputManager.OnPrimaryAction)
             {
-                Equipment?.Use();
+                Equipment.Use();
             }
 
-            if (playerInputManager.OnPrimaryAction.Stopped)
+            if (playerInputManager.OnSecondaryAction)
             {
-                Debug.Log($"Held for {playerInputManager.OnPrimaryAction.HoldTime}");
+                Equipment.AlternateUse();
             }
-
-            // var dir = MouseLook.Instance.LookData.EndPoint - Equipment.transform.position;
-            // var to = Quaternion.FromToRotation(Equipment.transform.forward, dir);
         }
 
         if (playerInputManager.OnInteract)

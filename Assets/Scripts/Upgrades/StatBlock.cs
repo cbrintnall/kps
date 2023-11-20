@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -15,9 +13,11 @@ public class StatBlock
     public StatInt HitScanDamage = 1;
     public StatInt GrenadeExplosiveDamage = 2;
     public StatInt GrenadeHitDamage = 1;
+    public StatInt AllyDamageBonus = 0;
 
     [Header("Cooldowns")]
     public StatFloat PistolCooldown = new StatFloat(1.25f, 15.0f, 0.001f);
+    public StatFloat ChargeSpeed = 0.0001f;
 
     [Header("Critical")]
     public StatFloat CriticalChance = 0.05f;

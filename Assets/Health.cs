@@ -17,6 +17,11 @@ public class DamagePayload
     public int Amount;
 }
 
+public class HealPayload
+{
+    public int Amount;
+}
+
 public class Health : MonoBehaviour
 {
     public event Action<HitPayload> OnDamaged;
@@ -40,6 +45,11 @@ public class Health : MonoBehaviour
                 Remaining = Data.Current
             }
         );
+    }
+
+    public void Heal(HealPayload payload)
+    {
+        Data.Incr(payload.Amount, StatOperation.Value);
     }
 
     public void InstaKill()

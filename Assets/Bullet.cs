@@ -17,6 +17,7 @@ public abstract class Bullet : MonoBehaviour
     public Transform Barrel;
     public Vector3 Start;
     public Vector3 Direction;
+    public ShootPayload ExtraData;
 
     // Used for upgrades to stop the bullet from freeing itself
     public bool CancelFree = false;
