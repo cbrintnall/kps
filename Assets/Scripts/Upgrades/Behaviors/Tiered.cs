@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class TieredUpgradeBehavior : UpgradeBehavior
@@ -32,24 +33,27 @@ public class TieredUpgradeBehavior : UpgradeBehavior
 
     public override void OnExisting(Upgrade upgrade)
     {
-        foreach (var kv in Data.Stats)
-        {
-            var field = upgrade.GetType().GetField(kv.Key);
-            var value = field.GetValue(upgrade);
+        var reserialized = JsonConvert.SerializeObject(Data.Stats);
 
-            if (kv.Value is double f)
-            {
-                (value as StatFloat).Set(Convert.ToSingle(f));
-            }
-            else if (kv.Value is long i)
-            {
-                (value as StatInt).Set(Convert.ToInt32(i));
-            }
-            else
-            {
-                field.SetValue(upgrade, kv.Value);
-            }
-        }
+        JsonConvert.PopulateObject(reserialized, upgrade);
+        // foreach (var kv in Data.Stats)
+        // {
+        //     var field = upgrade.GetType().GetField(kv.Key);
+        //     var value = field.GetValue(upgrade);
+
+        //     if (kv.Value is double f)
+        //     {
+        //         (value as StatFloat).Set(Convert.ToSingle(f));
+        //     }
+        //     else if (kv.Value is long i)
+        //     {
+        //         (value as StatInt).Set(Convert.ToInt32(i));
+        //     }
+        //     else
+        //     {
+        //         field.SetValue(upgrade, kv.Value);
+        //     }
+        // }
     }
 
     public override void OnPurchase(TransactionPayload payload)

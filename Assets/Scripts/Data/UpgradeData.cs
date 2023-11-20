@@ -47,6 +47,5 @@ public class UpgradeData
         return $"{GenerateBaseId()}.{Rarity}".ToLower();
     }
 
-    public string GenerateBaseId() =>
-        !string.IsNullOrEmpty(Prefix) ? string.Join(".", Prefix, Class.Name) : Class.Name;
+    public string GenerateBaseId() => string.IsNullOrEmpty(Prefix) ? Class.Name : Prefix;
 }

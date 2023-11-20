@@ -132,7 +132,6 @@ public class UpgradesManager : MonoBehaviour, IReloadable
         foreach (var definition in intermediate)
         {
             var generated = definition.ToData();
-            Assert.AreEqual(generated.Length, 4, "Should be 4 entries, one for each tier.");
             foreach (var upgrade in generated)
             {
                 Assert.IsFalse(upgrades.ContainsKey(upgrade.GenerateId()), "Clash for upgrade key");

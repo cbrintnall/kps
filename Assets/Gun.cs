@@ -1,16 +1,14 @@
 using System;
+using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 
-[RequireComponent(typeof(ShootPattern))]
 [RequireComponent(typeof(BaseOnHitUpgrade))]
-public class Gun : MonoBehaviour
+public abstract class Gun : MonoBehaviour
 {
     #region Events
-
     public event Action<Bullet> WillShootBullet;
     public event Action<Bullet> ShotBullet;
-
     #endregion
 
     public PlayerEquipmentController Controller;
@@ -20,7 +18,7 @@ public class Gun : MonoBehaviour
     [Header("Components")]
     public Transform Barrel;
     public Animator Animator;
-    public ShootPattern ShootPattern;
+    public List<ShootPattern> ShootPatterns = new();
 
     [Header("Audio")]
     public AudioClip OnShoot;
@@ -33,15 +31,16 @@ public class Gun : MonoBehaviour
     {
         audioManager = SingletonLoader.Get<AudioManager>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
+        ShootPatterns.AddRange(GetComponents<ShootPattern>());
     }
 
     void Start()
     {
         ts = Controller.Stats.PistolCooldown.Current;
         Cursor.lockState = CursorLockMode.Locked;
-
-        ShootPattern = GetComponent<ShootPattern>();
     }
+
+    public void AddPattern(ShootPattern pattern) => ShootPatterns.Add(pattern);
 
     public void Use()
     {
@@ -50,7 +49,7 @@ public class Gun : MonoBehaviour
 
         ts = 0;
 
-        ShootPattern.Shoot((variance) => Shoot(variance, null), ShootFX);
+        OnShot();
     }
 
     public void MonitorBullet(Bullet bullet)
@@ -91,6 +90,8 @@ public class Gun : MonoBehaviour
 
         return bullet;
     }
+
+    protected abstract void OnShot();
 
     protected virtual void ShootFX()
     {

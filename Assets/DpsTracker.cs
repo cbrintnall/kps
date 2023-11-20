@@ -29,6 +29,7 @@ public class DpsTracker : MonoBehaviour
         if (ts > 1)
         {
             ts = 0;
+            buffer[zone] = buffer[zone] > 0 ? buffer[zone] : 0;
             zone = (zone + 1) % BUFFER_SIZE;
         }
 

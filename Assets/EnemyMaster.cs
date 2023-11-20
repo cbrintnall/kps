@@ -145,7 +145,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
                 Mathf.InverseLerp(lastRoundValue, TargetValue, CurrentValue) * 2.0f,
                 Mathf.Abs(Mathf.Log10(10 - roundManager.Round))
             ),
-            Mathf.Max(Mathf.Log10(Data.MinCoefficient - roundManager.Round), 0.1f)
+            Mathf.Max(Mathf.Log10(Data.MinCoefficient - roundManager.Round) * 0.5f, 0.1f)
         );
 
         if (killCounter > 1.0f)

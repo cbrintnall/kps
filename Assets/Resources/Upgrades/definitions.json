@@ -231,5 +231,216 @@
         }
       }
     ]
+  },
+  {
+    "Prefix": "vtrishot",
+    "Class": "SprayUpgrade",
+    "Description": "Shoots three bullets in a vertical line.",
+    "Name": "Vertical Tri-Shot",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": -10.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              {
+                "x": 10.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 1
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.10000000149011612
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "htrishot",
+    "Class": "SprayUpgrade",
+    "Description": "Shoots three bullets in a horizontal line.",
+    "Name": "Horizontal Tri-Shot",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": 0.0,
+                "y": -10.0,
+                "z": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 10.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 1
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.10000000149011612
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "stutterstep",
+    "Class": "SprayUpgrade",
+    "Description": "Shoots a second bullet immediately after shooting the initial bullet.",
+    "Name": "Stutter Step",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 2
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.1
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "chunk",
+    "Class": "SprayUpgrade",
+    "Description": "Shoots four bullets in a 2 by 2 pattern.",
+    "Name": "Chunk Shot",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "uncommon",
+        "Cost": 60,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": -1.0,
+                "y": 1.0,
+                "z": 0.0
+              },
+              {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.0
+              },
+              {
+                "x": -1.0,
+                "y": -1.0,
+                "z": 0.0
+              },
+              {
+                "x": 1.0,
+                "y": -1.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 1
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.1
+            }
+          }
+        }
+      }
+    ]
   }
 ]

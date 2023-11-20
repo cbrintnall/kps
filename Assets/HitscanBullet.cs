@@ -100,14 +100,4 @@ public class HitscanBullet : Bullet
                 Destroy(gameObject);
         }
     }
-
-    void OnDrawGizmos()
-    {
-        foreach (var hp in hitPoints)
-        {
-            Gizmos.color = hp.Item3 ? Color.green : Color.red;
-            Gizmos.DrawSphere(hp.Item1, 0.5f);
-            Gizmos.DrawSphere(hp.Item2, 0.5f);
-        }
-    }
 }

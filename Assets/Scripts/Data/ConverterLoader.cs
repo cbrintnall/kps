@@ -14,7 +14,10 @@ public static class ConverterLoader
                 {
                     new TypeConverter(),
                     new GameObjectConverter(),
-                    new ColorConverter()
+                    new ColorConverter(),
+                    new Vector3Converter(),
+                    new StatFloatConverter(),
+                    new StatIntConverter()
                 }
             };
     }

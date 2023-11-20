@@ -1,30 +1,41 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
+using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 public delegate Bullet ShootCallback(Vector3 variance);
 
+[JsonObject(MemberSerialization.OptIn)]
 public class ShootPattern : MonoBehaviour
 {
-    public Vector3[] BulletPattern = new Vector3[] { Vector3.zero };
-
-    /// <summary>
-    /// The total amount of bullets fired during a burst, IE three round burst would be 3
-    /// </summary>
-    public StatInt PerBurst = 1;
-
-    /// <summary>
-    /// How much the bullet can spread from the initial position, where zero is a straight line.
-    /// </summary>
-    public StatFloat[] PerBulletDirectionVariance = { 0, 0, 0 };
-
-    /// <summary>
-    /// How long in between bursts do we cooldown.
-    /// </summary>
-    public StatFloat BurstCooldown = 0.1f;
+    [JsonProperty]
+    public SprayData Data;
 
     Coroutine activeBurst;
-    int PerShot => BulletPattern.Length;
+    int PerShot => Data.BulletPattern.Length;
+
+    [Button("Copy Output")]
+    void SyncOutput()
+    {
+        var output = JsonConvert.SerializeObject(
+            this,
+            Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                Converters = new List<JsonConverter>()
+                {
+                    new Vector3Converter(),
+                    new StatFloatConverter(),
+                    new StatIntConverter()
+                }
+            }
+        );
+
+        Clipboard.Copy(output);
+    }
 
     public void Shoot(ShootCallback cb, Action fx)
     {
@@ -36,26 +47,27 @@ public class ShootPattern : MonoBehaviour
 
     IEnumerator DoShot(ShootCallback cb, Action fx)
     {
-        var delay = new WaitForSeconds(BurstCooldown);
+        yield return new WaitForSeconds(Data.Delay);
+        var delay = new WaitForSeconds(Data.BurstCooldown);
         var variance = new Vector3(
             PerShot > 1
-                ? Mathf.Max(0.01f, PerBulletDirectionVariance[0])
-                : PerBulletDirectionVariance[0],
+                ? Mathf.Max(0.01f, Data.PerBulletDirectionVariance[0])
+                : Data.PerBulletDirectionVariance[0],
             PerShot > 1
-                ? Mathf.Max(0.01f, PerBulletDirectionVariance[1])
-                : PerBulletDirectionVariance[1],
+                ? Mathf.Max(0.01f, Data.PerBulletDirectionVariance[1])
+                : Data.PerBulletDirectionVariance[1],
             PerShot > 1
-                ? Mathf.Max(0.01f, PerBulletDirectionVariance[2])
-                : PerBulletDirectionVariance[2]
+                ? Mathf.Max(0.01f, Data.PerBulletDirectionVariance[2])
+                : Data.PerBulletDirectionVariance[2]
         );
 
-        for (int i = 0; i < PerBurst; i++)
+        for (int i = 0; i < Data.PerBurst; i++)
         {
             fx.Invoke();
-            for (int j = 0; j < BulletPattern.Length; j++)
+            for (int j = 0; j < Data.BulletPattern.Length; j++)
             {
                 var vec =
-                    BulletPattern[j]
+                    Data.BulletPattern[j]
                     + new Vector3(
                         UnityEngine.Random.Range(-variance.x, variance.x),
                         UnityEngine.Random.Range(-variance.y, variance.y),
