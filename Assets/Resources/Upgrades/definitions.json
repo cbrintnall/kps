@@ -510,5 +510,49 @@
         }
       }
     ]
-  }
+  },
+  {
+    "Prefix": "straightshot",
+    "Class": "SprayUpgrade",
+    "Description": "Shoots a single bullet bullets in a straight line.",
+    "Name": "Straight Shot",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 1
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.10000000149011612
+            }
+          }
+        }
+      }
+    ]
+  },
 ]

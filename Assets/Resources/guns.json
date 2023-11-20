@@ -1,0 +1,12 @@
+{
+  "test.revolver": {
+    "name": "Test Revolver",
+    "stats": {},
+    "class": "Revolver",
+    "upgrades": [
+      "hitscan.common",
+      "straightshot.common"
+    ],
+    "base": "Guns/Revolver_Test"
+  }
+}

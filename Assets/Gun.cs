@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Cinemachine;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class UsageData

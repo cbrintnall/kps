@@ -54,6 +54,8 @@ public class PlayerEquipmentController : MonoBehaviour
     public AudioClip UpgradePickup;
     public AudioClip HitSound;
 
+    [SerializeField]
+    private Transform WeaponSpot;
     private CinemachineImpulseSource impulseSource;
     private MouseLook mouseLook;
     private IInteractable lookingAt;
@@ -67,6 +69,22 @@ public class PlayerEquipmentController : MonoBehaviour
     public static void Die()
     {
         Instance.Health.Damage(Instance.Health.Data.Current);
+    }
+
+    public void PickupWeapon(Gun equipment)
+    {
+        if (Equipment)
+        {
+            Equipment.WillShootBullet -= OnWillShootBullet;
+            Equipment.ShotBullet -= OnShotBullet;
+        }
+
+        Equipment = equipment;
+        Equipment.WillShootBullet += OnWillShootBullet;
+        Equipment.ShotBullet += OnShotBullet;
+
+        equipment.transform.SetParent(WeaponSpot);
+        equipment.transform.localPosition = Vector3.zero;
     }
 
     public void AddUpgrade(UpgradeData data)
@@ -160,7 +178,6 @@ public class PlayerEquipmentController : MonoBehaviour
         audioManager = SingletonLoader.Get<AudioManager>();
         playerMovement = GetComponent<PlayerMovement>();
         mouseLook = GetComponent<MouseLook>();
-        Equipment.Controller = this;
         impulseSource = GetComponent<CinemachineImpulseSource>();
         Handler.LegSwung += DoInteraction;
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();
@@ -168,6 +185,11 @@ public class PlayerEquipmentController : MonoBehaviour
         Health = GetComponent<Health>();
         HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
         var eventManager = SingletonLoader.Get<EventManager>();
+
+        if (Equipment)
+        {
+            Equipment.Controller = this;
+        }
 
         Money.ValueChanged += (current, delta) =>
         {
@@ -193,19 +215,6 @@ public class PlayerEquipmentController : MonoBehaviour
     void SeedUpgrade(Upgrade upgrade)
     {
         upgrade.OnPickup(this);
-    }
-
-    void PickupWeapon(Gun equipment)
-    {
-        if (Equipment)
-        {
-            Equipment.WillShootBullet -= OnWillShootBullet;
-            Equipment.ShotBullet -= OnShotBullet;
-        }
-
-        Equipment = equipment;
-        Equipment.WillShootBullet += OnWillShootBullet;
-        Equipment.ShotBullet += OnShotBullet;
     }
 
     void OnShotBullet(Bullet bullet)
