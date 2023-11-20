@@ -24,7 +24,7 @@ public abstract class Gun : MonoBehaviour
     #endregion
 
     public StatFloat StageChargeTime = 2.0f;
-    public StatInt MaxChargeStage = 1;
+    public StatInt MaxChargeStage = 0;
 
     public PlayerEquipmentController Controller;
 

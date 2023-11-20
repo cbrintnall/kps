@@ -39,6 +39,8 @@ public abstract class Upgrade : MonoBehaviour
 
     public virtual void OnBulletShot(UpgradePipelineData pipelineData, Bullet bullet) { }
 
+    public virtual void OnKick(KickPipelineData data) { }
+
     protected virtual void OnCountIncrease(int count) { }
 
     public virtual void OnExisting(PlayerEquipmentController controller, UpgradeData data) { }

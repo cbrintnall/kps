@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -27,6 +26,7 @@ public class Health : MonoBehaviour
     public event Action<HitPayload> OnDamaged;
 
     public StatInt Data;
+    public bool Dead => Data.Current <= 0;
 
     public void Damage(int amount)
     {

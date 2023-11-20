@@ -70,7 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Value: 1
   MoveSpeed: 0.01
-  PickupSound: {fileID: 8300000, guid: e901b2ab5824a7f49874fa6922a70763, type: 3}
+  PickupSound: {fileID: 8300000, guid: 6dc84c31db71663459ad33e61f3b0809, type: 3}
 --- !u!198 &7279863400507589383
 ParticleSystem:
   m_ObjectHideFlags: 0

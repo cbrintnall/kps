@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private CharacterController m_Character;
-    private Vector3 m_PlayerVelocity = Vector3.zero;
+    public Vector3 m_PlayerVelocity = Vector3.zero;
 
     // Used to queue the next jump just before hitting the ground.
     private bool m_JumpQueued = false;
@@ -239,7 +239,13 @@ public class PlayerMovement : MonoBehaviour
 
         var wishdir = Vector3.zero;
         wishdir += playerInputManager.MoveDir.x * transform.right;
-        wishdir += playerInputManager.MoveDir.y * UnityEngine.Camera.main.transform.forward;
+        wishdir +=
+            playerInputManager.MoveDir.y
+            * new Vector3(
+                UnityEngine.Camera.main.transform.forward.x,
+                0.0f,
+                UnityEngine.Camera.main.transform.forward.z
+            );
         wishdir.Normalize();
 
         var wishspeed = wishdir.magnitude;

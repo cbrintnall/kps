@@ -1,0 +1,20 @@
+{
+  "PowerupWeights": {
+    "heal": 10,
+    "bomb": 7,
+    "shotspeed": 4
+  },
+  "PowerupStats": {
+    "HealAmount": 1,
+    "ExplosionSize": 30.0,
+    "ExplosionDamage": 15,
+    "SpeedTime": 10.0,
+    "SpeedMultiplier": 0.5
+  },
+  "UpgradeColors": {
+    "legendary": "#f5a442",
+    "rare": "#3e8dd6",
+    "uncommon": "#b0f25a",
+    "common": "#c3c4c0"
+  }
+}

@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Sirenix.OdinInspector;
-using Sirenix.Utilities.Editor;
 using UnityEngine;
+using Sirenix.OdinInspector;
+#if UNITY_EDITOR
+using Sirenix.Utilities.Editor;
+#endif
 
 public delegate Bullet ShootCallback(Vector3 variance);
 
@@ -34,7 +36,9 @@ public class ShootPattern : MonoBehaviour
             }
         );
 
+#if UNITY_EDITOR
         Clipboard.Copy(output);
+#endif
     }
 
     public void Shoot(ShootCallback cb, Action fx)

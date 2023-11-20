@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Build.Pipeline;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public enum UpgradeRarity
 {
@@ -36,6 +37,8 @@ public class UpgradeData
     public Type Class;
     public int Cost;
     public UpgradeType Type;
+    public string Color =>
+        SingletonLoader.Get<FlowManager>().GameData.UpgradeColors[Rarity].ToHexString();
 
     public override string ToString()
     {

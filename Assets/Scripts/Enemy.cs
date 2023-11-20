@@ -20,11 +20,9 @@ public class Enemy : MonoBehaviour
                 if (value == null)
                     return;
 
-                Debug.Log(string.Join(',', value.Stats.Values));
                 Damage.Set(Convert.ToInt32(value.Stats["Damage"]));
                 MoveSpeed.Set(Convert.ToSingle(value.Stats["MoveSpeed"]));
                 GetComponent<Health>().Data.Set(Convert.ToInt32(value.Stats["Health"]));
-                Debug.Log(GetComponent<Health>().Data.Current);
                 if (value.Stats.TryGetValue("Scale", out object additionalScale))
                 {
                     transform.localScale =

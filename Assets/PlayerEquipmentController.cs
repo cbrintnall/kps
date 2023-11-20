@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cinemachine;
 using IngameDebugConsole;
-using Sirenix.Utilities;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public struct InteractionPayload
@@ -11,15 +12,12 @@ public struct InteractionPayload
     public GameObject Owner;
 }
 
+public class PlayerDeathEvent : BaseEvent { }
+
 public class InteractionData
 {
     public string Title;
     public string Description;
-}
-
-public class UpgradePipelineData
-{
-    public StatBlock PlayerStats;
 }
 
 public interface IInteractable
@@ -62,6 +60,14 @@ public class PlayerEquipmentController : MonoBehaviour
     private Dictionary<Type, UpgradeStorage> upgrades = new();
     private PlayerInputManager playerInputManager;
     private AudioManager audioManager;
+    private PlayerMovement playerMovement;
+    private bool amDead;
+
+    [ConsoleMethod("die", "insta kills you, dumby")]
+    public static void Die()
+    {
+        Instance.Health.Damage(Instance.Health.Data.Current);
+    }
 
     public void AddUpgrade(UpgradeData data)
     {
@@ -73,18 +79,16 @@ public class PlayerEquipmentController : MonoBehaviour
 
         var upgrade = data.Behavior.CreateForOwner(gameObject);
         upgrades[data.Class] = new UpgradeStorage() { Data = data, Upgrade = upgrade };
-        upgrade.OnPickup(this);
+        SeedUpgrade(upgrade);
 
-        SingletonLoader
-            .Get<AudioManager>()
-            .Play(
-                new AudioPayload()
-                {
-                    Clip = UpgradePickup,
-                    PitchWobble = 0.1f,
-                    Location = transform.position
-                }
-            );
+        audioManager.Play(
+            new AudioPayload()
+            {
+                Clip = UpgradePickup,
+                PitchWobble = 0.1f,
+                Location = transform.position
+            }
+        );
     }
 
     public bool TryGetUpgrade(Type upgrade, out UpgradeStorage outgrade)
@@ -136,9 +140,25 @@ public class PlayerEquipmentController : MonoBehaviour
         end(this, ret);
     }
 
+    void OnDeath()
+    {
+        if (amDead)
+            return;
+
+        amDead = true;
+        MouseLook.Instance.Camera
+            .AddComponent<Rigidbody>()
+            .AddForce(PlayerMovement.Instance.m_PlayerVelocity, ForceMode.VelocityChange);
+
+        MouseLook.Instance.Camera.AddComponent<BoxCollider>();
+        SingletonLoader.Get<EventManager>().Publish(new PlayerDeathEvent());
+    }
+
     void Awake()
     {
         Instance = this;
+        audioManager = SingletonLoader.Get<AudioManager>();
+        playerMovement = GetComponent<PlayerMovement>();
         mouseLook = GetComponent<MouseLook>();
         Equipment.Controller = this;
         impulseSource = GetComponent<CinemachineImpulseSource>();
@@ -147,11 +167,32 @@ public class PlayerEquipmentController : MonoBehaviour
         DebugLogConsole.AddCommandInstance("money", "Gives money", "GiveMoney", this, "amount");
         Health = GetComponent<Health>();
         HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
+        var eventManager = SingletonLoader.Get<EventManager>();
+
+        Money.ValueChanged += (current, delta) =>
+        {
+            eventManager.Publish(new MoneyChangedEvent() { Gained = delta });
+        };
+
         Health.Data.ValueChanged += (current, delta) =>
         {
             HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
+            if (current <= 0)
+            {
+                OnDeath();
+            }
         };
+        foreach (var upgrade in GetComponents<Upgrade>())
+        {
+            upgrades[upgrade.GetType()] = new UpgradeStorage() { Upgrade = upgrade };
+            SeedUpgrade(upgrade);
+        }
         PickupWeapon(Equipment);
+    }
+
+    void SeedUpgrade(Upgrade upgrade)
+    {
+        upgrade.OnPickup(this);
     }
 
     void PickupWeapon(Gun equipment)
@@ -210,6 +251,9 @@ public class PlayerEquipmentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (amDead)
+            return;
+
         if (Equipment)
         {
             if (playerInputManager.OnPrimaryAction)
@@ -231,33 +275,44 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void DoInteraction()
     {
-        if (lookingAt != null)
-        {
-            lookingAt.Interact(new InteractionPayload() { Owner = gameObject });
-            impulseSource.GenerateImpulseWithForce(0.1f);
-        }
-        else
-        {
-            var lookData = MouseLook.Instance.LookData;
-            var hits = Physics.RaycastAll(
-                lookData.StartPoint,
-                lookData.Direction,
-                2.0f,
-                LayerMask.GetMask("Interactable", "Enemy")
-            );
-            hits.ForEach(val =>
+        var lookData = MouseLook.Instance.LookData;
+        var hits = Physics.RaycastAll(
+            lookData.StartPoint,
+            lookData.Direction,
+            2.0f,
+            LayerMask.GetMask("Interactable", "Enemy")
+        );
+
+        var healths = hits.Select(val =>
             {
                 if (val.collider.TryGetComponent(out Health health))
                 {
-                    health.Damage(10);
+                    return health;
                 }
-            });
-            impulseSource.GenerateImpulseWithForce(hits.Length / 10.0f);
+                return null;
+            })
+            .Where(val => val != null)
+            .ToArray();
+
+        foreach (var upgrade in upgrades)
+        {
+            upgrade.Value.Upgrade.OnKick(
+                new KickPipelineData()
+                {
+                    LookData = lookData,
+                    LookingAt = lookingAt,
+                    Health = healths,
+                    CameraShake = impulseSource,
+                    PlayerMovement = playerMovement
+                }
+            );
         }
     }
 
     void FixedUpdate()
     {
+        if (amDead)
+            return;
         var lookData = mouseLook.LookData;
         lookingAt = null;
 

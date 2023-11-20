@@ -1,38 +1,56 @@
+using System;
+using System.Collections.Generic;
+using KaimiraGames;
 using UnityEngine;
 
 public enum PowerupType
 {
     HEAL,
-    SHOTSPEED
+    SHOTSPEED,
+    BOMB
 }
 
 public class Powerup : MonoBehaviour
 {
+    private static WeightedList<PowerupType> WEIGHTED_POWERUPS;
+
     public PowerupType Type;
     public AudioClip PickupSound;
 
     public GameObject Heal;
     public GameObject Speed;
+    public GameObject Bomb;
 
-    public int HealAmount = 1;
-    public float SpeedDuration = 5.0f;
-    public float SpeedMultiplier = 0.5f;
+    public int HealAmount => GameSettings.PowerupStats.HealAmount;
+    public float SpeedDuration => GameSettings.PowerupStats.SpeedMultiplier;
+    public float SpeedMultiplier => GameSettings.PowerupStats.SpeedMultiplier;
+    public int BombDamage => GameSettings.PowerupStats.ExplosionDamage;
+    public float BombSize => GameSettings.PowerupStats.ExplosionSize;
+
+    private GameData GameSettings;
+
+    void Awake()
+    {
+        GameSettings = SingletonLoader.Get<FlowManager>().GameData;
+    }
 
     void Start()
     {
-        Type = Utilities.Randf() <= 0.5f ? PowerupType.HEAL : PowerupType.SHOTSPEED;
-
-        switch (Type)
+        if (WEIGHTED_POWERUPS == null)
         {
-            case PowerupType.SHOTSPEED:
-                Heal.SetActive(false);
-                Speed.SetActive(true);
-                break;
-            case PowerupType.HEAL:
-                Heal.SetActive(true);
-                Speed.SetActive(false);
-                break;
+            WEIGHTED_POWERUPS = new WeightedList<PowerupType>();
+
+            foreach (var combo in SingletonLoader.Get<FlowManager>().GameData.PowerupWeights)
+            {
+                WEIGHTED_POWERUPS.Add(combo.Key, combo.Value);
+            }
         }
+
+        Type = WEIGHTED_POWERUPS.Next();
+
+        Heal.SetActive(Type == PowerupType.HEAL);
+        Speed.SetActive(Type == PowerupType.SHOTSPEED);
+        Bomb.SetActive(Type == PowerupType.BOMB);
     }
 
     void OnTriggerEnter(Collider collider)
@@ -46,31 +64,33 @@ public class Powerup : MonoBehaviour
                         SpeedDuration,
                         (controller) =>
                         {
-                            var before = controller.Stats.PistolCooldown.Current;
                             controller.Stats.PistolCooldown.Incr(
                                 -SpeedMultiplier,
                                 out float toRemove,
                                 StatOperation.Percent,
                                 false
                             );
-                            var after = controller.Stats.PistolCooldown.Current;
-
-                            Debug.Log($"Before: {before}, after: {after}, to remove: {toRemove}");
-
                             return toRemove;
                         },
                         (controller, toRemove) =>
                         {
-                            Debug.Log("Removing");
-                            var before = controller.Stats.PistolCooldown.Current;
                             controller.Stats.PistolCooldown.Incr(toRemove, StatOperation.Value);
-                            var after = controller.Stats.PistolCooldown.Current;
-                            Debug.Log($"Before: {before}, after: {after}, to remove: {toRemove}");
                         }
                     );
                     break;
                 case PowerupType.HEAL:
                     controller.Health.Heal(new HealPayload() { Amount = HealAmount });
+                    break;
+                case PowerupType.BOMB:
+                    var explosion = Instantiate(
+                        Resources.Load<Explosion>("Upgrades/Explosion"),
+                        transform.position,
+                        Quaternion.identity
+                    );
+
+                    explosion.Layers = LayerMask.GetMask("Enemy");
+                    explosion.Damage = BombDamage;
+                    explosion.Size = BombSize;
                     break;
             }
 

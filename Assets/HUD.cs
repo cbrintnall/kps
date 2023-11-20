@@ -16,6 +16,6 @@ public class HUD : MonoBehaviour
     void Update()
     {
         Souls.text = $"Souls: {PlayerEquipmentController.Instance.Money.Current}";
-        KPS.text = $"KPS: {master.killsPerSecond}/s";
+        // KPS.text = $"KPS: {master.killsPerSecond}/s";
     }
 }

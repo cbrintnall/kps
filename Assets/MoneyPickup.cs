@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MoneyPickup : MonoBehaviour
@@ -28,6 +27,9 @@ public class MoneyPickup : MonoBehaviour
 
     void Update()
     {
+        if (PlayerEquipmentController.Instance.Health.Dead)
+            Destroy(gameObject);
+
         if (
             Vector3.Distance(
                 transform.position,
@@ -45,7 +47,7 @@ public class MoneyPickup : MonoBehaviour
                         Clip = PickupSound,
                         Location = transform.position,
                         Debounce = 0.5f,
-                        PitchWobble = 0.1f
+                        PitchWobble = 0.3f
                     }
                 );
 

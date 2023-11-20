@@ -6,28 +6,28 @@
     "Tiers": [
       {
         "Rarity": "common",
-        "Cost": 5,
-        "Stats": {
-          "PercentageIncrease": 0.01
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 9,
+        "Cost": 15,
         "Stats": {
           "PercentageIncrease": 0.05
         }
       },
       {
-        "Rarity": "rare",
-        "Cost": 20,
+        "Rarity": "uncommon",
+        "Cost": 40,
         "Stats": {
           "PercentageIncrease": 0.1
         }
       },
       {
+        "Rarity": "rare",
+        "Cost": 100,
+        "Stats": {
+          "PercentageIncrease": 0.18
+        }
+      },
+      {
         "Rarity": "legendary",
-        "Cost": 40,
+        "Cost": 200,
         "Stats": {
           "PercentageIncrease": 0.25
         }
@@ -41,30 +41,30 @@
     "Tiers": [
       {
         "Rarity": "common",
-        "Cost": 3,
-        "Stats": {
-          "ValueDecrease": 0.01
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 12,
+        "Cost": 15,
         "Stats": {
           "ValueDecrease": 0.05
         }
       },
       {
-        "Rarity": "rare",
-        "Cost": 20,
+        "Rarity": "uncommon",
+        "Cost": 40,
         "Stats": {
-          "ValueDecrease": 0.08
+          "ValueDecrease": 0.09
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 80,
+        "Stats": {
+          "ValueDecrease": 0.13
         }
       },
       {
         "Rarity": "legendary",
-        "Cost": 35,
+        "Cost": 150,
         "Stats": {
-          "ValueDecrease": 0.1
+          "ValueDecrease": 0.2
         }
       }
     ]
@@ -471,6 +471,42 @@
         "Cost": 20,
         "Stats": {
           "Bullet": "Upgrades/Bullets/GrenadeBullet"
+        }
+      }
+    ]
+  },
+  {
+    "Class": "SpeedKick",
+    "Description": "Your kick thrusts you forward with force whenever it doesn't make contact.",
+    "Name": "Flying Tiger",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 30,
+        "Stats": {
+          "Force": 30.0
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 70,
+        "Stats": {
+          "Force": 60.0
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 120,
+        "Stats": {
+          "Force": 100.0
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 300,
+        "Stats": {
+          "Force": 150.0
         }
       }
     ]
