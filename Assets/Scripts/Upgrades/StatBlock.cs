@@ -13,7 +13,7 @@ public class StatBlock
     [Header("Base Damage")]
     public StatInt RocketDamage = 3;
     public StatInt HitScanDamage = 1;
-    public StatInt GrenadeExplosiveDamage = 1;
+    public StatInt GrenadeExplosiveDamage = 2;
     public StatInt GrenadeHitDamage = 1;
 
     [Header("Cooldowns")]

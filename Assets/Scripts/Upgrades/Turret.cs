@@ -30,6 +30,8 @@ public class DropTurret : Upgrade
             }
 
             turrets.Push(Instantiate(Prefab, controller.GetGroundPosition(), Quaternion.identity));
+
+            ts = 0;
         }
     }
 }

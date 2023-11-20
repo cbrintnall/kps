@@ -189,7 +189,7 @@
         "Rarity": "legendary",
         "Cost": 300,
         "Stats": {
-          "DropTime": 30.0,
+          "DropTime": 20.0,
           "Number": 10,
           "Path": "Upgrades/Turret"
         }
@@ -439,6 +439,38 @@
               "base": 0.1
             }
           }
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "hitscan",
+    "Class": "BulletUpgrade",
+    "Description": "The fastest bullet you'll shoot, your standard bullet.",
+    "Name": "Bullet",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Bullet": "Upgrades/Bullets/HitscanBullet"
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "grenade",
+    "Class": "BulletUpgrade",
+    "Description": "An explosive grenade, subject to gravity.",
+    "Name": "Grenade",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 20,
+        "Stats": {
+          "Bullet": "Upgrades/Bullets/GrenadeBullet"
         }
       }
     ]

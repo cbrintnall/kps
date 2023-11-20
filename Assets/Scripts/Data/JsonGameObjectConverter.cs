@@ -2,26 +2,32 @@ using System;
 using Newtonsoft.Json;
 using UnityEngine;
 
-class GameObjectConverter : JsonConverter<GameObject>
+class GameObjectConverter : JsonConverter
 {
-    public override GameObject ReadJson(
+    public override bool CanConvert(Type objectType)
+    {
+        Debug.Log($"Type: {objectType.Name}");
+
+        return objectType == typeof(GameObject) || objectType.IsSubclassOf(typeof(MonoBehaviour));
+    }
+
+    public override object ReadJson(
         JsonReader reader,
         Type objectType,
-        GameObject existingValue,
-        bool hasExistingValue,
+        object existingValue,
         JsonSerializer serializer
     )
     {
         if (reader.Value is string str)
         {
-            return Resources.Load<GameObject>(str);
+            return Resources.Load(str, objectType);
         }
 
         return null;
     }
 
-    public override void WriteJson(JsonWriter writer, GameObject value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
-        throw new InvalidOperationException("Can't write out gameobject");
+        throw new NotImplementedException();
     }
 }

@@ -51,3 +51,5 @@ MonoBehaviour:
   Mask:
     serializedVersion: 2
     m_Bits: 65
+  BulletSize: 0.75
+  PierceAmount: 1

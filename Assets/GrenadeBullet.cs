@@ -29,6 +29,8 @@ public class GrenadeBullet : Bullet
             ForceMode.Impulse
         );
 
+        rb.AddTorque(Random.insideUnitSphere * 15.0f, ForceMode.Impulse);
+
         StartCoroutine(DelayThenExplode());
     }
 
@@ -63,7 +65,7 @@ public class GrenadeBullet : Bullet
             transform.position,
             Quaternion.identity
         );
-        explosion.Layers = LayerMask.GetMask("Enemies");
+        explosion.Layers = LayerMask.GetMask("Enemy");
         explosion.Damage = PlayerEquipmentController.Instance.Stats.GrenadeExplosiveDamage;
         explosion.Size = PlayerEquipmentController.Instance.Stats.ExplosionSize;
         Destroy(gameObject);

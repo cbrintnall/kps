@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ShootingTurret : MonoBehaviour
@@ -7,6 +5,7 @@ public class ShootingTurret : MonoBehaviour
     public Bullet Bullet;
     public StatFloat Cooldown = 1f;
     public Transform Barrel;
+    public Transform Head;
     public StatInt Damage = 1;
     public StatFloat MonitorRadius = 10.0f;
     public AudioClip ShootSound;
@@ -41,7 +40,11 @@ public class ShootingTurret : MonoBehaviour
     {
         if (target)
         {
-            Barrel.transform.forward = (target.position - Barrel.transform.position).normalized;
+            Head.transform.forward = Vector3.Lerp(
+                Head.transform.forward,
+                (target.position - Head.transform.position).normalized,
+                Time.deltaTime * 0.6f
+            );
             if (Vector3.Distance(target.position, transform.position) > MonitorRadius)
             {
                 target = null;

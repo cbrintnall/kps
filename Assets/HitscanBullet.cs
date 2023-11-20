@@ -14,11 +14,9 @@ public class HitscanBullet : Bullet
 
     public LayerMask Mask;
     public float BulletSize = 0.75f;
+    public int PierceAmount = 1;
 
     bool debug = false;
-    RaycastHit[] storage = new RaycastHit[50];
-    List<Tuple<Vector3, Vector3, bool>> hitPoints;
-    Tuple<Vector3, Vector3, bool> lastHit;
 
     /// <summary>
     /// "Shoots" the bullet, as in runs the physics simulation and searches for targets.
@@ -44,13 +42,10 @@ public class HitscanBullet : Bullet
                     )
             );
 
-            hitPoints = new();
-
-            foreach (var hit in hits.Where(cast => cast.collider != null))
+            foreach (var hit in hits.Where(cast => cast.collider != null).Take(PierceAmount))
             {
                 if ((1 << hit.collider.gameObject.layer & LayerMask.GetMask("Enemy")) == 0)
                 {
-                    hitPoints.Add(Tuple.Create(Start, end, false));
                     break;
                 }
 
@@ -65,15 +60,8 @@ public class HitscanBullet : Bullet
                 RaiseHit(data);
 
                 end = hit.point;
-                hitPoints.Add(Tuple.Create(Start, end, true));
             }
         }
-
-        lastHit = Tuple.Create(
-            Start,
-            Start + transform.forward * SHOOT_DISTANCE,
-            storage.Length > 0
-        );
 
         if (Vector3.Distance(Start, end) > MIN_FX_DISTANCE)
         {
