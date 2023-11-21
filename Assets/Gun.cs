@@ -103,6 +103,19 @@ public abstract class Gun : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// Allows sending a bullet through the gun's pipeline as if it was fired from this gun.
+    /// This method will handle calling shoot.
+    /// </summary>
+    /// <param name="bullet">The bullet to be fired, should already be setup and instantiated</param>
+    public void VirtualShoot(Bullet bullet)
+    {
+        MonitorBullet(bullet);
+        WillShootBullet?.Invoke(bullet);
+        bullet.Shoot();
+        ShotBullet?.Invoke(bullet);
+    }
+
     public virtual Bullet Shoot(
         Vector3 variance,
         Bullet overrideBullet = null,
@@ -119,11 +132,7 @@ public abstract class Gun : MonoBehaviour
         bullet.transform.Rotate(variance);
         bullet.ExtraData = payload;
 
-        MonitorBullet(bullet);
-
-        WillShootBullet?.Invoke(bullet);
-        bullet.Shoot();
-        ShotBullet?.Invoke(bullet);
+        VirtualShoot(bullet);
 
         return bullet;
     }

@@ -4,6 +4,13 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public class DebugData
+{
+    public string PasteBinKey;
+    public string PasteBinUrl;
+    public string PasteBinUserKey;
+}
+
 public class PowerupStats
 {
     public int HealAmount;
@@ -18,6 +25,7 @@ public class GameData
     public Dictionary<PowerupType, int> PowerupWeights;
     public PowerupStats PowerupStats;
     public Dictionary<UpgradeRarity, Color> UpgradeColors;
+    public DebugData Debug;
 }
 
 [Singleton]

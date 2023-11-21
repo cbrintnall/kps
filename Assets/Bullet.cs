@@ -7,6 +7,7 @@ public class BulletHitData
     public RaycastHit Hit;
     public Collider Collider;
     public Bullet Bullet;
+    public Vector3 EndPoint;
 
     public Collider Target => Hit.collider ?? Collider;
 }

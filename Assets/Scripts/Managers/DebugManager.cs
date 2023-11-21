@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using IngameDebugConsole;
 using UnityEngine;
@@ -9,11 +11,7 @@ public class DebugManager : MonoBehaviour
 {
     public static bool DebugEnabled;
 
-    void Awake()
-    {
-        DebugLogConsole.AddCustomParameterType(typeof(object), ParseObject);
-        DebugLogConsole.AddCommand<string, object>("set", "Set a static variable", SetVar);
-    }
+    Dictionary<Action, TimeSince> timedDraw = new();
 
     private static bool ParseObject(string input, out object output)
     {
@@ -67,4 +65,16 @@ public class DebugManager : MonoBehaviour
             }
         }
     }
+
+    void Awake()
+    {
+        DebugLogConsole.AddCustomParameterType(typeof(object), ParseObject);
+        DebugLogConsole.AddCommand<string, object>("set", "Set a static variable", SetVar);
+    }
+
+    // public void DrawForTime(Action cb, float time) {
+    //     timedDraw[cb] = time
+    //  }
+
+    void OnDrawGizmos() { }
 }

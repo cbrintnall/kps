@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,4 +34,15 @@ public static class Utilities
     }
 
     public static float Randf() => UnityEngine.Random.Range(0.0f, 1.0f);
+
+    public static void WaitThen(this MonoBehaviour t, float time, Action then)
+    {
+        t.StartCoroutine(WaitAndThen(time, then));
+    }
+
+    private static IEnumerator WaitAndThen(float time, Action then)
+    {
+        yield return new WaitForSeconds(time);
+        then();
+    }
 }

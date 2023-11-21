@@ -29,8 +29,6 @@ public class MoneyStatusUpdater : MonoBehaviour
         if (ev.Gained < 0)
             return;
 
-        Debug.Log(ev.Gained);
-
         aggregate += ev.Gained;
         ts = 0;
 

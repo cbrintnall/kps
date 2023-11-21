@@ -210,7 +210,12 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void OnShotBullet(Bullet bullet)
     {
-        var pipeline = new UpgradePipelineData() { PlayerStats = Stats };
+        var pipeline = new UpgradePipelineData()
+        {
+            PlayerStats = Stats,
+            ShotFrom = Equipment,
+            CameraShake = impulseSource
+        };
         foreach (var upgrade in upgrades)
         {
             upgrade.Value.Upgrade.OnBulletShot(pipeline, bullet);
@@ -219,7 +224,13 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void OnWillShootBullet(Bullet bullet)
     {
-        var pipeline = new UpgradePipelineData() { PlayerStats = Stats };
+        var pipeline = new UpgradePipelineData()
+        {
+            PlayerStats = Stats,
+            ShotFrom = Equipment,
+            CameraShake = impulseSource
+        };
+
         foreach (var upgrade in upgrades)
         {
             upgrade.Value.Upgrade.OnWillShootBullet(pipeline, bullet);

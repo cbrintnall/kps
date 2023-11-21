@@ -16,6 +16,7 @@ public class HitscanBullet : Bullet
     public float BulletSize = 0.75f;
     public int PierceAmount = 1;
 
+    private Vector3 start => Barrel?.transform.position ?? transform.position;
     bool debug = false;
 
     /// <summary>
@@ -23,7 +24,7 @@ public class HitscanBullet : Bullet
     /// </summary>
     public override void Shoot()
     {
-        var end = Barrel.transform.position + transform.forward * SHOOT_DISTANCE;
+        var end = start + transform.forward * SHOOT_DISTANCE;
         var hits = Physics.SphereCastAll(
             Start,
             BulletSize,
@@ -51,11 +52,6 @@ public class HitscanBullet : Bullet
                 var hit in hits.Where(cast => cast.collider != null).Take(PierceAmount * extra)
             )
             {
-                if ((1 << hit.collider.gameObject.layer & LayerMask.GetMask("Enemy")) == 0)
-                {
-                    break;
-                }
-
                 var data = new BulletHitData() { Hit = hit };
 
                 if (hit.collider.TryGetComponent(out Health health))
@@ -64,16 +60,21 @@ public class HitscanBullet : Bullet
                     data.Bullet = this;
                 }
 
+                end = hit.point;
+                data.EndPoint = end;
                 RaiseHit(data);
 
-                end = hit.point;
+                if ((1 << hit.collider.gameObject.layer & LayerMask.GetMask("Enemy")) == 0)
+                {
+                    break;
+                }
             }
         }
 
         if (Vector3.Distance(Start, end) > MIN_FX_DISTANCE)
         {
             var fx = Instantiate(Resources.Load("BulletFX")).GetComponent<LineRenderer>();
-            fx.SetPositions(new Vector3[] { Barrel.transform.position, end });
+            fx.SetPositions(new Vector3[] { start, end });
             var t = fx.DOColor(
                 new Color2() { ca = Color.white, cb = Color.white },
                 new Color2() { ca = Color.clear, cb = Color.clear },

@@ -4,6 +4,7 @@ public class UpgradePipelineData
 {
     public StatBlock PlayerStats;
     public CinemachineImpulseSource CameraShake;
+    public Gun ShotFrom;
 }
 
 public class KickPipelineData : UpgradePipelineData
