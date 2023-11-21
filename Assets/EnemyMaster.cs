@@ -58,6 +58,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     public EnemyDefinition[] Enemies => Data.Definitions;
     public int Deficit => TargetValue - CurrentValue;
     public List<EnemySequence> Sequences = new();
+    public int KPS => Mathf.RoundToInt(killsPerSecond);
 
     // This should eventually become a curve, dictated by difficulty
     public float TargetIncreaseSeconds => Data.TargetRateIncrease;
@@ -165,7 +166,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     {
         foreach (var enemy in ActiveEnemies.ToList())
         {
-            enemy?.GetComponent<Health>().InstaKill();
+            enemy?.GetComponent<Health>()?.InstaKill();
         }
 
         ActiveEnemies = new();

@@ -235,6 +235,7 @@ public class PlayerEquipmentController : MonoBehaviour
         {
             upgrade.Value.Upgrade.OnWillShootBullet(pipeline, bullet);
         }
+
         bullet.Hit += (data) =>
         {
             this.PlayAtMe(
@@ -305,7 +306,8 @@ public class PlayerEquipmentController : MonoBehaviour
             .Where(val => val != null)
             .ToArray();
 
-        foreach (var upgrade in upgrades)
+        // Copy list here only, since kicking can lead to modifying the collection.
+        foreach (var upgrade in upgrades.ToList())
         {
             upgrade.Value.Upgrade.OnKick(
                 new KickPipelineData()

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Cinemachine;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class UsageData
@@ -13,6 +11,14 @@ public class UsageData
 public class ShootPayload
 {
     public float ChargeTime = 0.0f;
+}
+
+public class ShootRequestPayload
+{
+    public UpgradePipelineData PipelineData;
+    public Vector3 Variance;
+    public Bullet BulletPrefab;
+    public ShootPayload Payload = new();
 }
 
 [RequireComponent(typeof(BaseOnHitUpgrade))]
@@ -122,15 +128,27 @@ public abstract class Gun : MonoBehaviour
         ShootPayload payload = null
     )
     {
-        var bullet = Instantiate(overrideBullet ?? Bullet);
+        return Shoot(
+            new ShootRequestPayload()
+            {
+                Variance = variance,
+                BulletPrefab = overrideBullet,
+                Payload = payload
+            }
+        );
+    }
+
+    public virtual Bullet Shoot(ShootRequestPayload request)
+    {
+        var bullet = Instantiate(request.BulletPrefab ?? Bullet);
         var mouseLook = MouseLook.Instance.LookData;
 
         bullet.transform.position = Barrel.transform.position;
         bullet.Start = mouseLook.StartPoint;
         bullet.Barrel = Barrel;
         bullet.transform.forward = mouseLook.Direction.normalized;
-        bullet.transform.Rotate(variance);
-        bullet.ExtraData = payload;
+        bullet.transform.Rotate(request.Variance);
+        bullet.ExtraData = request.Payload;
 
         VirtualShoot(bullet);
 

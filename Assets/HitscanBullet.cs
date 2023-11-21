@@ -16,8 +16,14 @@ public class HitscanBullet : Bullet
     public float BulletSize = 0.75f;
     public int PierceAmount = 1;
 
+    private LineRenderer bulletFX;
     private Vector3 start => Barrel?.transform.position ?? transform.position;
     bool debug = false;
+
+    void Awake()
+    {
+        bulletFX = Instantiate(Resources.Load("BulletFX")).GetComponent<LineRenderer>();
+    }
 
     /// <summary>
     /// "Shoots" the bullet, as in runs the physics simulation and searches for targets.
@@ -73,7 +79,6 @@ public class HitscanBullet : Bullet
 
         if (Vector3.Distance(Start, end) > MIN_FX_DISTANCE)
         {
-            var fx = Instantiate(Resources.Load("BulletFX")).GetComponent<LineRenderer>();
             fx.SetPositions(new Vector3[] { start, end });
             var t = fx.DOColor(
                 new Color2() { ca = Color.white, cb = Color.white },
@@ -92,8 +97,7 @@ public class HitscanBullet : Bullet
         }
         else
         {
-            if (!debug || !CancelFree)
-                Destroy(gameObject);
+            Destroy(gameObject);
         }
     }
 }

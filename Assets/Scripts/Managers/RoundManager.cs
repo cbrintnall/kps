@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.Utilities;
 using UnityEngine;
@@ -14,11 +15,13 @@ public class RoundManager : MonoBehaviour
     public string TimerTag => TimeSpan.FromSeconds(TimeLeft).ToString(@"mm\:ss");
     public bool Active { get; private set; }
     public StatInt Round = 0;
+    public int KPS => masters.Sum(m => m.KPS);
 
     private Coroutine roundCoroutine;
     private PlayerInputManager playerInputManager;
     private UpgradesManager upgradesManager;
     private bool active_;
+    private EnemyMaster[] masters;
 
     [IngameDebugConsole.ConsoleMethod("endround", "Ends the current round")]
     public static void EndRound()
@@ -33,6 +36,7 @@ public class RoundManager : MonoBehaviour
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();
         upgradesManager = SingletonLoader.Get<UpgradesManager>();
         TimeLeft = RoundTimeSeconds;
+        masters = FindObjectsOfType<EnemyMaster>();
     }
 
     void Update()
@@ -59,7 +63,7 @@ public class RoundManager : MonoBehaviour
     {
         Active = false;
         RoundEnded?.Invoke();
-        FindObjectsOfType<EnemyMaster>().ForEach(spawner => spawner.enabled = false);
+        masters.ForEach(spawner => spawner.enabled = false);
         if (roundCoroutine != null)
             StopCoroutine(roundCoroutine);
         roundCoroutine = null;
@@ -83,10 +87,9 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator HandleRound()
     {
-        var spawners = FindObjectsOfType<EnemyMaster>();
         Active = true;
 
-        spawners.ForEach(spawner => spawner.enabled = true);
+        masters.ForEach(spawner => spawner.enabled = true);
         yield return new WaitForSeconds(TimeLeft);
         EndCurrentRound();
     }

@@ -9,7 +9,7 @@ public class ShootingTurret : MonoBehaviour
     public StatInt Damage = 1;
     public StatFloat MonitorRadius = 10.0f;
     public AudioClip ShootSound;
-    public Faction Faction;
+    public Faction Faction = Faction.PLAYER;
 
     TimeSince ts;
     Transform target;

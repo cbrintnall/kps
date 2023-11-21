@@ -6,6 +6,7 @@ public class GrenadeBullet : Bullet
 {
     const float SHOOT_FORCE = 50.0f;
 
+    public float Force = SHOOT_FORCE;
     public float ExplosionDelay;
     public int Damage;
 
@@ -24,12 +25,7 @@ public class GrenadeBullet : Bullet
     {
         Physics.SyncTransforms();
 
-        rb.AddForce(
-            (transform.forward * SHOOT_FORCE) + PlayerMovement.Instance.Velocity,
-            ForceMode.Impulse
-        );
-
-        rb.AddTorque(Random.insideUnitSphere * 15.0f, ForceMode.Impulse);
+        rb.AddForce(transform.forward * Force, ForceMode.Impulse);
 
         StartCoroutine(DelayThenExplode());
     }

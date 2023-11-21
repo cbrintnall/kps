@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Sirenix.Utilities;
+using System.Linq;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
 public class BulletRichocet : Upgrade
 {
+    const int max = 10;
+    int count;
+
     public StatFloat ScanSize = 20.0f;
     List<Tuple<Vector3, Vector3>> reflections = new();
 
@@ -12,16 +16,32 @@ public class BulletRichocet : Upgrade
     {
         base.OnBulletHit(pipelineData, data);
 
+        if (count >= max)
+        {
+            Debug.LogWarning("Hit ricochet max");
+            return;
+        }
+
         if (data.Health == null)
         {
             var reflected = Vector3.Reflect(data.Bullet.transform.forward, data.Hit.normal);
             reflections.Add(Tuple.Create(data.Hit.point, reflected));
 
-            var bullet = Instantiate(data.Bullet, data.EndPoint, Quaternion.identity);
+            // var bullet = Instantiate(data.Bullet, data.EndPoint, Quaternion.identity);
+            var bullet = data.Bullet;
 
+            bullet.CancelFree = true;
             bullet.Barrel = null;
-            bullet.Start = data.EndPoint;
+            bullet.transform.position = data.EndPoint;
+            // bullet.Start = data.EndPoint;
             bullet.transform.forward = reflected;
+
+            if (!bullet is HitscanBullet)
+            {
+                return;
+            }
+
+            count++;
 
             var hits = Physics.BoxCastAll(
                 data.Hit.point,
@@ -32,18 +52,19 @@ public class BulletRichocet : Upgrade
                 LayerMask.GetMask("Enemy")
             );
 
-            hits.Sort(
-                (a, b) =>
-                    Vector3.Distance(data.EndPoint, a.point)
-                    > Vector3.Distance(data.EndPoint, b.point)
-                        ? -1
-                        : 1
-            );
+            var sorted = hits.OrderBy((a) => Vector3.Distance(a.transform.position, bullet.Start))
+                .ThenByDescending(
+                    hit =>
+                        Vector3.Dot((hit.transform.position - bullet.Start).normalized, reflected)
+                );
 
             foreach (var hit in hits)
             {
                 if (hit.collider.TryGetComponent(out Health health))
                 {
+                    if (health.Dead)
+                        continue;
+
                     if (
                         !Physics.Raycast(
                             bullet.Start,
@@ -63,8 +84,14 @@ public class BulletRichocet : Upgrade
                 }
             }
 
-            pipelineData.ShotFrom.VirtualShoot(bullet);
+            // pipelineData.ShotFrom.VirtualShoot(bullet);
+            bullet.Shoot();
         }
+    }
+
+    void Update()
+    {
+        count = 0;
     }
 
     void OnDrawGizmos()

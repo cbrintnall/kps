@@ -19791,6 +19791,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2466740045515835446, guid: f9483f8c4630ad4488a6b15d13a84344,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 28663
+      objectReference: {fileID: 0}
     - target: {fileID: 3173239238462096255, guid: f9483f8c4630ad4488a6b15d13a84344,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -19898,6 +19903,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ba49f0c5cef2643bb162f10d22b26c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ScanSize:
+    Max: Infinity
+    Min: 0
+    Current: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
