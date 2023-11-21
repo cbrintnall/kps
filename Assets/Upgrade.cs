@@ -35,6 +35,8 @@ public abstract class Upgrade : MonoBehaviour
 
     public virtual void OnWillShootBullet(UpgradePipelineData pipelineData, Bullet bullet) { }
 
+    public virtual void OnBulletMissed() { }
+
     public virtual void OnBulletHit(UpgradePipelineData pipelineData, BulletHitData data) { }
 
     public virtual void OnBulletShot(UpgradePipelineData pipelineData, Bullet bullet) { }

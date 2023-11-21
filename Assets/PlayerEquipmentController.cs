@@ -120,6 +120,15 @@ public class PlayerEquipmentController : MonoBehaviour
         return Vector3.one;
     }
 
+    public UpgradePipeline CreatePipeline(Gun equipment)
+    {
+        return new UpgradePipeline(
+            upgrades.Values.Select(storage => storage.Upgrade),
+            new UpgradePipelineData() { CameraShake = impulseSource, PlayerStats = Stats },
+            equipment
+        );
+    }
+
     public void AddStatus<T>(
         float time,
         Func<PlayerEquipmentController, T> start,
@@ -197,62 +206,7 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void PickupWeapon(Gun equipment)
     {
-        if (Equipment)
-        {
-            Equipment.WillShootBullet -= OnWillShootBullet;
-            Equipment.ShotBullet -= OnShotBullet;
-        }
-
         Equipment = equipment;
-        Equipment.WillShootBullet += OnWillShootBullet;
-        Equipment.ShotBullet += OnShotBullet;
-    }
-
-    void OnShotBullet(Bullet bullet)
-    {
-        var pipeline = new UpgradePipelineData()
-        {
-            PlayerStats = Stats,
-            ShotFrom = Equipment,
-            CameraShake = impulseSource
-        };
-        foreach (var upgrade in upgrades)
-        {
-            upgrade.Value.Upgrade.OnBulletShot(pipeline, bullet);
-        }
-    }
-
-    void OnWillShootBullet(Bullet bullet)
-    {
-        var pipeline = new UpgradePipelineData()
-        {
-            PlayerStats = Stats,
-            ShotFrom = Equipment,
-            CameraShake = impulseSource
-        };
-
-        foreach (var upgrade in upgrades)
-        {
-            upgrade.Value.Upgrade.OnWillShootBullet(pipeline, bullet);
-        }
-
-        bullet.Hit += (data) =>
-        {
-            this.PlayAtMe(
-                new AudioPayload()
-                {
-                    Clip = HitSound,
-                    Location = transform.position,
-                    PitchWobble = 0.1f,
-                    Debounce = 0.1f
-                }
-            );
-
-            foreach (var upgrade in upgrades)
-            {
-                upgrade.Value.Upgrade.OnBulletHit(pipeline, data);
-            }
-        };
     }
 
     void GiveMoney(int amt)

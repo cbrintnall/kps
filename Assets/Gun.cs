@@ -143,6 +143,8 @@ public abstract class Gun : MonoBehaviour
         var bullet = Instantiate(request.BulletPrefab ?? Bullet);
         var mouseLook = MouseLook.Instance.LookData;
 
+        Controller.CreatePipeline(this);
+
         bullet.transform.position = Barrel.transform.position;
         bullet.Start = mouseLook.StartPoint;
         bullet.Barrel = Barrel;

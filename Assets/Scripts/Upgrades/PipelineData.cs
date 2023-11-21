@@ -7,6 +7,7 @@ public class UpgradePipelineData
     public StatBlock PlayerStats;
     public CinemachineImpulseSource CameraShake;
     public Gun ShotFrom;
+    public UpgradePipeline Parent;
     private Dictionary<Type, object> custom = new();
 
     public T GetCustom<T>()

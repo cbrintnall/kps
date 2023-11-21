@@ -15,6 +15,7 @@ public class BulletHitData
 public abstract class Bullet : MonoBehaviour
 {
     public event Action<BulletHitData> Hit;
+    public event Action Missed;
     public Transform Barrel;
     public Vector3 Start;
     public Vector3 Direction;
@@ -22,13 +23,34 @@ public abstract class Bullet : MonoBehaviour
 
     // Used for upgrades to stop the bullet from freeing itself
     public bool CancelFree = false;
+    public bool DidHit = false;
+
+    void Awake()
+    {
+        DidHit = false;
+    }
 
     public abstract void Shoot();
+
+    protected void RaiseMiss()
+    {
+        Missed?.Invoke();
+    }
 
     protected void RaiseHit(BulletHitData target)
     {
         target.Bullet = this;
 
+        DidHit = true;
         Hit?.Invoke(target);
+    }
+
+    void OnDestroy()
+    {
+        Debug.Log($"goodbye bullet: {DidHit}");
+        if (!DidHit)
+        {
+            Missed?.Invoke();
+        }
     }
 }
