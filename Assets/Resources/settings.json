@@ -21,5 +21,8 @@
     "rare": "#3e8dd6",
     "uncommon": "#b0f25a",
     "common": "#c3c4c0"
+  },
+  "Rounds": {
+    "MaxRoundTime": 300.0
   }
 }

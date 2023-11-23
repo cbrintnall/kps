@@ -510,5 +510,45 @@
         }
       }
     ]
+  },
+  {
+    "Class": "HealPerSecond",
+    "Description": "The surrounding light fills your hollow soul, healing you for an additional {Amount} every {Time} seconds.",
+    "Name": "Heals For The Soul",
+    "Behavior": "TieredUpgradeBehavior",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 30,
+        "Stats": {
+          "Amount": 1.0,
+          "Time": 7.5
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 70,
+        "Stats": {
+          "Amount": 3.0,
+          "Time": 7.5
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 120,
+        "Stats": {
+          "Amount": 5.0,
+          "Time": 7.5
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 300,
+        "Stats": {
+          "Amount": 8.0,
+          "Time": 7.5
+        }
+      }
+    ]
   }
 ]

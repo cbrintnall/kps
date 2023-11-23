@@ -113,12 +113,14 @@ public class PlayerMovement : MonoBehaviour
             GroundMove();
             m_TimeOffGround = 0.0f;
             maxSpeed = m_GroundSettings.MaxSpeed;
+            Animator.SetBool("Moving", m_MoveInput.sqrMagnitude > 0);
         }
         else
         {
             AirMove();
             m_TimeOffGround += Time.deltaTime;
             maxSpeed = m_AirSettings.MaxSpeed;
+            Animator.SetBool("Moving", false);
         }
 
         // Move the character.

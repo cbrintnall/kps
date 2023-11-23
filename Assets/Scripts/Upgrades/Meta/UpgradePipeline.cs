@@ -62,8 +62,6 @@ public class UpgradePipeline
         {
             Callback = () => equipment.WillShootBullet -= OnWillShootBullet
         };
-
-        Debug.Log($"New pipeline: {id}");
     }
 
     public void ListenToBullet(Bullet bullet)

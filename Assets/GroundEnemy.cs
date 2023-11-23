@@ -5,7 +5,7 @@ public class GroundEnemy : Enemy
 {
     public AudioClip[] SwingSounds;
     public AudioClip[] HitSounds;
-    TimeSince attack;
+    protected TimeSince attack;
 
     protected override void SubscribeToAnimationEvents(AnimationEventsHandler handler)
     {
@@ -27,7 +27,7 @@ public class GroundEnemy : Enemy
         };
     }
 
-    void Attacked()
+    protected virtual void Attacked()
     {
         attack = 0.0f;
 

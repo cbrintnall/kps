@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    const float SATISFIED_DISTANCE = 2.5f;
-
+    public float SATISFIED_DISTANCE = 2.5f;
     public GameObject Money;
     public ParticleSystem OnHit;
     public StatFloat MoveSpeed = 4.0f;
     public StatInt Damage = 3;
     public Animator Animator;
     public Canvas Canvas;
+    public bool Flying;
     public EnemyDefinition Definition
     {
         set
@@ -43,11 +43,9 @@ public class Enemy : MonoBehaviour
     protected AudioManager audioManager;
     private CharacterController characterController;
     private Vector3 targetOffset;
-    private TimeSince walkforward;
 
     void Awake()
     {
-        walkforward = 0;
         characterController = GetComponent<CharacterController>();
         animationEventsHandler = Animator.gameObject.GetComponent<AnimationEventsHandler>();
         audioManager = SingletonLoader.Get<AudioManager>();
@@ -112,7 +110,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected virtual void UpdateMoving()
     {
         if (target)
         {
@@ -120,13 +118,18 @@ public class Enemy : MonoBehaviour
             transform.forward = new Vector3(dir.x, 0.0f, dir.z);
         }
 
-        if (
-            target != null
-            && Vector3.Distance(transform.position, target.position) > SATISFIED_DISTANCE
-        )
+        if (target != null)
         {
-            characterController.Move(transform.forward * MoveSpeed * Time.fixedDeltaTime);
-            Animator?.SetBool("Moving", true);
+            float distance = Vector3.Distance(
+                new Vector3(transform.position.x, 0.0f, transform.position.z),
+                new Vector3(target.position.x, 0.0f, target.position.z)
+            );
+
+            if (distance > SATISFIED_DISTANCE)
+            {
+                characterController.Move(transform.forward * MoveSpeed * Time.fixedDeltaTime);
+                Animator?.SetBool("Moving", true);
+            }
         }
         else
         {
@@ -134,6 +137,12 @@ public class Enemy : MonoBehaviour
             Animator?.SetBool("Moving", false);
         }
 
-        characterController.Move(Vector3.down * 9.8f);
+        if (!Flying)
+            characterController.Move(Vector3.down * 9.8f);
+    }
+
+    void FixedUpdate()
+    {
+        UpdateMoving();
     }
 }

@@ -44,6 +44,9 @@ public abstract class Gun : MonoBehaviour
     [Header("Audio")]
     public AudioClip OnShoot;
 
+    [Header("FX")]
+    public GameObject ShotFlare;
+
     [SerializeField]
     private ChargeOrb chargeFX;
     private TimeSince ts;
@@ -55,6 +58,7 @@ public abstract class Gun : MonoBehaviour
 
     void Awake()
     {
+        ShotFlare.SetActive(false);
         audioManager = SingletonLoader.Get<AudioManager>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
         ShootPatterns.AddRange(GetComponents<ShootPattern>());
@@ -152,6 +156,11 @@ public abstract class Gun : MonoBehaviour
         bullet.transform.Rotate(request.Variance);
         bullet.ExtraData = request.Payload;
 
+        if (bullet is GrenadeBullet gb)
+        {
+            gb.Force += PlayerMovement.Instance.m_PlayerVelocity.magnitude;
+        }
+
         VirtualShoot(bullet);
 
         return bullet;
@@ -172,16 +181,25 @@ public abstract class Gun : MonoBehaviour
         }
 
         impulseSource.GenerateImpulse();
+
+        ShotFlare.SetActive(true);
+        this.WaitThen(0.05f, () => ShotFlare.SetActive(false));
     }
 
     void Update()
     {
-        chargeFX.Charge = charge;
-        chargeFX.MaxChargeValue = StageChargeTime * MaxChargeStage;
+        if (chargeFX)
+        {
+            chargeFX.Charge = charge;
+            chargeFX.MaxChargeValue = StageChargeTime * MaxChargeStage;
+        }
     }
 
     void FixedUpdate()
     {
-        charge = Mathf.Max(charge - 0.005f, 0.0f);
+        if (chargeFX)
+        {
+            charge = Mathf.Max(charge - 0.005f, 0.0f);
+        }
     }
 }

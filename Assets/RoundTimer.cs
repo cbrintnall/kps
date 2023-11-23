@@ -18,9 +18,5 @@ public class RoundTimer : MonoBehaviour
         {
             txt.text = roundManager.TimerTag;
         }
-        else
-        {
-            txt.text = "Press U to start round";
-        }
     }
 }

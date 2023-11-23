@@ -101,6 +101,8 @@ MonoBehaviour:
   Start: {x: 0, y: 0, z: 0}
   Direction: {x: 0, y: 0, z: 0}
   CancelFree: 0
+  DidHit: 0
+  Force: 50
   ExplosionDelay: 0
   Damage: 0
 --- !u!96 &4257157229423354096

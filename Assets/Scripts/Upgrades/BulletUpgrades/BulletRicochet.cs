@@ -5,8 +5,15 @@ using UnityEngine;
 
 public class BulletRichocet : Upgrade
 {
-    public StatFloat ScanSize = 20.0f;
+    public StatFloat ScanSize = 5.0f;
+
+    AudioClip flyby;
     List<Tuple<Vector3, Vector3>> reflections = new();
+
+    void Awake()
+    {
+        flyby = Resources.Load<AudioClip>("Audio/Bullet Flyby 7");
+    }
 
     public override void OnBulletHit(UpgradePipelineData pipelineData, BulletHitData data)
     {
@@ -19,64 +26,100 @@ public class BulletRichocet : Upgrade
             return;
         }
 
-        if (data.Health == null)
+        ricochetData.Count++;
+
+        if (data.Bullet is HitscanBullet)
         {
-            var reflected = Vector3.Reflect(data.Bullet.transform.forward, data.Hit.normal);
-            reflections.Add(Tuple.Create(data.Hit.point, reflected));
+            HandleHitscan(pipelineData, data);
+        }
+    }
 
-            var bullet = Instantiate(data.Bullet, data.EndPoint, Quaternion.identity);
+    public override void OnWillShootBullet(UpgradePipelineData pipelineData, Bullet bullet)
+    {
+        base.OnWillShootBullet(pipelineData, bullet);
 
-            bullet.Barrel = null;
-            bullet.transform.position = data.EndPoint;
-            bullet.Start = data.EndPoint;
-            bullet.transform.forward = reflected;
+        if (bullet is GrenadeBullet)
+        {
+            HandleGrenade(pipelineData, bullet);
+        }
+    }
 
-            var hits = Physics.BoxCastAll(
-                data.Hit.point,
-                Vector3.one * ScanSize,
-                reflected,
-                Quaternion.identity,
-                1000.0f,
-                LayerMask.GetMask("Enemy")
-            );
+    void HandleGrenade(UpgradePipelineData pipelineData, Bullet data)
+    {
+        var attractor = data.gameObject.AddComponent<Attractor>();
 
-            var sorted = hits.OrderBy((a) => Vector3.Distance(a.transform.position, bullet.Start))
-                .ThenByDescending(
-                    hit =>
-                        Vector3.Dot((hit.transform.position - bullet.Start).normalized, reflected)
-                );
+        attractor.Targets = LayerMask.GetMask("Enemy");
+        attractor.Radius = 20.0f;
+        attractor.Force = 7.5f;
+    }
 
-            foreach (var hit in hits)
+    void HandleHitscan(UpgradePipelineData pipelineData, BulletHitData data)
+    {
+        if (data.Health != null)
+            return;
+
+        var reflected = Vector3.Reflect(data.Bullet.transform.forward, data.Hit.normal);
+        reflections.Add(Tuple.Create(data.Hit.point, reflected));
+
+        var bullet = Instantiate(data.Bullet, data.EndPoint, Quaternion.identity);
+
+        bullet.Barrel = null;
+        bullet.transform.position = data.EndPoint;
+        bullet.Start = data.EndPoint;
+        bullet.transform.forward = reflected;
+
+        var hits = Physics.BoxCastAll(
+            data.Hit.point,
+            Vector3.one * ScanSize,
+            reflected,
+            Quaternion.identity,
+            1000.0f,
+            LayerMask.GetMask("Enemy")
+        );
+
+        var sorted = hits.OrderBy((a) => Vector3.Distance(a.point, data.Hit.point));
+        // .ThenByDescending(hit => Vector3.Dot((hit.point - bullet.Start).normalized, reflected));
+
+        foreach (var hit in hits)
+        {
+            if (hit.collider.TryGetComponent(out Health health))
             {
-                if (hit.collider.TryGetComponent(out Health health))
-                {
-                    if (health.Dead)
-                        continue;
+                if (health.Dead)
+                    continue;
 
-                    if (
-                        !Physics.Raycast(
-                            bullet.Start,
-                            health.transform.position - bullet.Start,
-                            Vector3.Distance(bullet.Start, health.transform.position),
-                            LayerMask.GetMask("Default")
-                        )
+                if (
+                    !Physics.Raycast(
+                        bullet.Start,
+                        health.transform.position - bullet.Start,
+                        Vector3.Distance(bullet.Start, health.transform.position),
+                        LayerMask.GetMask("Default")
                     )
-                    {
-                        bullet.transform.forward =
-                            hit.collider.transform.position - bullet.transform.position;
+                )
+                {
+                    bullet.transform.forward =
+                        hit.collider.transform.position - bullet.transform.position;
 
-                        bullet.transform.forward.Normalize();
+                    bullet.transform.forward.Normalize();
 
-                        break;
-                    }
+                    break;
                 }
             }
-
-            ricochetData.Count++;
-            pipelineData.Parent.ListenToBullet(bullet);
-            // pipelineData.ShotFrom.MonitorBullet(bullet);
-            bullet.Shoot();
         }
+
+        pipelineData.Parent.ListenToBullet(bullet);
+        pipelineData.ShotFrom.MonitorBullet(bullet);
+        bullet.Shoot();
+
+        SingletonLoader
+            .Get<AudioManager>()
+            .Play(
+                new AudioPayload()
+                {
+                    Clip = flyby,
+                    Location = bullet.transform.position,
+                    PitchWobble = 0.2f
+                }
+            );
     }
 
     void OnDrawGizmos()

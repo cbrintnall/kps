@@ -47,7 +47,6 @@ public abstract class Bullet : MonoBehaviour
 
     void OnDestroy()
     {
-        Debug.Log($"goodbye bullet: {DidHit}");
         if (!DidHit)
         {
             Missed?.Invoke();

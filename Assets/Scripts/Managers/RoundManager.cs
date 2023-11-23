@@ -10,7 +10,7 @@ public class RoundManager : MonoBehaviour
 {
     public event Action RoundEnded;
 
-    public StatFloat RoundTimeSeconds = 60f;
+    public float RoundTimeSeconds;
     public float TimeLeft { get; private set; }
     public string TimerTag => TimeSpan.FromSeconds(TimeLeft).ToString(@"mm\:ss");
     public bool Active { get; private set; }
@@ -20,8 +20,8 @@ public class RoundManager : MonoBehaviour
     private Coroutine roundCoroutine;
     private PlayerInputManager playerInputManager;
     private UpgradesManager upgradesManager;
-    private bool active_;
     private EnemyMaster[] masters;
+    private FlowManager flowManager;
 
     [IngameDebugConsole.ConsoleMethod("endround", "Ends the current round")]
     public static void EndRound()
@@ -37,15 +37,17 @@ public class RoundManager : MonoBehaviour
         upgradesManager = SingletonLoader.Get<UpgradesManager>();
         TimeLeft = RoundTimeSeconds;
         masters = FindObjectsOfType<EnemyMaster>();
+        flowManager = SingletonLoader.Get<FlowManager>();
+        RoundTimeSeconds = CalculateRoundTime(1);
     }
+
+    int CalculateRoundTime(int round) =>
+        Mathf.CeilToInt(
+            Mathf.Min(Mathf.Pow(round, 2.0f) + 60.0f, flowManager.GameData.Rounds.MaxRoundTime)
+        );
 
     void Update()
     {
-        if (!Active && playerInputManager.StartRound)
-        {
-            StartRound();
-        }
-
         if (Active)
         {
             TimeLeft -= Time.deltaTime;
@@ -83,6 +85,8 @@ public class RoundManager : MonoBehaviour
                 break;
             }
         }
+
+        RoundTimeSeconds = CalculateRoundTime(Round);
     }
 
     IEnumerator HandleRound()

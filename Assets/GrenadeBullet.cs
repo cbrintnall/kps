@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class GrenadeBullet : Bullet
 {
-    const float SHOOT_FORCE = 50.0f;
+    const float SHOOT_FORCE = 100.0f;
 
     public float Force = SHOOT_FORCE;
     public float ExplosionDelay;
@@ -61,6 +61,7 @@ public class GrenadeBullet : Bullet
             transform.position,
             Quaternion.identity
         );
+
         explosion.Layers = LayerMask.GetMask("Enemy");
         explosion.Damage = PlayerEquipmentController.Instance.Stats.GrenadeExplosiveDamage;
         explosion.Size = PlayerEquipmentController.Instance.Stats.ExplosionSize;

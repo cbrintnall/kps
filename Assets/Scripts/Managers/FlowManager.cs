@@ -20,12 +20,18 @@ public class PowerupStats
     public float SpeedMultiplier;
 }
 
+public class RoundData
+{
+    public float MaxRoundTime;
+}
+
 public class GameData
 {
     public Dictionary<PowerupType, int> PowerupWeights;
     public PowerupStats PowerupStats;
     public Dictionary<UpgradeRarity, Color> UpgradeColors;
     public DebugData Debug;
+    public RoundData Rounds;
 }
 
 [Singleton]

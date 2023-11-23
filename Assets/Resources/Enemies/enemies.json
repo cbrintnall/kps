@@ -69,6 +69,19 @@
       }
     },
     {
+      "startsat": "7",
+      "value": 10,
+      "prefab": "Enemies/FlyingBomber",
+      "type": "Flyingbomber",
+      "primaryColor": "#3271a8",
+      "secondaryColor": "#a85c32",
+      "stats": {
+        "Health": 3,
+        "Damage": 1,
+        "MoveSpeed": 6.0
+      }
+    },
+    {
       "startsat": 10,
       "value": 30,
       "prefab": "Enemies/GroundEnemy",
