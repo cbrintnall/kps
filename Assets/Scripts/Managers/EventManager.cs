@@ -2,12 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void EventDispatch<in T>(T ev)
+public delegate void EventDispatch<T>(T ev)
     where T : BaseEvent;
 
 public class BaseEvent
 {
     public string ID = Guid.NewGuid().ToString();
+
+    public void Emit()
+    {
+        SingletonLoader.Get<EventManager>().Publish(this);
+    }
 }
 
 [Singleton]

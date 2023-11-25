@@ -65,6 +65,7 @@ public class GrenadeBullet : Bullet
         explosion.Layers = LayerMask.GetMask("Enemy");
         explosion.Damage = PlayerEquipmentController.Instance.Stats.GrenadeExplosiveDamage;
         explosion.Size = PlayerEquipmentController.Instance.Stats.ExplosionSize;
+        explosion.Owner = PlayerEquipmentController.Instance.gameObject;
         Destroy(gameObject);
     }
 }

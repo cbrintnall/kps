@@ -21,6 +21,7 @@
     },
     {
       "value": 3,
+      "startsat": 120,
       "prefab": "Enemies/GroundEnemy",
       "type": "GroundEnemy",
       "primaryColor": "#8455bd",
@@ -32,7 +33,7 @@
       }
     },
     {
-      "startsat": 2,
+      "startsat": 60,
       "value": 5,
       "prefab": "Enemies/SingingEnemy",
       "type": "SingingEnemy",
@@ -43,7 +44,7 @@
       }
     },
     {
-      "startsat": 5,
+      "startsat": 120,
       "value": 20,
       "prefab": "Enemies/BomberEnemy",
       "type": "BomberEnemy",
@@ -56,7 +57,7 @@
       }
     },
     {
-      "startsat": 3,
+      "startsat": 150,
       "value": 10,
       "prefab": "Enemies/GroundEnemy",
       "type": "GroundEnemy",
@@ -69,8 +70,8 @@
       }
     },
     {
-      "startsat": "7",
-      "value": 10,
+      "startsat": 250,
+      "value": 12,
       "prefab": "Enemies/FlyingBomber",
       "type": "Flyingbomber",
       "primaryColor": "#3271a8",
@@ -82,7 +83,7 @@
       }
     },
     {
-      "startsat": 10,
+      "startsat": 360,
       "value": 30,
       "prefab": "Enemies/GroundEnemy",
       "type": "GroundEnemy",

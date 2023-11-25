@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public class StartWavesEvent : BaseEvent { }
+
 public class SoulFountain : MonoBehaviour, IInteractable
 {
     public AudioClip StartSound;
@@ -26,6 +28,7 @@ public class SoulFountain : MonoBehaviour, IInteractable
     {
         if (!roundManager.Active)
         {
+            SingletonLoader.Get<EventManager>().Publish(new StartWavesEvent());
             roundManager.StartRound();
             audioManager.Play(
                 new AudioPayload()

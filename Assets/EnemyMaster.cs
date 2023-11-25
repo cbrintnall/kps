@@ -38,6 +38,13 @@ public class EnemySequence
     public EnemyDefinition Enemy;
     public int Count;
     public int TotalValue => Enemy.Value * Count;
+
+    public void Consume()
+    {
+        Count--;
+    }
+
+    public bool IsValid() => Count > 0;
 }
 
 public class EnemyMaster : MonoBehaviour, IReloadable
@@ -63,6 +70,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     // This should eventually become a curve, dictated by difficulty
     public float TargetIncreaseSeconds => Data.TargetRateIncrease;
 
+    Queue<EnemySequence> sequences = new();
     int lastRoundValue;
     TimeSince targetts;
     TimeSince spawnts;
@@ -99,28 +107,20 @@ public class EnemyMaster : MonoBehaviour, IReloadable
         TargetValue = Data.StartValue;
     }
 
-    void BuildSequences()
+    EnemySequence BuildSequence()
     {
-        Sequences = new();
-        for (
-            int i = 0;
-            i < UnityEngine.Random.Range(Data.MinSequencesPerRound, Data.MaxSequencesPerRound);
-            i++
-        )
+        var target = Data.Definitions
+            .Where(def => def.StartsAt <= roundManager.TimeLeft)
+            .Where(def => def.Value * Data.MinSequenceSize < TargetValue)
+            .Random();
+
+        var sequence = new EnemySequence
         {
-            var target = Data.Definitions
-                .Where(def => def.StartsAt <= roundManager.Round)
-                .Where(def => def.Value * Data.MinSequenceSize < TargetValue)
-                .Random();
+            Count = UnityEngine.Random.Range(Data.MinSequenceSize, Data.MaxSequenceSize),
+            Enemy = target
+        };
 
-            var sequence = new EnemySequence
-            {
-                Count = UnityEngine.Random.Range(Data.MinSequenceSize, Data.MaxSequenceSize),
-                Enemy = target
-            };
-
-            Sequences.Add(sequence);
-        }
+        return sequence;
     }
 
     void Start()
@@ -130,7 +130,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
         killCounter = 0;
 
         CollectSpawns();
-        BuildSequences();
         Enemies.Sort((a, b) => b.Value - a.Value);
         enabled = false;
         lastRoundValue = 0;
@@ -171,7 +170,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
         ActiveEnemies = new();
         CurrentValue = 0;
-        BuildSequences();
     }
 
     void CollectSpawns()
@@ -199,12 +197,13 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
         if (currentSequence == null)
         {
-            currentSequence = Sequences.Random();
+            currentSequence = BuildSequence();
             sequenceCount = 0;
         }
 
         if (currentSequence.Enemy.Value <= Deficit)
         {
+            currentSequence.Consume();
             SpawnPayload(currentSequence.Enemy);
             sequenceCount++;
             if (sequenceCount >= currentSequence.Count)

@@ -252,6 +252,7 @@ MonoBehaviour:
       Min: 0
       Current: 0.1
   HealthMaterial: {fileID: 2100000, guid: b910d9bb33d2d2442ad43eab081fa7a4, type: 2}
+  XPMaterial: {fileID: 2100000, guid: 2e3e37ab1de454149bf8dac502cab6ce, type: 2}
   Health: {fileID: 778358602821026027}
   UpgradePickup: {fileID: 8300000, guid: ea1f138e1095cfc48a35a702b707b525, type: 3}
   HitSound: {fileID: 8300000, guid: b9cc5e564c860774d8f7cb3c867daa9b, type: 3}

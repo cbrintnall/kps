@@ -5,13 +5,13 @@ using System.Reflection;
 using Sirenix.Utilities;
 using UnityEngine;
 
-public class Singleton : System.Attribute { }
+public class Singleton : Attribute { }
 
 public class SingletonLoader
 {
     static Dictionary<Type, Component> singletons = new();
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     static void LoadSingletons()
     {
         Assembly

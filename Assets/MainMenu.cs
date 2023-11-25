@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public class PlayGameEvent : BaseEvent { }
+
 public class MainMenu : MonoBehaviour
 {
     public GameObject Skull;
@@ -10,6 +12,7 @@ public class MainMenu : MonoBehaviour
 
     public void Play()
     {
+        new PlayGameEvent().Emit();
         SceneManager.LoadScene("ObsidianLibrary");
     }
 

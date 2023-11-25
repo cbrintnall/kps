@@ -42,7 +42,7 @@ public class MoneyStatusUpdater : MonoBehaviour
 
     void Update()
     {
-        textCount = Mathf.RoundToInt(Mathf.Lerp(textCount, aggregate, Time.deltaTime * 3.0f));
+        textCount += Mathf.Max(1, Mathf.RoundToInt(0.05f * aggregate - textCount));
         TMP.text = $"+{textCount}";
 
         if (ts > ResetTime)

@@ -67,7 +67,7 @@ public abstract class Gun : MonoBehaviour
     void Start()
     {
         ts = Controller.Stats.PistolCooldown.Current;
-        Cursor.lockState = CursorLockMode.Locked;
+        SingletonLoader.Get<PlayerInputManager>().PushCursor(CursorLockMode.Locked);
     }
 
     public void AddPattern(ShootPattern pattern) => ShootPatterns.Add(pattern);

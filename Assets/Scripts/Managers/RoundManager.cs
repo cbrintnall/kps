@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Newtonsoft.Json;
 using Sirenix.Utilities;
 using UnityEngine;
 
@@ -50,15 +49,17 @@ public class RoundManager : MonoBehaviour
     {
         if (Active)
         {
-            TimeLeft -= Time.deltaTime;
+            TimeLeft += Time.deltaTime;
         }
     }
 
     public void StartRound()
     {
-        TimeLeft = RoundTimeSeconds;
-        roundCoroutine = StartCoroutine(HandleRound());
+        TimeLeft = 0;
+        // roundCoroutine = StartCoroutine(HandleRound());
         Round.Incr(1, StatOperation.Value);
+        Active = true;
+        masters.ForEach(spawner => spawner.enabled = true);
     }
 
     public void EndCurrentRound()

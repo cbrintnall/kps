@@ -7,6 +7,13 @@ using IngameDebugConsole;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public class PlayerLeveledEvent : BaseEvent
+{
+    public PlayerEquipmentController Controller;
+    public int FromLevel;
+    public int ToLevel;
+}
+
 public struct InteractionPayload
 {
     public GameObject Owner;
@@ -48,6 +55,7 @@ public class PlayerEquipmentController : MonoBehaviour
     public AnimationEventsHandler Handler;
     public StatBlock Stats = new();
     public Material HealthMaterial;
+    public Material XPMaterial;
     public Health Health;
 
     [Header("Audio")]
@@ -62,6 +70,12 @@ public class PlayerEquipmentController : MonoBehaviour
     private AudioManager audioManager;
     private PlayerMovement playerMovement;
     private bool amDead;
+    private int level = 1;
+    private int requiredXP => Curves.GetRequiredXP(level);
+    private float normalizedXP => (float)Money / (float)requiredXP;
+
+    // Mathf.RoundToInt(Mathf.Log10((level + 1) * 100) * (Mathf.Pow(level + 1, 2.0f) / 10.0f))
+    // + Mathf.RoundToInt(Mathf.Log10(level * 100) * (Mathf.Pow(level, 2.0f) / 10.0f));
 
     [ConsoleMethod("die", "insta kills you, dumby")]
     public static void Die()
@@ -165,6 +179,11 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void Awake()
     {
+        var test = 5;
+        for (int i = 1; i < test; i++)
+        {
+            Debug.Log(Curves.GetRequiredXP(i));
+        }
         Instance = this;
         audioManager = SingletonLoader.Get<AudioManager>();
         playerMovement = GetComponent<PlayerMovement>();
@@ -176,11 +195,20 @@ public class PlayerEquipmentController : MonoBehaviour
         DebugLogConsole.AddCommandInstance("money", "Gives money", "GiveMoney", this, "amount");
         Health = GetComponent<Health>();
         HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
+        XPMaterial.SetFloat("_NormalizedValue", normalizedXP);
         var eventManager = SingletonLoader.Get<EventManager>();
 
         Money.ValueChanged += (current, delta) =>
         {
+            XPMaterial.SetFloat("_NormalizedValue", normalizedXP);
             eventManager.Publish(new MoneyChangedEvent() { Gained = delta });
+            while (Money >= requiredXP)
+            {
+                level++;
+                SingletonLoader
+                    .Get<EventManager>()
+                    .Publish(new PlayerLeveledEvent() { Controller = this });
+            }
         };
 
         Health.Data.ValueChanged += (current, delta) =>

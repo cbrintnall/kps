@@ -24,5 +24,8 @@
   },
   "Rounds": {
     "MaxRoundTime": 300.0
+  },
+  "Leveling": {
+    "Offset": 10.0
   }
 }

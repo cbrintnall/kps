@@ -130,11 +130,11 @@ public class Enemy : MonoBehaviour
                 characterController.Move(transform.forward * MoveSpeed * Time.fixedDeltaTime);
                 Animator?.SetBool("Moving", true);
             }
-        }
-        else
-        {
-            UpdateAtTarget();
-            Animator?.SetBool("Moving", false);
+            else
+            {
+                UpdateAtTarget();
+                Animator?.SetBool("Moving", false);
+            }
         }
 
         if (!Flying)

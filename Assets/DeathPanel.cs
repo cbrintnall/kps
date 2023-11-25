@@ -11,7 +11,9 @@ public class DeathPanel : MonoBehaviour
     {
         background = GetComponent<Image>();
         background.color = Color.clear;
-        Cursor.lockState = CursorLockMode.Confined;
+        var input = SingletonLoader.Get<PlayerInputManager>();
+        input.ClearCursors();
+        input.PushCursor(CursorLockMode.Confined);
     }
 
     void Start()

@@ -17,6 +17,9 @@ public class PlayerUI : MonoBehaviour
     FlowManager flowManager;
 
     List<string> logs = new();
+    int errorCount = 0;
+    int autoErrorCapture = 15;
+    TimeSince ts;
 
     void Awake()
     {
@@ -31,6 +34,15 @@ public class PlayerUI : MonoBehaviour
         Application.logMessageReceived += (string condition, string stackTrace, LogType type) =>
         {
             logs.Add($"\n[{DateTime.Now} | {type}]: {condition}\n---\n{stackTrace}\n");
+            if (type == LogType.Error)
+            {
+                errorCount++;
+                if (errorCount >= autoErrorCapture && ts > 120)
+                {
+                    UploadLogs($"Auto-captured, errors=#{errorCount}, seconds since last={ts}");
+                    ts = 0;
+                }
+            }
         };
     }
 
@@ -38,11 +50,11 @@ public class PlayerUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F12))
         {
-            UploadLogs();
+            UploadLogs("Uploaded, thank you!");
         }
     }
 
-    void UploadLogs()
+    void UploadLogs(string message)
     {
         using (var client = new WebClient())
         {
@@ -61,7 +73,7 @@ public class PlayerUI : MonoBehaviour
             if (resp.Contains("pastebin"))
             {
                 GUIUtility.systemCopyBuffer = resp;
-                LogText.text = $"{UPLOAD_TXT} - (Copied to clipboard [{resp}])";
+                LogText.text = message;
                 this.WaitThen(3.0f, () => LogText.text = UPLOAD_TXT);
             }
 

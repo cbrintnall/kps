@@ -36,6 +36,10 @@ public class AreaEditor : Editor
             if (EditorGUI.EndChangeCheck())
                 area.points[i] = basis.InverseTransformPoint(val);
         }
+
+        var end = basis.TransformPoint(area.points[area.points.Length - 1]);
+        var start = basis.TransformPoint(area.points[0]);
+        Handles.DrawLine(end, start);
     }
 }
 #endif

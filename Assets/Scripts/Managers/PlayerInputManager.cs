@@ -59,13 +59,19 @@ public class PlayerInputManager : MonoBehaviour
     private System.Collections.Generic.Stack<CursorLockMode> CursorStack = new();
     private bool debug;
 
+    public void ClearCursors() => CursorStack = new();
+
     public void PushCursor(CursorLockMode mode)
     {
         CursorStack.Push(mode);
         Cursor.lockState = mode;
     }
 
-    public void PopCursor() { }
+    public void PopCursor()
+    {
+        CursorStack.Pop();
+        Cursor.lockState = CursorStack.Peek();
+    }
 
     void Update()
     {
