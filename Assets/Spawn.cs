@@ -1,8 +1,14 @@
 using UnityEngine;
 
-public class Spawn : MonoBehaviour
+public class Spawn : MonoBehaviour, ISpawn
 {
-    public bool CanSpawn = true;
+    bool ISpawn.CanSpawn => canSpawn;
+    private bool canSpawn = false;
+
+    public void DoSpawn(Transform target)
+    {
+        target.position = transform.position;
+    }
 
     void FixedUpdate()
     {
@@ -10,7 +16,7 @@ public class Spawn : MonoBehaviour
             PlayerEquipmentController.Instance.transform.position - transform.position
         ).normalized;
 
-        CanSpawn = false;
+        canSpawn = false;
 
         if (
             Physics.Raycast(
@@ -22,7 +28,7 @@ public class Spawn : MonoBehaviour
             )
         )
         {
-            CanSpawn = hit.collider.tag != "player";
+            canSpawn = hit.collider.tag != "player";
         }
     }
 }

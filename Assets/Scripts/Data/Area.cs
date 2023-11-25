@@ -1,29 +1,168 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DelaunatorSharp;
-using KaimiraGames;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public static class TriangleExtensions
+public class Triangulator
 {
-    public static float Area(this ITriangle triangle)
-    {
-        var arr = triangle.Points
-            .Select(pt => new Vector2(Convert.ToSingle(pt.X), Convert.ToSingle(pt.Y)))
-            .ToArray();
+    private List<Vector2> m_points = new List<Vector2>();
 
-        return ((arr[0] - arr[2]) * (arr[1] - arr[2])).magnitude / 2;
+    public Triangulator(Vector2[] points)
+    {
+        m_points = new List<Vector2>(points);
     }
 
-    public static Vector2 RandomPoint(this ITriangle triangle)
+    public int[] Triangulate()
     {
-        var arr = triangle.Points
-            .Select(pt => new Vector2(Convert.ToSingle(pt.X), Convert.ToSingle(pt.Y)))
-            .ToArray();
+        List<int> indices = new List<int>();
 
+        int n = m_points.Count;
+        if (n < 3)
+            return indices.ToArray();
+
+        int[] V = new int[n];
+        if (Area() > 0)
+        {
+            for (int v = 0; v < n; v++)
+                V[v] = v;
+        }
+        else
+        {
+            for (int v = 0; v < n; v++)
+                V[v] = (n - 1) - v;
+        }
+
+        int nv = n;
+        int count = 2 * nv;
+        for (int m = 0, v = nv - 1; nv > 2; )
+        {
+            if ((count--) <= 0)
+                return indices.ToArray();
+
+            int u = v;
+            if (nv <= u)
+                u = 0;
+            v = u + 1;
+            if (nv <= v)
+                v = 0;
+            int w = v + 1;
+            if (nv <= w)
+                w = 0;
+
+            if (Snip(u, v, w, nv, V))
+            {
+                int a,
+                    b,
+                    c,
+                    s,
+                    t;
+                a = V[u];
+                b = V[v];
+                c = V[w];
+                indices.Add(a);
+                indices.Add(b);
+                indices.Add(c);
+                m++;
+                for (s = v, t = v + 1; t < nv; s++, t++)
+                    V[s] = V[t];
+                nv--;
+                count = 2 * nv;
+            }
+        }
+
+        indices.Reverse();
+        return indices.ToArray();
+    }
+
+    public float Area()
+    {
+        int n = m_points.Count;
+        float A = 0.0f;
+        for (int p = n - 1, q = 0; q < n; p = q++)
+        {
+            Vector2 pval = m_points[p];
+            Vector2 qval = m_points[q];
+            A += pval.x * qval.y - qval.x * pval.y;
+        }
+        return (A * 0.5f);
+    }
+
+    private bool Snip(int u, int v, int w, int n, int[] V)
+    {
+        int p;
+        Vector2 A = m_points[V[u]];
+        Vector2 B = m_points[V[v]];
+        Vector2 C = m_points[V[w]];
+        if (Mathf.Epsilon > (((B.x - A.x) * (C.y - A.y)) - ((B.y - A.y) * (C.x - A.x))))
+            return false;
+        for (p = 0; p < n; p++)
+        {
+            if ((p == u) || (p == v) || (p == w))
+                continue;
+            Vector2 P = m_points[V[p]];
+            if (InsideTriangle(A, B, C, P))
+                return false;
+        }
+        return true;
+    }
+
+    private bool InsideTriangle(Vector2 A, Vector2 B, Vector2 C, Vector2 P)
+    {
+        float ax,
+            ay,
+            bx,
+            by,
+            cx,
+            cy,
+            apx,
+            apy,
+            bpx,
+            bpy,
+            cpx,
+            cpy;
+        float cCROSSap,
+            bCROSScp,
+            aCROSSbp;
+
+        ax = C.x - B.x;
+        ay = C.y - B.y;
+        bx = A.x - C.x;
+        by = A.y - C.y;
+        cx = B.x - A.x;
+        cy = B.y - A.y;
+        apx = P.x - A.x;
+        apy = P.y - A.y;
+        bpx = P.x - B.x;
+        bpy = P.y - B.y;
+        cpx = P.x - C.x;
+        cpy = P.y - C.y;
+
+        aCROSSbp = ax * bpy - ay * bpx;
+        cCROSSap = cx * apy - cy * apx;
+        bCROSScp = bx * cpy - by * cpx;
+
+        return ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f));
+    }
+}
+
+public static class TriangleExtensions { }
+
+public class Triangle
+{
+    public float Area => ((arr[0] - arr[2]) * (arr[1] - arr[2])).magnitude / 2.0f;
+    public Vector2 Pt1 => arr[0];
+    public Vector2 Pt2 => arr[1];
+    public Vector2 Pt3 => arr[2];
+
+    private Vector2[] arr;
+
+    public Triangle(Vector2[] points)
+    {
+        arr = points;
+    }
+
+    public Vector2 RandomPoint()
+    {
         var r1 = Mathf.Sqrt(UnityEngine.Random.Range(0f, 1f));
         var r2 = UnityEngine.Random.Range(0f, 1f);
         var m1 = 1 - r1;
@@ -38,38 +177,33 @@ public static class TriangleExtensions
 }
 
 // adapted from: https://dev.to/bogdanalexandru/generating-random-points-within-a-polygon-in-unity-nce
-public class Area : MonoBehaviour
+public class Area : MonoBehaviour, ISpawn
 {
     [SerializeField]
     public Vector3[] points;
-    Delaunator triangulator;
+    public List<Triangle> triangles = new();
+    Triangulator triangulator;
     float totalArea;
-    private List<Vector3> testpts;
+    private List<Vector3> testpts = new();
+    private Vector2[] v2points;
+    private int[] indices;
 
-    [Button]
-    void Test()
-    {
-        for (int i = 0; i < 500; i++)
-            testpts.Add(GetRandomLocation());
-    }
-
-    [Button]
-    void ResetY()
-    {
-        if (points.Length == 0)
-            return;
-
-        float y = points[0].y;
-        for (int i = 0; i < points.Length; i++)
-        {
-            points[i].y = y;
-        }
-    }
+    public bool CanSpawn => true;
 
     void Awake()
     {
+        v2points = points.Select(pt => new Vector2(pt.x, pt.z)).ToArray();
         Recalculate();
-        Test();
+
+        // for (int i = 0; i < 300; i++)
+        // {
+        //     testpts.Add(GetRandomLocation());
+        // }
+    }
+
+    public void DoSpawn(Transform target)
+    {
+        target.position = transform.TransformPoint(GetRandomLocation());
     }
 
     public Vector3 GetRandomLocation()
@@ -80,25 +214,38 @@ public class Area : MonoBehaviour
 
     private void Recalculate()
     {
-        IPoint[] pts = new IPoint[points.Length + 1];
-        for (int i = 0; i < points.Length; i++)
-            pts[i] = new Point(points[i].x, points[i].y);
-        pts[points.Length] = pts[0];
-        triangulator = new Delaunator(pts);
-        totalArea = triangulator.GetTriangles().Select(triangle => triangle.Area()).Sum();
+        triangulator = new Triangulator(v2points);
+        indices = triangulator.Triangulate();
+
+        for (int i = 0; i < indices.Length; i += 3)
+        {
+            triangles.Add(
+                new Triangle(
+                    new Vector2[]
+                    {
+                        v2points[indices[i]],
+                        v2points[indices[i + 1]],
+                        v2points[indices[i + 2]]
+                    }
+                )
+            );
+        }
+
+        totalArea = triangles.Sum(triangle => triangle.Area);
+
+        Debug.Log($"idx count = {indices.Length}, triangle count = {triangles.Count}");
     }
 
-    private ITriangle PickRandomTriangle()
+    private Triangle PickRandomTriangle()
     {
         var rng = UnityEngine.Random.Range(0f, totalArea);
-        var triangles = triangulator.GetTriangles().ToArray();
-        for (int i = 0; i < triangles.Length; ++i)
+        for (int i = 0; i < triangles.Count; ++i)
         {
-            if (rng < triangles[i].Area())
+            if (rng < triangles[i].Area)
             {
                 return triangles[i];
             }
-            rng -= triangles[i].Area();
+            rng -= triangles[i].Area;
         }
 
         return triangles.Last();
@@ -112,7 +259,7 @@ public class Area : MonoBehaviour
         Gizmos.color = Color.green;
         foreach (var pt in testpts)
         {
-            Gizmos.DrawSphere(pt, 0.5f);
+            Gizmos.DrawSphere(transform.TransformPoint(pt), 0.25f);
         }
     }
 }

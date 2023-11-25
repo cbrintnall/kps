@@ -47,6 +47,13 @@ public class EnemySequence
     public bool IsValid() => Count > 0;
 }
 
+public interface ISpawn
+{
+    bool CanSpawn { get; }
+
+    void DoSpawn(Transform transform);
+}
+
 public class EnemyMaster : MonoBehaviour, IReloadable
 {
     public static HashSet<GameObject> ActiveEnemies = new();
@@ -75,7 +82,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     TimeSince targetts;
     TimeSince spawnts;
     TimeSince killCounter;
-    List<Spawn> spawns = new();
+    List<ISpawn> spawns = new();
     int killedInLastSecond;
     public float killsPerSecond;
     int sequenceCount = 0;
@@ -174,7 +181,9 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
     void CollectSpawns()
     {
-        spawns.AddRange(FindObjectsOfType<Spawn>());
+        spawns.AddRange(
+            GameObject.FindGameObjectsWithTag("spawn").Select(spawn => spawn.GetComponent<ISpawn>())
+        );
     }
 
     void IncrTarget()
@@ -223,7 +232,10 @@ public class EnemyMaster : MonoBehaviour, IReloadable
             return;
         }
 
-        var enemy = Instantiate(payload.Prefab, spawn.transform.position, Quaternion.identity);
+        var enemy = Instantiate(payload.Prefab);
+
+        spawn.DoSpawn(enemy.transform);
+        Physics.SyncTransforms();
 
         var health = enemy.GetComponent<Health>();
         enemy.GetComponent<Enemy>().Definition = payload;
@@ -252,16 +264,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
         ActiveEnemies.Add(enemy);
 
         CurrentValue += payload.Value;
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-
-        foreach (var spawn in spawns)
-        {
-            Gizmos.DrawSphere(spawn.transform.position, 0.5f);
-        }
     }
 
     public void Reload()

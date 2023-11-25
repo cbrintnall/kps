@@ -45,4 +45,6 @@ public static class Utilities
         yield return new WaitForSeconds(time);
         then();
     }
+
+    public static Vector3 ToVec3(this Vector2 v) => new Vector3(v.x, 0.0f, v.y);
 }

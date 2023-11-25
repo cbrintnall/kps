@@ -25,6 +25,16 @@ public class AreaEditor : Editor
         if (area.points.Length == 1)
             return;
 
+        for (int i = 0; i < area.triangles.Count; i++)
+        {
+            var p0 = basis.TransformPoint(area.triangles[i].Pt1.ToVec3());
+            var p1 = basis.TransformPoint(area.triangles[i].Pt2.ToVec3());
+            var p2 = basis.TransformPoint(area.triangles[i].Pt3.ToVec3());
+            Handles.DrawLine(p0, p1, 2.0f);
+            Handles.DrawLine(p1, p2, 2.0f);
+            Handles.DrawLine(p2, p0, 2.0f);
+        }
+
         for (int i = 1; i < area.points.Length; i++)
         {
             var p0 = basis.TransformPoint(area.points[i - 1]);
