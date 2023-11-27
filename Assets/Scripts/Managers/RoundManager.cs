@@ -4,11 +4,11 @@ using System.Linq;
 using Sirenix.Utilities;
 using UnityEngine;
 
-[Singleton]
 public class RoundManager : MonoBehaviour
 {
     public event Action RoundEnded;
 
+    public int ElapsedSeconds => Mathf.FloorToInt(TimeLeft);
     public float RoundTimeSeconds;
     public float TimeLeft { get; private set; }
     public string TimerTag => TimeSpan.FromSeconds(TimeLeft).ToString(@"mm\:ss");
@@ -25,7 +25,7 @@ public class RoundManager : MonoBehaviour
     [IngameDebugConsole.ConsoleMethod("endround", "Ends the current round")]
     public static void EndRound()
     {
-        SingletonLoader.Get<RoundManager>().EndCurrentRound();
+        FindObjectOfType<RoundManager>().EndCurrentRound();
     }
 
     void Awake() { }

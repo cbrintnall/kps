@@ -72,7 +72,9 @@ public class PlayerEquipmentController : MonoBehaviour
     private bool amDead;
     private int level = 1;
     private int requiredXP => Curves.GetRequiredXP(level);
-    private float normalizedXP => (float)Money / (float)requiredXP;
+    private float normalizedXP =>
+        (Money - Curves.GetRequiredXP(level - 1))
+        / (float)(requiredXP - Curves.GetRequiredXP(level - 1));
 
     // Mathf.RoundToInt(Mathf.Log10((level + 1) * 100) * (Mathf.Pow(level + 1, 2.0f) / 10.0f))
     // + Mathf.RoundToInt(Mathf.Log10(level * 100) * (Mathf.Pow(level, 2.0f) / 10.0f));
@@ -197,6 +199,7 @@ public class PlayerEquipmentController : MonoBehaviour
         HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
         XPMaterial.SetFloat("_NormalizedValue", normalizedXP);
         var eventManager = SingletonLoader.Get<EventManager>();
+        playerInputManager.PushCursor(CursorLockMode.Locked);
 
         Money.ValueChanged += (current, delta) =>
         {

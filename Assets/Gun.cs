@@ -98,18 +98,23 @@ public abstract class Gun : MonoBehaviour
     {
         bullet.Hit += (hit) =>
         {
-            bool didCrit = Controller.Stats.CritWithDamage(
-                Controller.Stats.HitScanDamage,
-                out int damage
-            );
+            if (hit.Health)
+            {
+                bool didCrit = Controller.Stats.CritWithDamage(
+                    Controller.Stats.HitScanDamage,
+                    out int damage
+                );
 
-            hit.Health?.Damage(
-                new DamagePayload()
-                {
-                    Amount = damage,
-                    Owner = PlayerEquipmentController.Instance.gameObject
-                }
-            );
+                hit.Health.Damage(
+                    new DamagePayload()
+                    {
+                        Amount = damage,
+                        Owner = PlayerEquipmentController.Instance.gameObject
+                    }
+                );
+
+                audioManager.Play(new AudioPayload() { Clip = Controller.HitSound, Is2D = true });
+            }
         };
     }
 

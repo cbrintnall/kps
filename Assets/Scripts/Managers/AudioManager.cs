@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Pool;
 
 public class AudioPayload
@@ -12,6 +13,7 @@ public class AudioPayload
     public float Volume = 1.0f;
     public float PitchWobble = 0.0f;
     public float Debounce = 0.0f;
+    public bool Is2D = false;
 
     public static implicit operator AudioPayload(AudioClip clip) =>
         new AudioPayload() { Clip = clip };
@@ -35,16 +37,25 @@ public static class AudioExtensions
 [Singleton]
 public class AudioManager : MonoBehaviour
 {
-    private ObjectPool<AudioSource> pool =
-        new(
+    private ObjectPool<AudioSource> pool;
+
+    private Dictionary<AudioClip, TimeSince> debounce = new();
+    private AudioMixerGroup mixerGroup;
+
+    void Awake()
+    {
+        mixerGroup = Resources.Load<AudioMixer>("Audio/Game").FindMatchingGroups("SFX")[0];
+        pool = new(
             () =>
             {
-                var source = new GameObject($"audio-source-{System.Guid.NewGuid()}");
+                var source = new GameObject($"audio-source-{Guid.NewGuid()}");
+                source.transform.SetParent(transform);
 
                 var player = source.AddComponent<AudioSource>();
                 source.AddComponent<Follower>();
                 player.spatialBlend = 1.0f;
                 player.dopplerLevel = 0.0f;
+                player.outputAudioMixerGroup = mixerGroup;
                 return player;
             },
             source =>
@@ -58,8 +69,7 @@ public class AudioManager : MonoBehaviour
             },
             source => Destroy(source.gameObject)
         );
-
-    private Dictionary<AudioClip, TimeSince> debounce = new();
+    }
 
     public void Play(AudioPayload payload)
     {
@@ -80,6 +90,7 @@ public class AudioManager : MonoBehaviour
 
         var player = pool.Get();
 
+        player.spatialBlend = payload.Is2D ? 0.0f : 1.0f;
         player.pitch = 1.0f + Utilities.Randf() * payload.PitchWobble;
         player.volume = payload.Volume;
 

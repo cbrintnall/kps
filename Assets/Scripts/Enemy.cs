@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -83,7 +84,7 @@ public class Enemy : MonoBehaviour
             {
                 Instantiate(
                     Resources.Load<GameObject>("Upgrades/Powerup"),
-                    transform.position,
+                    transform.position + Vector3.up * 2.5f,
                     Quaternion.identity
                 );
             }
@@ -94,6 +95,7 @@ public class Enemy : MonoBehaviour
         else
         {
             OnHit.Play();
+            transform.DOPunchScale(Vector3.one * 1.2f, 0.2f);
             if (OnHurtSound)
             {
                 SingletonLoader

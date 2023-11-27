@@ -6,6 +6,7 @@ public class UpgradePanelListener : MonoBehaviour
 {
     public int CreateCount = 4;
     public GameObject PanelPrefab;
+    private CanvasGroup canvasGroup;
 
     List<GameObject> panels = new();
     int remainingChoices = 0;
@@ -13,6 +14,8 @@ public class UpgradePanelListener : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canvasGroup = GetComponent<CanvasGroup>();
+
         SingletonLoader
             .Get<EventManager>()
             .Subscribe<PlayerLeveledEvent>(data =>
@@ -24,6 +27,7 @@ public class UpgradePanelListener : MonoBehaviour
             .Get<EventManager>()
             .Subscribe<UpgradeChosenEvent>(data =>
             {
+                SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
                 foreach (var panel in panels)
                 {
                     Destroy(panel.gameObject);
@@ -33,6 +37,7 @@ public class UpgradePanelListener : MonoBehaviour
                 remainingChoices--;
                 SingletonLoader.Get<PlayerInputManager>().PopCursor();
                 DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 1.0f, 0.75f);
+                canvasGroup.blocksRaycasts = false;
             });
     }
 
@@ -40,6 +45,7 @@ public class UpgradePanelListener : MonoBehaviour
     {
         if (remainingChoices > 0 && panels.Count == 0)
         {
+            canvasGroup.blocksRaycasts = true;
             for (int i = 0; i < CreateCount; i++)
             {
                 var panel = Instantiate(PanelPrefab, transform);

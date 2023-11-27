@@ -15,7 +15,17 @@ public class MoneyPickup : MonoBehaviour
 
     void Start()
     {
-        roundManager = SingletonLoader.Get<RoundManager>();
+        roundManager = FindObjectOfType<RoundManager>();
+        SingletonLoader
+            .Get<EventManager>()
+            .Subscribe<GameStateChangedEvent>(data =>
+            {
+                if (data.NewState != GameState.IN_GAME)
+                {
+                    Destroy(gameObject);
+                }
+            });
+        target = PlayerEquipmentController.Instance;
     }
 
     void Update()
@@ -30,7 +40,7 @@ public class MoneyPickup : MonoBehaviour
             ) <= PICKUP_DISTANCE
         )
         {
-            int value = (SingletonLoader.Get<RoundManager>().KPS + 1) * Value;
+            int value = (roundManager.KPS + 1) * Value;
             PlayerEquipmentController.Instance.Money.Incr(value, StatOperation.Value);
 
             SingletonLoader
@@ -46,11 +56,6 @@ public class MoneyPickup : MonoBehaviour
                 );
 
             Destroy(gameObject);
-        }
-
-        if (!roundManager.Active && target == null)
-        {
-            target = PlayerEquipmentController.Instance;
         }
 
         if (target)

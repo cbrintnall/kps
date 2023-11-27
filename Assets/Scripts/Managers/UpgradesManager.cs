@@ -8,10 +8,20 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Localization.SmartFormat;
 using KaimiraGames;
+using Sirenix.Utilities;
 
 public class UpgradeSettings
 {
     public Dictionary<UpgradeRarity, int> Chances;
+}
+
+[AttributeUsage(AttributeTargets.Field)]
+public class StatUpgradeDirective : Attribute
+{
+    public int[] Values;
+    public bool IsPercent = true;
+    public string Name;
+    public string Description = "Stat increase description goes here.";
 }
 
 public class UpgradeDefinition
@@ -21,7 +31,6 @@ public class UpgradeDefinition
     public string Description;
     public Type Class;
     public Type Behavior = typeof(UpgradeBehavior);
-    public UpgradeType Type;
     public UpgradeTierDefinition[] Tiers;
 
     public UpgradeData[] ToData()
@@ -35,7 +44,6 @@ public class UpgradeDefinition
                     Name = Name,
                     Description = Smart.Format(Description, tier.Stats),
                     Class = Class,
-                    Type = Type,
                     Rarity = tier.Rarity,
                     Stats = tier.Stats,
                     Cost = tier.Cost,
@@ -63,7 +71,7 @@ public class UpgradeTierDefinition
     public int Cost;
 }
 
-[Singleton]
+[@Singleton]
 public class UpgradesManager : MonoBehaviour, IReloadable
 {
     public WeightedList<UpgradeData> RoundData { get; private set; }
@@ -75,10 +83,31 @@ public class UpgradesManager : MonoBehaviour, IReloadable
     {
         Debug.Log(
             string.Join(
-                ',',
+                "\n-",
                 SingletonLoader.Get<UpgradesManager>().upgrades.Select(upgrade => upgrade.Key)
             )
         );
+    }
+
+    [ConsoleMethod("getval", "Outputs the current value of an upgrade")]
+    public static void GetValue(string name)
+    {
+        Type type = Assembly.GetExecutingAssembly().GetType(name);
+        if (PlayerEquipmentController.Instance.TryGetUpgrade(type, out var data))
+        {
+            Debug.Log(data);
+        }
+        else
+        {
+            Debug.LogWarning($"Player doesn't have upgrade {name}");
+        }
+    }
+
+    [ConsoleMethod("stat", "Gets the value of the player's stat")]
+    public static void GetStat(string name)
+    {
+        FieldInfo field = typeof(StatBlock).GetField(name);
+        Debug.Log(field.GetValue(PlayerEquipmentController.Instance.Stats));
     }
 
     [ConsoleMethod("gu", "Gives an upgrade")]
@@ -124,9 +153,11 @@ public class UpgradesManager : MonoBehaviour, IReloadable
         var time = DateTime.Now;
 
         var data = Resources.Load<TextAsset>("Upgrades/definitions");
-        var intermediate = JsonConvert.DeserializeObject<UpgradeDefinition[]>(data.text);
+        var intermediate = JsonConvert.DeserializeObject<List<UpgradeDefinition>>(data.text);
 
         Debug.Log($"Loading upgrade data: {data.text}");
+
+        intermediate.AddRange(IngestStatDirectives());
 
         upgrades = new();
         foreach (var definition in intermediate)
@@ -145,6 +176,52 @@ public class UpgradesManager : MonoBehaviour, IReloadable
 
         var settingsData = Resources.Load<TextAsset>("Upgrades/settings");
         settings = JsonConvert.DeserializeObject<UpgradeSettings>(settingsData.text);
+    }
+
+    List<UpgradeDefinition> IngestStatDirectives()
+    {
+        return typeof(StatBlock)
+            .GetFields(BindingFlags.Public | BindingFlags.Instance)
+            .Where(type => type.GetCustomAttribute<StatUpgradeDirective>(true) != null)
+            .Select(type => Tuple.Create(type, type.GetCustomAttribute<StatUpgradeDirective>(true)))
+            .Select(duo =>
+            {
+                List<UpgradeRarity> rarities =
+                    new()
+                    {
+                        UpgradeRarity.COMMON,
+                        UpgradeRarity.UNCOMMON,
+                        UpgradeRarity.RARE,
+                        UpgradeRarity.LEGENDARY,
+                    };
+
+                var tiers = rarities.SelectEnumerate(
+                    (rarity, idx) =>
+                    {
+                        return new UpgradeTierDefinition()
+                        {
+                            Rarity = rarity,
+                            Stats = new Dictionary<string, object>()
+                            {
+                                { "FieldName", duo.Item1.Name },
+                                { "Amount", duo.Item2.Values[idx] },
+                                { "IsPercentage", duo.Item2.IsPercent }
+                            }
+                        };
+                    }
+                );
+
+                return new UpgradeDefinition()
+                {
+                    Name = duo.Item2.Name,
+                    Description = duo.Item2.Description,
+                    Behavior = typeof(UpgradeBehavior),
+                    Class = typeof(StatChanger),
+                    Prefix = duo.Item1.Name.ToLower(),
+                    Tiers = tiers.ToArray()
+                };
+            })
+            .ToList();
     }
 
     void Awake()

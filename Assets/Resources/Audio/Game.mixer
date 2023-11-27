@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!244 &-8733919403581885331
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: f492f480706f6fe4583feedf972d2f4c
+  m_EffectName: Send
+  m_MixLevel: 177dd30747001d24abc329b29db783fc
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!243 &-3382507521857852579
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -19,6 +33,19 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!245 &-2979580388427554232
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Snapshot - Copy
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: dded54f9514922a44a2a0cc745ab9d85
+  m_FloatValues:
+    ba4e04f00d5323a458274337b732a6ea: 1
+    4435149a3a376cf4a8c6cb93f41513a0: 0
+  m_TransitionOverrides: {}
 --- !u!244 &-2866180143253794668
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -63,11 +90,18 @@ AudioMixerController:
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
   - {fileID: 24500006}
+  - {fileID: -2979580388427554232}
   m_StartSnapshot: {fileID: 24500006}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
   m_UpdateMode: 0
-  m_ExposedParameters: []
+  m_ExposedParameters:
+  - guid: 4435149a3a376cf4a8c6cb93f41513a0
+    name: MasterVolume
+  - guid: 856b00f2d35f564428b87c492f383c3d
+    name: MusicVolume
+  - guid: 4bde1d1a9a4e0fb4ab4415a289aa8a4c
+    name: SFXVolume
   m_AudioMixerGroupViews:
   - guids:
     - 9a8f115b3bafe6e4392a5aba27e211cd
@@ -75,7 +109,7 @@ AudioMixerController:
     - 8ccfdfb50edb9e74b892ae2af9216ae0
     name: View
   m_CurrentViewIndex: 0
-  m_TargetSnapshot: {fileID: 24500006}
+  m_TargetSnapshot: {fileID: -2979580388427554232}
 --- !u!243 &24300002
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -120,7 +154,9 @@ AudioMixerSnapshotController:
   m_Name: Snapshot
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: e17cc54d70ba92e44a0ec6cdc19176de
-  m_FloatValues: {}
+  m_FloatValues:
+    ba4e04f00d5323a458274337b732a6ea: 1
+    4435149a3a376cf4a8c6cb93f41513a0: 0
   m_TransitionOverrides: {}
 --- !u!244 &768898814761863500
 AudioMixerEffectController:

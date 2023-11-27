@@ -10,7 +10,7 @@
     "shotspeed": 4
   },
   "PowerupStats": {
-    "HealAmount": 1,
+    "HealAmount": 5,
     "ExplosionSize": 30.0,
     "ExplosionDamage": 15,
     "SpeedTime": 10.0,

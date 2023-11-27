@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+
+public delegate K SelectedEnumerable<T, K>(T input, int idx);
 
 public static class Utilities
 {
@@ -47,4 +48,41 @@ public static class Utilities
     }
 
     public static Vector3 ToVec3(this Vector2 v) => new Vector3(v.x, 0.0f, v.y);
+
+    public static IEnumerable<T> Tap<T>(this IEnumerable<T> tapped, Action<T> cb)
+    {
+        foreach (var el in tapped)
+        {
+            cb(el);
+        }
+        return tapped;
+    }
+
+    public static IEnumerable<T> Enumerate<T>(this IEnumerable<T> enumerator, Action<T, int> cb)
+    {
+        int count = 0;
+        foreach (var el in enumerator)
+        {
+            cb(el, count);
+            count++;
+        }
+
+        return enumerator;
+    }
+
+    public static IEnumerable<K> SelectEnumerate<T, K>(
+        this IEnumerable<T> enumerator,
+        SelectedEnumerable<T, K> cb
+    )
+    {
+        int count = 0;
+        List<K> enumerated = new();
+        foreach (var el in enumerator)
+        {
+            enumerated.Add(cb(el, count));
+            count++;
+        }
+
+        return enumerated;
+    }
 }

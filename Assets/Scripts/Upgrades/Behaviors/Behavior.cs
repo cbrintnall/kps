@@ -24,38 +24,6 @@ public class UpgradeBehavior
 
         var reserialized = JsonConvert.SerializeObject(Data.Stats);
         JsonConvert.PopulateObject(reserialized, upgrade);
-        // foreach (var kv in Data.Stats)
-        // {
-        //     var field = upgrade.GetType().GetField(kv.Key);
-        //     var value = field.GetValue(upgrade);
-
-        //     if (kv.Value is double f)
-        //     {
-        //         var statint = value as StatFloat;
-        //         field.SetValue(
-        //             upgrade,
-        //             new StatFloat(Convert.ToSingle(f), statint.Max, statint.Min)
-        //         );
-        //     }
-        //     else if (kv.Value is long i)
-        //     {
-        //         var statint = value as StatInt;
-        //         field.SetValue(upgrade, new StatInt(Convert.ToInt32(i), statint.Max, statint.Min));
-        //     }
-        //     else
-        //     {
-        //         try
-        //         {
-        //             field.SetValue(upgrade, kv.Value);
-        //         }
-        //         catch (Exception)
-        //         {
-        //             Debug.LogWarning(
-        //                 $"Failed to set value for field '{upgrade.GetType()}:{field.GetType().Name}' with type '{value.GetType().Name}'"
-        //             );
-        //         }
-        //     }
-        // }
 
         return upgrade;
     }
@@ -67,13 +35,13 @@ public class UpgradeBehavior
             var field = upgrade.GetType().GetField(kv.Key);
             var value = field.GetValue(upgrade);
 
-            if (kv.Value is double f)
+            if (kv.Value is double || kv.Value is float)
             {
-                (value as StatFloat).Incr(Convert.ToSingle(f), StatOperation.Value);
+                (value as StatFloat).Incr(Convert.ToSingle(kv.Value), StatOperation.Value);
             }
-            else if (kv.Value is long i)
+            else if (kv.Value is long || kv.Value is int)
             {
-                (value as StatInt).Incr(Convert.ToInt32(i), StatOperation.Value);
+                (value as StatInt).Incr(Convert.ToInt32(kv.Value), StatOperation.Value);
             }
             else
             {
@@ -87,5 +55,8 @@ public class UpgradeBehavior
         return true;
     }
 
-    public virtual void OnPurchase(TransactionPayload payload) { }
+    public virtual void OnPurchase(TransactionPayload payload)
+    {
+        payload.Data.Behavior.OnPurchase(payload);
+    }
 }

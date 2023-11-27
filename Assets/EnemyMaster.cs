@@ -59,13 +59,13 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     public static HashSet<GameObject> ActiveEnemies = new();
     public static List<Transform> RangedPoints = new();
 
-    [ReadOnly, DebugGUIGraphAttribute(0.0f, 1.0f, 0.0f)]
+    [ReadOnly, DebugGUIGraph(0.0f, 1.0f, 0.0f)]
     public int CurrentValue;
 
-    [ReadOnly, DebugGUIGraphAttribute(1.0f, 0.0f, 0.0f)]
+    [ReadOnly, DebugGUIGraph(1.0f, 0.0f, 0.0f)]
     public int TargetValue;
 
-    [DebugGUIGraphAttribute(0.0f, 0.0f, 1.0f)]
+    [DebugGUIGraph(0.0f, 0.0f, 1.0f)]
     public float SpawnCheckSeconds = 1.0f;
     public Material BaseEnemyMaterial;
     public EnemyData Data;
@@ -75,9 +75,8 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     public int KPS => Mathf.RoundToInt(killsPerSecond);
 
     // This should eventually become a curve, dictated by difficulty
-    public float TargetIncreaseSeconds => Data.TargetRateIncrease;
-
-    Queue<EnemySequence> sequences = new();
+    public float TargetIncreaseSeconds =>
+        Curves.GetTargetRateIncreaseTime(roundManager.ElapsedSeconds);
     int lastRoundValue;
     TimeSince targetts;
     TimeSince spawnts;
@@ -88,7 +87,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     int sequenceCount = 0;
     EnemySequence currentSequence;
     RoundManager roundManager;
-    Vector3 targetPoint;
 
     [IngameDebugConsole.ConsoleMethod("spawn", "Spawns monster with ID")]
     public static void ForceSpawn(string id)
@@ -104,7 +102,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
     void Awake()
     {
-        roundManager = SingletonLoader.Get<RoundManager>();
+        roundManager = FindObjectOfType<RoundManager>();
         RangedPoints = GameObject
             .FindGameObjectsWithTag("ranged")
             .Select(go => go.transform)
@@ -147,13 +145,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
         IncrTarget();
         CheckSpawn();
 
-        SpawnCheckSeconds = Mathf.Max(
-            Mathf.Min(
-                Mathf.InverseLerp(lastRoundValue, TargetValue, CurrentValue) * 2.0f,
-                Mathf.Abs(Mathf.Log10(10 - roundManager.Round))
-            ),
-            Mathf.Max(Mathf.Log10(Data.MinCoefficient - roundManager.Round) * 0.5f, 0.1f)
-        );
+        SpawnCheckSeconds = Mathf.InverseLerp(0, TargetValue, CurrentValue);
 
         if (killCounter > 1.0f)
         {

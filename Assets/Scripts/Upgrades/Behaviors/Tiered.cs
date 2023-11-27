@@ -21,7 +21,7 @@ public class TieredUpgradeBehavior : UpgradeBehavior
         )
         {
             Debug.Log(
-                $"Player has previous tier ({upgrade.Data.GenerateBaseId()}), allowing {Data.GenerateBaseId()}"
+                $"Player has previous tier ({upgrade.Data.GenerateId()}), allowing {Data.GenerateId()}"
             );
 
             return upgrade.Data.Next == Data;
@@ -36,24 +36,6 @@ public class TieredUpgradeBehavior : UpgradeBehavior
         var reserialized = JsonConvert.SerializeObject(Data.Stats);
 
         JsonConvert.PopulateObject(reserialized, upgrade);
-        // foreach (var kv in Data.Stats)
-        // {
-        //     var field = upgrade.GetType().GetField(kv.Key);
-        //     var value = field.GetValue(upgrade);
-
-        //     if (kv.Value is double f)
-        //     {
-        //         (value as StatFloat).Set(Convert.ToSingle(f));
-        //     }
-        //     else if (kv.Value is long i)
-        //     {
-        //         (value as StatInt).Set(Convert.ToInt32(i));
-        //     }
-        //     else
-        //     {
-        //         field.SetValue(upgrade, kv.Value);
-        //     }
-        // }
     }
 
     public override void OnPurchase(TransactionPayload payload)
@@ -61,6 +43,6 @@ public class TieredUpgradeBehavior : UpgradeBehavior
         base.OnPurchase(payload);
 
         // Can only purchase one tier at a time.
-        payload.Machine.ClearStock();
+        // payload.Machine.ClearStock();
     }
 }

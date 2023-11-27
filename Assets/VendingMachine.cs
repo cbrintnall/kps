@@ -5,8 +5,8 @@ using Unity.VisualScripting;
 public class TransactionPayload
 {
     public UpgradeData Data;
-    public VendingMachine Machine;
-    public PlayerEquipmentController PurchasedBy;
+    public PlayerEquipmentController SelectedBy;
+    public Upgrade Upgrade;
 }
 
 public class VendingMachine : MonoBehaviour, IInteractable
@@ -97,15 +97,6 @@ public class VendingMachine : MonoBehaviour, IInteractable
                 Debug.Log($"bzzt, dispensing upgrade {Upgrade.Class}");
                 controller.AddUpgrade(Upgrade);
                 controller.Money.Incr(-Upgrade.Cost, StatOperation.Value);
-
-                Upgrade.Behavior.OnPurchase(
-                    new TransactionPayload()
-                    {
-                        PurchasedBy = controller,
-                        Machine = this,
-                        Data = Upgrade
-                    }
-                );
             }
 
             var manager = SingletonLoader.Get<AudioManager>();

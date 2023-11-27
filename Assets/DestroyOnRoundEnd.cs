@@ -6,7 +6,7 @@ public class DestroyOnRoundEnd : MonoBehaviour
 
     void Start()
     {
-        roundManager = SingletonLoader.Get<RoundManager>();
+        roundManager = FindObjectOfType<RoundManager>();
     }
 
     void Update()

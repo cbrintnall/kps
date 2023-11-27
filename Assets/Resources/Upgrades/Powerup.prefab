@@ -277,7 +277,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5739819405796251644
 MonoBehaviour:
@@ -296,11 +296,6 @@ MonoBehaviour:
   Heal: {fileID: 8356398495262807342}
   Speed: {fileID: 1873917501867818277}
   Bomb: {fileID: 6244038526655930875}
-  HealAmount: 1
-  SpeedDuration: 5
-  SpeedMultiplier: 0.5
-  BombDamage: 15
-  BombSize: 8
 --- !u!1 &8845719054219435314
 GameObject:
   m_ObjectHideFlags: 0

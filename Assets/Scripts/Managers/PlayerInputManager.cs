@@ -53,11 +53,13 @@ public class PlayerInputManager : MonoBehaviour
     public PlayerBinaryAction OnSecondaryAction = new();
     public PlayerBinaryAction Jumping = new();
     public PlayerBinaryAction StartRound = new();
+    public PlayerBinaryAction Cancel = new();
     public Vector2 MoveDir;
     public Vector3 LookDir;
+    public bool Paused;
 
     private System.Collections.Generic.Stack<CursorLockMode> CursorStack = new();
-    private bool debug;
+    private bool pauseInput;
 
     public void ClearCursors() => CursorStack = new();
 
@@ -65,31 +67,54 @@ public class PlayerInputManager : MonoBehaviour
     {
         CursorStack.Push(mode);
         Cursor.lockState = mode;
+        Cursor.visible = Cursor.lockState != CursorLockMode.Locked;
     }
 
     public void PopCursor()
     {
-        CursorStack.Pop();
-        Cursor.lockState = CursorStack.Peek();
+        CursorStack.TryPop(out var _);
+
+        if (CursorStack.Count > 0)
+        {
+            Cursor.lockState = CursorStack.Peek();
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+
+        Cursor.visible = Cursor.lockState != CursorLockMode.Locked;
+    }
+
+    public void TogglePause(bool state)
+    {
+        Paused = state;
+        pauseInput = state;
+
+        if (pauseInput)
+        {
+            OnInteract.Reset();
+            OnPrimaryAction.Reset();
+            OnSecondaryAction.Reset();
+            Jumping.Reset();
+            StartRound.Reset();
+            LookDir = Vector2.zero;
+            MoveDir = Vector3.zero;
+        }
+
+        Time.timeScale = pauseInput ? 0.0f : 1.0f;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
-            debug = !debug;
-
-            if (debug)
-            {
-                OnInteract.Reset();
-                OnPrimaryAction.Reset();
-                OnSecondaryAction.Reset();
-                Jumping.Reset();
-                StartRound.Reset();
-            }
+            TogglePause(!Paused);
         }
 
-        if (debug)
+        Cancel.UpdateValue(Input.GetKey(KeyCode.Escape));
+
+        if (pauseInput)
             return;
 
         LookDir = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));

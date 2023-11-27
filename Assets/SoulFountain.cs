@@ -12,7 +12,7 @@ public class SoulFountain : MonoBehaviour, IInteractable
     void Awake()
     {
         audioManager = SingletonLoader.Get<AudioManager>();
-        roundManager = SingletonLoader.Get<RoundManager>();
+        roundManager = FindObjectOfType<RoundManager>();
     }
 
     public InteractionData GetData()

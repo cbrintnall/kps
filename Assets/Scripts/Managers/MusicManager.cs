@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Audio;
 
 [Singleton]
 public class MusicManager : MonoBehaviour
@@ -11,6 +12,11 @@ public class MusicManager : MonoBehaviour
     {
         a = new GameObject("MusicManagerA").AddComponent<AudioSource>();
         b = new GameObject("MusicManagerB").AddComponent<AudioSource>();
+
+        var mixer = Resources.Load<AudioMixer>("Audio/Game").FindMatchingGroups("Music")[0];
+
+        a.outputAudioMixerGroup = mixer;
+        b.outputAudioMixerGroup = mixer;
     }
 
     public void Play(AudioClip music, float fadetime = 0.0f)

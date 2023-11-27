@@ -49,10 +49,17 @@ public enum GameState
     IN_GAME
 }
 
+public class GameStateChangedEvent : BaseEvent
+{
+    public GameState OldState;
+    public GameState NewState;
+}
+
 [@Singleton]
 public class FlowManager : MonoBehaviour
 {
     public GameData GameData;
+    public GameState CurrentState { get; private set; }
 
     public AudioClip MainMenuMusic;
     public AudioClip PreGameMusic;
@@ -96,6 +103,7 @@ public class FlowManager : MonoBehaviour
     public void SetState(GameState gameState)
     {
         MusicManager musicManager = SingletonLoader.Get<MusicManager>();
+        var old = CurrentState;
 
         switch (gameState)
         {
@@ -111,5 +119,11 @@ public class FlowManager : MonoBehaviour
                 musicManager.Play(PreGameMusic, 0.5f);
                 break;
         }
+
+        CurrentState = gameState;
+
+        SingletonLoader
+            .Get<EventManager>()
+            .Publish(new GameStateChangedEvent() { NewState = CurrentState, OldState = old });
     }
 }

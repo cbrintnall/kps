@@ -36,7 +36,6 @@ ${Cost}</color></size>
     void Start()
     {
         upgradesManager = SingletonLoader.Get<UpgradesManager>();
-        upgradesManager.UpdateUpgradeList();
 
         if (upgradesManager.TryGetViableUpgrade(out UpgradeData data))
         {

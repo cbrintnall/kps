@@ -8,7 +8,7 @@ public class RoundTimer : MonoBehaviour
 
     void Awake()
     {
-        roundManager = SingletonLoader.Get<RoundManager>();
+        roundManager = FindObjectOfType<RoundManager>();
         txt = GetComponent<TextMeshProUGUI>();
     }
 
