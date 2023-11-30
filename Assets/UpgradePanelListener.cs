@@ -28,6 +28,7 @@ public class UpgradePanelListener : MonoBehaviour
 
     public void OpenPanels()
     {
+        SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
         gameObject.SetActive(true);
         // canvasGroup.blocksRaycasts = true;
         RemainingText.text = "Choices Remaining\n" + PlayerUpgradeManager.Instance.Upgrades;
@@ -47,7 +48,6 @@ public class UpgradePanelListener : MonoBehaviour
     public void ClosePanels()
     {
         gameObject.SetActive(false);
-        SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
         foreach (var panel in panels)
         {
             Destroy(panel.gameObject);

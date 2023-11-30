@@ -76,7 +76,7 @@ public class PlayerEquipmentController : MonoBehaviour
     private CinemachineImpulseSource impulseSource;
     private MouseLook mouseLook;
     private IInteractable lookingAt;
-    private Dictionary<Type, UpgradeStorage> upgrades = new();
+    private Dictionary<string, UpgradeStorage> upgrades = new();
     private PlayerInputManager playerInputManager;
     private AudioManager audioManager;
     private PlayerMovement playerMovement;
@@ -101,7 +101,7 @@ public class PlayerEquipmentController : MonoBehaviour
 
     public void AddUpgrade(UpgradeData data)
     {
-        if (upgrades.TryGetValue(data.Class, out UpgradeStorage existing))
+        if (upgrades.TryGetValue(data.GenerateBaseId(), out UpgradeStorage existing))
         {
             data.Behavior.OnExisting(existing.Upgrade);
             audioManager.Play(
@@ -116,7 +116,7 @@ public class PlayerEquipmentController : MonoBehaviour
         }
 
         var upgrade = data.Behavior.CreateForOwner(this);
-        upgrades[data.Class] = new UpgradeStorage() { Data = data, Upgrade = upgrade };
+        upgrades[data.GenerateBaseId()] = new UpgradeStorage() { Data = data, Upgrade = upgrade };
         SeedUpgrade(upgrade);
 
         audioManager.Play(
@@ -129,10 +129,15 @@ public class PlayerEquipmentController : MonoBehaviour
         );
     }
 
-    public bool TryGetUpgrade(Type upgrade, out UpgradeStorage outgrade)
+    public bool TryGetUpgrade(UpgradeData data, out UpgradeStorage storage)
+    {
+        return TryGetUpgrade(data.GenerateBaseId(), out storage);
+    }
+
+    public bool TryGetUpgrade(string id, out UpgradeStorage outgrade)
     {
         outgrade = null;
-        if (upgrades.TryGetValue(upgrade, out UpgradeStorage value))
+        if (upgrades.TryGetValue(id, out UpgradeStorage value))
         {
             outgrade = value;
             return true;
@@ -264,7 +269,10 @@ public class PlayerEquipmentController : MonoBehaviour
         }
         foreach (var upgrade in GetComponents<Upgrade>())
         {
-            upgrades[upgrade.GetType()] = new UpgradeStorage() { Upgrade = upgrade };
+            upgrades[$"{upgrade.GetType().Name}.default"] = new UpgradeStorage()
+            {
+                Upgrade = upgrade
+            };
             SeedUpgrade(upgrade);
         }
         PickupWeapon(Equipment);

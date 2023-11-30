@@ -11,7 +11,7 @@ public class SingletonLoader
 {
     static Dictionary<Type, Component> singletons = new();
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void LoadSingletons()
     {
         Assembly

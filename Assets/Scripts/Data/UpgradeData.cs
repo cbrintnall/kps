@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -23,10 +24,26 @@ public class UpgradeData
     public string Description;
     public Type Class;
     public int Cost;
-    public Type[] Requires;
+    public string[] Requires;
 
     public string Color =>
         SingletonLoader.Get<FlowManager>().GameData.UpgradeColors[Rarity].ToHexString();
+
+    public void Validate()
+    {
+        if (Requires != null)
+        {
+            UpgradesManager upgradesManager = SingletonLoader.Get<UpgradesManager>();
+            string[] prefixes = upgradesManager.Prefixes;
+            foreach (string requirement in Requires)
+            {
+                Debug.Assert(
+                    prefixes.Contains(requirement),
+                    $"Requirement {requirement} does not exist for {GenerateId()}"
+                );
+            }
+        }
+    }
 
     public override string ToString()
     {
@@ -38,5 +55,6 @@ public class UpgradeData
         return $"{GenerateBaseId()}.{Rarity}".ToLower();
     }
 
-    public string GenerateBaseId() => string.IsNullOrEmpty(Prefix) ? Class.Name : Prefix;
+    public string GenerateBaseId() =>
+        (string.IsNullOrEmpty(Prefix) ? Class.Name : Prefix).ToLower();
 }

@@ -59,12 +59,12 @@ public class UpgradeBehavior
         if (Data.Requires != null && Data.Requires.Length > 0)
         {
             canSell = Data.Requires.All(
-                type => PlayerEquipmentController.Instance.TryGetUpgrade(type, out var _)
+                id => PlayerEquipmentController.Instance.TryGetUpgrade(id, out var _)
             );
 
             if (!canSell)
             {
-                Debug.Log($"Not selling {Data.Class}, player doesn't have pre-reqs.");
+                Debug.Log($"Not selling {Data.GenerateId()}, player doesn't have pre-reqs.");
             }
         }
 

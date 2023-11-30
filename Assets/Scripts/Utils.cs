@@ -85,4 +85,15 @@ public static class Utilities
 
         return enumerated;
     }
+
+    public static void Defer(this MonoBehaviour m, Action cb)
+    {
+        m.StartCoroutine(_Defer(cb));
+    }
+
+    private static IEnumerator _Defer(Action cb)
+    {
+        yield return new WaitForEndOfFrame();
+        cb();
+    }
 }

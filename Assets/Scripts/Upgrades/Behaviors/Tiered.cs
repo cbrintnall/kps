@@ -5,17 +5,14 @@ using UnityEngine;
 public class TieredUpgradeBehavior : UpgradeBehavior
 {
     public TieredUpgradeBehavior(UpgradeData data)
-        : base(data)
-    {
-        Debug.Log($"Creating tiered behavior for {data}");
-    }
+        : base(data) { }
 
     public override bool CanBeSold()
     {
         if (
             PlayerEquipmentController.Instance != null
             && PlayerEquipmentController.Instance.TryGetUpgrade(
-                Data.Class,
+                Data.GenerateId(),
                 out UpgradeStorage upgrade
             )
         )

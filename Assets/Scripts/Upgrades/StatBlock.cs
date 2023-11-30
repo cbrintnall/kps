@@ -98,7 +98,8 @@ public class StatBlock
     [StatUpgradeDirective(
         IsPercent = false,
         Values = new int[] { 1, 2, 4, 8 },
-        Name = "Saw Bounces"
+        Name = "Saw Bounces",
+        Requires = new string[] { "saw" }
     )]
     public StatInt MaxSawBounces = new StatInt(3, 100, 1);
 

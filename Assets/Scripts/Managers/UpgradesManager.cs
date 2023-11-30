@@ -19,7 +19,7 @@ public class UpgradeSettings
 public class StatUpgradeDirective : Attribute
 {
     public int[] Values;
-    public Type[] Requires;
+    public string[] Requires;
     public bool IsPercent = true;
     public string Name;
     public string Description = "Stat increase description goes here.";
@@ -50,7 +50,7 @@ public class UpgradeDefinition
     public string Prefix;
     public string Name;
     public string Description;
-    public Type[] Requires;
+    public string[] Requires;
     public Type Class;
     public Type Behavior = typeof(UpgradeBehavior);
     public UpgradeTierDefinition[] Tiers;
@@ -98,6 +98,7 @@ public class UpgradeTierDefinition
 public class UpgradesManager : MonoBehaviour, IReloadable
 {
     public WeightedList<UpgradeData> RoundData { get; private set; }
+    public string[] Prefixes => upgrades.Keys.Select(key => key.Split('.')[0]).ToArray();
     private Dictionary<string, UpgradeData> upgrades = new();
     private UpgradeSettings settings = new();
 
@@ -115,8 +116,7 @@ public class UpgradesManager : MonoBehaviour, IReloadable
     [ConsoleMethod("getval", "Outputs the current value of an upgrade")]
     public static void GetValue(string name)
     {
-        Type type = Assembly.GetExecutingAssembly().GetType(name);
-        if (PlayerEquipmentController.Instance.TryGetUpgrade(type, out var data))
+        if (PlayerEquipmentController.Instance.TryGetUpgrade(name, out var data))
         {
             Debug.Log(data);
         }
@@ -136,11 +136,10 @@ public class UpgradesManager : MonoBehaviour, IReloadable
         }
         else
         {
-            string[] data = name.Split('.');
-            var type = Assembly.GetExecutingAssembly().GetType(data[0]);
-            if (PlayerEquipmentController.Instance.TryGetUpgrade(type, out var upgrade))
+            string[] data = name.Split('/');
+            if (PlayerEquipmentController.Instance.TryGetUpgrade(data[0], out var upgrade))
             {
-                var upgradeField = type.GetField(data[1]);
+                var upgradeField = upgrade.Upgrade.GetType().GetField(data[1]);
                 Debug.Log(upgradeField.GetValue(upgrade.Upgrade));
             }
         }
@@ -283,6 +282,19 @@ public class UpgradesManager : MonoBehaviour, IReloadable
     void Awake()
     {
         IngestData();
+    }
+
+    void Start()
+    {
+        Debug.Log("Validating upgrade data");
+
+        foreach (var upgrade in upgrades.Values)
+        {
+            upgrade.Validate();
+        }
+
+        Debug.Log($"Upgrades validated");
+
         UpdateUpgradeList();
     }
 
