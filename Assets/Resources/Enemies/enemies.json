@@ -1,8 +1,8 @@
 {
   "targetrateincrease": 1.5,
   "startvalue": 300,
-  "maxsequencesize": 10,
-  "minsequencesize": 3,
+  "maxsequencesize": 50,
+  "minsequencesize": 15,
   "minsequencesperround": 5,
   "maxsequencesperround": 15,
   "mincoefficient": 25.0,
@@ -34,7 +34,7 @@
     },
     {
       "startsat": 60,
-      "value": 5,
+      "value": 2,
       "prefab": "Enemies/SingingEnemy",
       "type": "SingingEnemy",
       "stats": {
@@ -45,7 +45,7 @@
     },
     {
       "startsat": 120,
-      "value": 20,
+      "value": 10,
       "prefab": "Enemies/BomberEnemy",
       "type": "BomberEnemy",
       "primaryColor": "#232323",
@@ -58,7 +58,7 @@
     },
     {
       "startsat": 150,
-      "value": 10,
+      "value": 6,
       "prefab": "Enemies/GroundEnemy",
       "type": "GroundEnemy",
       "primaryColor": "#E3E3E3",

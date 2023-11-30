@@ -132,7 +132,7 @@ public class HomingMissile : MonoBehaviour
                 if (
                     Physics.SphereCast(
                         transform.position,
-                        2.0f,
+                        MonitorRadius,
                         transform.forward,
                         out var hit,
                         2.5f,

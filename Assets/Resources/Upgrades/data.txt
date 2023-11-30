@@ -1,7 +1,0 @@
-[
-  {
-    "Type": "SPREAD",
-    "Description": "A spread upgrade!",
-    "Class": "BulletCountSpraySize"
-  }
-]

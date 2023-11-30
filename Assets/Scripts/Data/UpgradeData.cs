@@ -11,19 +11,6 @@ public enum UpgradeRarity
     LEGENDARY
 }
 
-public enum UpgradeScaleType
-{
-    NONE,
-    LINEAR,
-    EXPONENTIAL
-}
-
-public enum UpgradeType
-{
-    LADDER,
-    STAT
-}
-
 [Serializable]
 public class UpgradeData
 {
@@ -36,7 +23,8 @@ public class UpgradeData
     public string Description;
     public Type Class;
     public int Cost;
-    public UpgradeType Type;
+    public Type[] Requires;
+
     public string Color =>
         SingletonLoader.Get<FlowManager>().GameData.UpgradeColors[Rarity].ToHexString();
 

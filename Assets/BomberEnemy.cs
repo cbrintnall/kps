@@ -38,6 +38,7 @@ public class BomberEnemy : GroundEnemy
             transform.position,
             Quaternion.identity
         );
+        explosion.Owner = gameObject;
         explosion.Damage = Damage;
         explosion.Layers = LayerMask.GetMask("Player");
         explosion.Size = 5.0f;

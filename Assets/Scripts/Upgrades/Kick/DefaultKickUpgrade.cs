@@ -4,7 +4,13 @@ public class DefaultKickUpgrade : Upgrade
     {
         if (data.LookingAt != null)
         {
-            data.LookingAt.Interact(new InteractionPayload() { Owner = controller.gameObject });
+            data.LookingAt.Interact(
+                new InteractionPayload()
+                {
+                    Owner = controller.gameObject,
+                    LookDir = MouseLook.Instance.LookData.Direction
+                }
+            );
             data.CameraShake.GenerateImpulseWithForce(0.1f);
         }
         else if (data.Health != null)

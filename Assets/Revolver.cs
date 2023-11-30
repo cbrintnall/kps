@@ -16,7 +16,7 @@ public class Revolver : Gun
         var bullet = base.Shoot(variance, overridebullet, payload);
 
         shot = (shot + 1) % MAX_SHOT;
-        Animator.SetInteger("BarrelIdx", shot);
+        // Animator.SetInteger("BarrelIdx", shot);
 
         return bullet;
     }

@@ -1,4 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
+
+public class BulletChanceData
+{
+    public HashSet<Bullet> Existing = new();
+}
 
 public class RandomBulletChance : Upgrade
 {
@@ -15,9 +21,13 @@ public class RandomBulletChance : Upgrade
     {
         base.OnBulletShot(pipelineData, bullet);
 
-        if (Utilities.Randf() > Chance)
+        var custom = pipelineData.GetCustom<BulletChanceData>();
+
+        if (Utilities.Randf() > Chance || custom.Existing.Contains(Prefab))
             return;
 
-        Gun.Shoot(Vector3.zero, Prefab);
+        custom.Existing.Add(Prefab);
+
+        Gun.Shoot(new ShootRequestPayload() { PipelineData = pipelineData, BulletPrefab = Prefab });
     }
 }

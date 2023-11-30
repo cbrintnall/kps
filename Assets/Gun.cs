@@ -46,6 +46,7 @@ public abstract class Gun : MonoBehaviour
 
     [Header("FX")]
     public GameObject ShotFlare;
+    public Tuple<bool, Vector3> OverrideStart;
 
     [SerializeField]
     private ChargeOrb chargeFX;
@@ -113,7 +114,14 @@ public abstract class Gun : MonoBehaviour
                     }
                 );
 
-                audioManager.Play(new AudioPayload() { Clip = Controller.HitSound, Is2D = true });
+                audioManager.Play(
+                    new AudioPayload()
+                    {
+                        Clip = Controller.HitSound,
+                        Is2D = true,
+                        PitchWobble = didCrit ? 1.0f : 0.0f
+                    }
+                );
             }
         };
     }
@@ -152,7 +160,7 @@ public abstract class Gun : MonoBehaviour
         var bullet = Instantiate(request.BulletPrefab ?? Bullet);
         var mouseLook = MouseLook.Instance.LookData;
 
-        Controller.CreatePipeline(this);
+        Controller.CreatePipeline(this, request.PipelineData);
 
         bullet.transform.position = Barrel.transform.position;
         bullet.Start = mouseLook.StartPoint;

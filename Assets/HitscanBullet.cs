@@ -49,7 +49,8 @@ public class HitscanBullet : Bullet
                     : 1;
 
             foreach (
-                var hit in hits.Where(cast => cast.collider != null).Take(PierceAmount * extra)
+                var hit in hits.Where(cast => cast.collider != null)
+                    .Take(PlayerEquipmentController.Instance.Stats.PierceAmount * extra)
             )
             {
                 var data = new BulletHitData() { Hit = hit };

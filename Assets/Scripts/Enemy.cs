@@ -44,6 +44,7 @@ public class Enemy : MonoBehaviour
     protected AudioManager audioManager;
     private CharacterController characterController;
     private Vector3 targetOffset;
+    private Tweener scalePunch;
 
     void Awake()
     {
@@ -67,7 +68,24 @@ public class Enemy : MonoBehaviour
 
     protected virtual void UpdateAtTarget() { }
 
-    protected virtual void BeforeDeath(HitPayload payload) { }
+    protected virtual void BeforeDeath(HitPayload payload)
+    {
+        if (
+            UnityEngine.Random.Range(1, 100)
+            > PlayerEquipmentController.Instance.Stats.ExplodeOnEnemyDeathChance
+        )
+            return;
+
+        var explosion = Instantiate(
+            Resources.Load<Explosion>("Upgrades/Explosion"),
+            transform.position,
+            Quaternion.identity
+        );
+        explosion.Owner = gameObject;
+        explosion.Damage = PlayerEquipmentController.Instance.Stats.ExplosionDamage;
+        explosion.Layers = LayerMask.GetMask("Enemy");
+        explosion.Size = PlayerEquipmentController.Instance.Stats.ExplosionSize;
+    }
 
     private void OnHealthHit(HitPayload payload)
     {
@@ -95,7 +113,8 @@ public class Enemy : MonoBehaviour
         else
         {
             OnHit.Play();
-            transform.DOPunchScale(Vector3.one * 1.2f, 0.2f);
+            if (scalePunch == null || !scalePunch.active)
+                scalePunch = transform.DOPunchScale(Vector3.one * 1.2f, 0.2f);
             if (OnHurtSound)
             {
                 SingletonLoader

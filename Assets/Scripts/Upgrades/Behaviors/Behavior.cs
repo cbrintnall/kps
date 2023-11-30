@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -17,14 +18,15 @@ public class UpgradeBehavior
     /// <summary>
     /// Creates a new version of the upgrade
     /// </summary>
-    public virtual Upgrade CreateForOwner(GameObject owner)
+    public virtual Upgrade CreateForOwner(PlayerEquipmentController owner)
     {
-        var upgrade = owner.AddComponent(Data.Class) as Upgrade;
+        var upgrade = owner.gameObject.AddComponent(Data.Class) as Upgrade;
         Assert.IsNotNull(upgrade);
 
         var reserialized = JsonConvert.SerializeObject(Data.Stats);
         JsonConvert.PopulateObject(reserialized, upgrade);
 
+        upgrade.OnPickup(owner);
         return upgrade;
     }
 
@@ -52,7 +54,21 @@ public class UpgradeBehavior
 
     public virtual bool CanBeSold()
     {
-        return true;
+        bool canSell = true;
+
+        if (Data.Requires != null && Data.Requires.Length > 0)
+        {
+            canSell = Data.Requires.All(
+                type => PlayerEquipmentController.Instance.TryGetUpgrade(type, out var _)
+            );
+
+            if (!canSell)
+            {
+                Debug.Log($"Not selling {Data.Class}, player doesn't have pre-reqs.");
+            }
+        }
+
+        return canSell;
     }
 
     public virtual void OnPurchase(TransactionPayload payload)

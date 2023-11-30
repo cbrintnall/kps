@@ -16,6 +16,8 @@ public class Stat<T>
     public T Min;
     public T Current;
 
+    public override string ToString() => $"base={Base}, min={Min}, max={Max}, current={Current}";
+
     public Stat(T _base, T max, T min)
     {
         this.Base = _base;
@@ -102,8 +104,6 @@ public class StatFloat : Stat<float>
 
     public StatFloat(float _base, float max, float min)
         : base(_base, max, min) { }
-
-    public override string ToString() => $"base={Base}, min={Min}, max={Max}, current={Current}";
 
     public void Set(float value)
     {

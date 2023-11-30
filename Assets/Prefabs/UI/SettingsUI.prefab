@@ -826,8 +826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e20ca03e553c741aa941ee2339ba87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParameterName: MusicVolume
-  Group: {fileID: -503687844535731365, guid: 4d85531326e90304a9092bc0c0c1b425, type: 2}
+  Type: 2
 --- !u!1 &3661148618140046416
 GameObject:
   m_ObjectHideFlags: 0
@@ -2251,8 +2250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e20ca03e553c741aa941ee2339ba87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParameterName: SFXVolume
-  Group: {fileID: -3382507521857852579, guid: 4d85531326e90304a9092bc0c0c1b425, type: 2}
+  Type: 1
 --- !u!1 &7790989040909797748
 GameObject:
   m_ObjectHideFlags: 0
@@ -2452,8 +2450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e20ca03e553c741aa941ee2339ba87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParameterName: MasterVolume
-  Group: {fileID: 24300002, guid: 4d85531326e90304a9092bc0c0c1b425, type: 2}
+  Type: 0
 --- !u!1 &8134262690420998984
 GameObject:
   m_ObjectHideFlags: 0

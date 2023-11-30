@@ -15,8 +15,14 @@ public class MusicManager : MonoBehaviour
 
         var mixer = Resources.Load<AudioMixer>("Audio/Game").FindMatchingGroups("Music")[0];
 
+        a.transform.SetParent(transform);
+        b.transform.SetParent(transform);
+
         a.outputAudioMixerGroup = mixer;
         b.outputAudioMixerGroup = mixer;
+
+        a.loop = true;
+        b.loop = true;
     }
 
     public void Play(AudioClip music, float fadetime = 0.0f)

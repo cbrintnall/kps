@@ -18,7 +18,6 @@ public abstract class Bullet : MonoBehaviour
     public event Action Missed;
     public Transform Barrel;
     public Vector3 Start;
-    public Vector3 Direction;
     public ShootPayload ExtraData;
 
     // Used for upgrades to stop the bullet from freeing itself
@@ -43,6 +42,18 @@ public abstract class Bullet : MonoBehaviour
 
         DidHit = true;
         Hit?.Invoke(target);
+    }
+
+    protected void RaiseHitFromCollider(Collider collider)
+    {
+        BulletHitData payload = new BulletHitData() { Collider = collider, Bullet = this };
+
+        if (collider.TryGetComponent(out Health health))
+        {
+            payload.Health = health;
+        }
+
+        RaiseHit(payload);
     }
 
     void OnDestroy()

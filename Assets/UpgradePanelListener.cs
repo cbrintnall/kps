@@ -1,61 +1,62 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class UpgradePanelListener : MonoBehaviour
 {
+    public static UpgradePanelListener Instance;
+
+    public GameObject UpgradesBase;
+    public TextMeshProUGUI RemainingText;
+
     public int CreateCount = 4;
-    public GameObject PanelPrefab;
+    public UpgradeSelection PanelPrefab;
+    public bool IsOpen => panels.Count > 0;
+    public event Action ClosedPanels;
     private CanvasGroup canvasGroup;
 
-    List<GameObject> panels = new();
-    int remainingChoices = 0;
+    List<UpgradeSelection> panels = new();
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-
-        SingletonLoader
-            .Get<EventManager>()
-            .Subscribe<PlayerLeveledEvent>(data =>
-            {
-                remainingChoices++;
-            });
-
-        SingletonLoader
-            .Get<EventManager>()
-            .Subscribe<UpgradeChosenEvent>(data =>
-            {
-                SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
-                foreach (var panel in panels)
-                {
-                    Destroy(panel.gameObject);
-                }
-
-                panels = new();
-                remainingChoices--;
-                SingletonLoader.Get<PlayerInputManager>().PopCursor();
-                DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 1.0f, 0.75f);
-                canvasGroup.blocksRaycasts = false;
-            });
+        Instance = this;
+        // canvasGroup = GetComponent<CanvasGroup>();
+        ClosePanels();
     }
 
-    void Update()
+    public void OpenPanels()
     {
-        if (remainingChoices > 0 && panels.Count == 0)
+        gameObject.SetActive(true);
+        // canvasGroup.blocksRaycasts = true;
+        RemainingText.text = "Choices Remaining\n" + PlayerUpgradeManager.Instance.Upgrades;
+        for (int i = 0; i < CreateCount; i++)
         {
-            canvasGroup.blocksRaycasts = true;
-            for (int i = 0; i < CreateCount; i++)
-            {
-                var panel = Instantiate(PanelPrefab, transform);
-
-                panels.Add(panel);
-            }
-
-            SingletonLoader.Get<PlayerInputManager>().PushCursor(CursorLockMode.Confined);
-
-            DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 0.1f, 0.25f);
+            var panel = Instantiate(PanelPrefab, transform);
+            panel.transform.SetParent(UpgradesBase.transform);
+            panel.OnChoose += ClosePanels;
+            panels.Add(panel);
         }
+
+        SingletonLoader.Get<PlayerInputManager>().PushCursor(CursorLockMode.Confined);
+
+        DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 0.01f, 0.25f);
+    }
+
+    public void ClosePanels()
+    {
+        gameObject.SetActive(false);
+        SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
+        foreach (var panel in panels)
+        {
+            Destroy(panel.gameObject);
+        }
+
+        panels = new();
+        SingletonLoader.Get<PlayerInputManager>().PopCursor();
+        DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 1.0f, 0.75f);
+        // canvasGroup.blocksRaycasts = false;
+        ClosedPanels?.Invoke();
     }
 }

@@ -54,12 +54,14 @@ public class PlayerInputManager : MonoBehaviour
     public PlayerBinaryAction Jumping = new();
     public PlayerBinaryAction StartRound = new();
     public PlayerBinaryAction Cancel = new();
+    public PlayerBinaryAction OpenUpgrades = new();
     public Vector2 MoveDir;
     public Vector3 LookDir;
     public bool Paused;
 
     private System.Collections.Generic.Stack<CursorLockMode> CursorStack = new();
     private bool pauseInput;
+    private float lastTimeScale;
 
     public void ClearCursors() => CursorStack = new();
 
@@ -93,6 +95,8 @@ public class PlayerInputManager : MonoBehaviour
 
         if (pauseInput)
         {
+            lastTimeScale = Time.timeScale;
+            OpenUpgrades.Reset();
             OnInteract.Reset();
             OnPrimaryAction.Reset();
             OnSecondaryAction.Reset();
@@ -102,7 +106,7 @@ public class PlayerInputManager : MonoBehaviour
             MoveDir = Vector3.zero;
         }
 
-        Time.timeScale = pauseInput ? 0.0f : 1.0f;
+        Time.timeScale = pauseInput ? 0.0f : lastTimeScale;
     }
 
     void Update()
@@ -120,6 +124,7 @@ public class PlayerInputManager : MonoBehaviour
         LookDir = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         MoveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+        OpenUpgrades.UpdateValue(Input.GetKey(KeyCode.T));
         OnSecondaryAction.UpdateValue(Input.GetMouseButton(1));
         OnPrimaryAction.UpdateValue(Input.GetMouseButton(0));
         OnInteract.UpdateValue(Input.GetKeyDown(KeyCode.F));

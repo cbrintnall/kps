@@ -13,6 +13,7 @@ public class PlayerUI : MonoBehaviour
     public DeathPanel DeathPanel;
     public AudioClip LogsSuccessSound;
     public TextMeshProUGUI LogText;
+    public TextMeshProUGUI LevelText;
 
     FlowManager flowManager;
 
@@ -31,6 +32,11 @@ public class PlayerUI : MonoBehaviour
             Instantiate(DeathPanel, transform);
         });
 
+        eventManager.Subscribe<PlayerLeveledEvent>(data =>
+        {
+            LevelText.text = "Level " + data.ToLevel;
+        });
+
         Application.logMessageReceived += (string condition, string stackTrace, LogType type) =>
         {
             logs.Add($"\n[{DateTime.Now} | {type}]: {condition}\n---\n{stackTrace}\n");
@@ -44,6 +50,11 @@ public class PlayerUI : MonoBehaviour
                 }
             }
         };
+    }
+
+    void Start()
+    {
+        LevelText.text = "Level " + PlayerEquipmentController.Instance.level;
     }
 
     void Update()

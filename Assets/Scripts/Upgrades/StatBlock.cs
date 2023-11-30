@@ -8,17 +8,10 @@ using UnityEngine.Assertions;
 [Serializable]
 public class StatBlock
 {
-    [
-        Header("Base Damage"),
-        StatUpgradeDirective(IsPercent = false, Values = new int[] { 2, 5, 10, 20 })
-    ]
+    [Header("Base Damage")]
     public StatInt RocketDamage = 3;
 
-    [StatUpgradeDirective(
-        IsPercent = false,
-        Values = new int[] { 3, 7, 15, 30 },
-        Name = "On Hit Damage"
-    )]
+    [StatUpgradeDirective(IsPercent = false, Values = new int[] { 3, 7, 15, 30 }, Name = "Damage")]
     public StatInt HitScanDamage = 1;
     public StatInt GrenadeExplosiveDamage = 2;
     public StatInt GrenadeHitDamage = 1;
@@ -33,7 +26,7 @@ public class StatBlock
     [Header("Cooldowns")]
     [StatUpgradeDirective(
         IsPercent = true,
-        Values = new int[] { 3, 7, 15, 30 },
+        Values = new int[] { -3, -7, -15, -30 },
         Name = "Cooldown Decrease"
     )]
     public StatFloat PistolCooldown = new StatFloat(1.25f, 15.0f, 0.005f);
@@ -48,6 +41,13 @@ public class StatBlock
     public StatFloat CriticalChance = 0.05f;
     public StatFloat CriticalMultiplier = 1.1f;
 
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 1, 3, 5, 8 },
+        Name = "Turret Damage"
+    )]
+    public StatInt TurretDamage = 1;
+
     [Header("Timing")]
     public StatFloat ExplosionDelay = new StatFloat(1.5f, float.PositiveInfinity, 0.3f);
 
@@ -59,6 +59,13 @@ public class StatBlock
     )]
     public StatFloat ExplosionSize = new StatFloat(3.0f, float.PositiveInfinity, 1.0f);
 
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 3, 7, 8, 15 },
+        Name = "Exposive Damage"
+    )]
+    public StatInt ExplosionDamage = new StatInt(3, 999999, 0);
+
     [Header("Drop chances")]
     [StatUpgradeDirective(
         IsPercent = true,
@@ -66,6 +73,34 @@ public class StatBlock
         Name = "Powerup Drop Chance"
     )]
     public StatFloat EnemyPowerupDropChance = new StatFloat(0.1f, 1.0f, 0.0f);
+
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 1, 2, 4, 6 },
+        Name = "Bullet Pierce"
+    )]
+    public StatInt PierceAmount = new StatInt(1, 999, 1);
+
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 3, 5, 9, 13 },
+        Name = "Corpse Explosion"
+    )]
+    public StatInt ExplodeOnEnemyDeathChance = new StatInt(0, 100, 0);
+
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 3, 5, 9, 13 },
+        Name = "Kick Explosion"
+    )]
+    public StatInt KickExplosion = new StatInt(0, 100, 0);
+
+    [StatUpgradeDirective(
+        IsPercent = false,
+        Values = new int[] { 1, 2, 4, 8 },
+        Name = "Saw Bounces"
+    )]
+    public StatInt MaxSawBounces = new StatInt(3, 100, 1);
 
     public bool CritWithDamage(int baseDamage, out int finalDamage)
     {

@@ -19,9 +19,30 @@ public class UpgradeSettings
 public class StatUpgradeDirective : Attribute
 {
     public int[] Values;
+    public Type[] Requires;
     public bool IsPercent = true;
     public string Name;
     public string Description = "Stat increase description goes here.";
+}
+
+public class UpgradeGroup
+{
+    public Type Behavior = typeof(UpgradeBehavior);
+    protected UpgradeDefinition[] Definitions;
+
+    public UpgradeDefinition[] GetDefinitions =>
+        Definitions
+            .Select(def =>
+            {
+                def.Behavior = Behavior;
+                return def;
+            })
+            .ToArray();
+}
+
+public interface IUpgrade
+{
+    void Apply(PlayerEquipmentController controller, UpgradeData data);
 }
 
 public class UpgradeDefinition
@@ -29,6 +50,7 @@ public class UpgradeDefinition
     public string Prefix;
     public string Name;
     public string Description;
+    public Type[] Requires;
     public Type Class;
     public Type Behavior = typeof(UpgradeBehavior);
     public UpgradeTierDefinition[] Tiers;
@@ -47,6 +69,7 @@ public class UpgradeDefinition
                     Rarity = tier.Rarity,
                     Stats = tier.Stats,
                     Cost = tier.Cost,
+                    Requires = Requires
                 };
 
                 data.Behavior = Activator.CreateInstance(Behavior, data) as UpgradeBehavior;
@@ -107,13 +130,25 @@ public class UpgradesManager : MonoBehaviour, IReloadable
     public static void GetStat(string name)
     {
         FieldInfo field = typeof(StatBlock).GetField(name);
-        Debug.Log(field.GetValue(PlayerEquipmentController.Instance.Stats));
+        if (field != null)
+        {
+            Debug.Log(field.GetValue(PlayerEquipmentController.Instance.Stats));
+        }
+        else
+        {
+            string[] data = name.Split('.');
+            var type = Assembly.GetExecutingAssembly().GetType(data[0]);
+            if (PlayerEquipmentController.Instance.TryGetUpgrade(type, out var upgrade))
+            {
+                var upgradeField = type.GetField(data[1]);
+                Debug.Log(upgradeField.GetValue(upgrade.Upgrade));
+            }
+        }
     }
 
     [ConsoleMethod("gu", "Gives an upgrade")]
     public static void GiveUpgrade(string name, int count = 1)
     {
-        Type type = Assembly.GetExecutingAssembly().GetType(name);
         UpgradesManager upgradesManager = SingletonLoader.Get<UpgradesManager>();
 
         for (int i = 0; i < count; i++)
@@ -152,10 +187,30 @@ public class UpgradesManager : MonoBehaviour, IReloadable
     {
         var time = DateTime.Now;
 
-        var data = Resources.Load<TextAsset>("Upgrades/definitions");
-        var intermediate = JsonConvert.DeserializeObject<List<UpgradeDefinition>>(data.text);
+        var data = Resources.Load<TextAsset>("table");
+        List<string> upgradePaths = JsonConvert.DeserializeObject<List<string>>(data.text);
+        List<UpgradeDefinition> intermediate = new();
 
-        Debug.Log($"Loading upgrade data: {data.text}");
+        foreach (var path in upgradePaths)
+        {
+            var upgradeData = Resources.Load<TextAsset>(path);
+            Debug.Log($"Loading upgrade data at path \"{path}\": {upgradeData.text}");
+            try
+            {
+                var group = JsonConvert.DeserializeObject<UpgradeGroup>(upgradeData.text);
+                intermediate.AddRange(group.GetDefinitions);
+            }
+            catch (Exception)
+            {
+                Debug.LogWarning(
+                    $"Upgrade at path {path} is in legacy format.. reverting to legacy behavior for file"
+                );
+
+                intermediate.AddRange(
+                    JsonConvert.DeserializeObject<List<UpgradeDefinition>>(upgradeData.text)
+                );
+            }
+        }
 
         intermediate.AddRange(IngestStatDirectives());
 
@@ -215,10 +270,11 @@ public class UpgradesManager : MonoBehaviour, IReloadable
                 {
                     Name = duo.Item2.Name,
                     Description = duo.Item2.Description,
-                    Behavior = typeof(UpgradeBehavior),
+                    Behavior = typeof(StatBehavior),
                     Class = typeof(StatChanger),
                     Prefix = duo.Item1.Name.ToLower(),
-                    Tiers = tiers.ToArray()
+                    Tiers = tiers.ToArray(),
+                    Requires = duo.Item2.Requires
                 };
             })
             .ToList();

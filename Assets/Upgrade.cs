@@ -1,13 +1,11 @@
-using System;
 using UnityEngine;
 
 public struct OnHitEventData { }
 
 public struct OnShotEventData { }
 
-public abstract class Upgrade : MonoBehaviour
+public abstract class Upgrade : MonoBehaviour, IUpgrade
 {
-    public virtual UpgradeScaleType ScaleType => UpgradeScaleType.LINEAR;
     public virtual bool ConsumeDuplicates => false;
     protected virtual Gun Gun => PlayerEquipmentController.Instance.Equipment;
     protected PlayerEquipmentController controller;
@@ -46,4 +44,6 @@ public abstract class Upgrade : MonoBehaviour
     protected virtual void OnCountIncrease(int count) { }
 
     public virtual void OnExisting(PlayerEquipmentController controller, UpgradeData data) { }
+
+    public void Apply(PlayerEquipmentController controller, UpgradeData data) { }
 }

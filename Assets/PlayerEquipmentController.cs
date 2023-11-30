@@ -17,6 +17,7 @@ public class PlayerLeveledEvent : BaseEvent
 public struct InteractionPayload
 {
     public GameObject Owner;
+    public Vector3 LookDir;
 }
 
 public class PlayerDeathEvent : BaseEvent { }
@@ -44,10 +45,19 @@ public class PlayerEquipmentController : MonoBehaviour
 {
     public static PlayerEquipmentController Instance;
 
+    public event Action<int> PlayerLeveled;
+
     #region stats
     public StatFloat ExplosionSize = 4.0f;
     public StatFloat UpgradeDropChance = 0.25f;
     #endregion
+
+    private static Type[] DefaultUpgrades = new Type[]
+    {
+        typeof(DefaultKickUpgrade),
+        typeof(BulletRichocet),
+        typeof(ExplosiveKick)
+    };
 
     public StatInt Money = 0;
     public Gun Equipment;
@@ -61,6 +71,7 @@ public class PlayerEquipmentController : MonoBehaviour
     [Header("Audio")]
     public AudioClip UpgradePickup;
     public AudioClip HitSound;
+    public int level = 1;
 
     private CinemachineImpulseSource impulseSource;
     private MouseLook mouseLook;
@@ -70,11 +81,14 @@ public class PlayerEquipmentController : MonoBehaviour
     private AudioManager audioManager;
     private PlayerMovement playerMovement;
     private bool amDead;
-    private int level = 1;
     private int requiredXP => Curves.GetRequiredXP(level);
+    private float smoothedMoney = 0.0f;
     private float normalizedXP =>
-        (Money - Curves.GetRequiredXP(level - 1))
-        / (float)(requiredXP - Curves.GetRequiredXP(level - 1));
+        Mathf.InverseLerp(
+            (float)Mathf.Max(Curves.GetRequiredXP(level - 1), 0.0f),
+            (float)requiredXP,
+            (float)Money
+        );
 
     // Mathf.RoundToInt(Mathf.Log10((level + 1) * 100) * (Mathf.Pow(level + 1, 2.0f) / 10.0f))
     // + Mathf.RoundToInt(Mathf.Log10(level * 100) * (Mathf.Pow(level, 2.0f) / 10.0f));
@@ -90,10 +104,18 @@ public class PlayerEquipmentController : MonoBehaviour
         if (upgrades.TryGetValue(data.Class, out UpgradeStorage existing))
         {
             data.Behavior.OnExisting(existing.Upgrade);
+            audioManager.Play(
+                new AudioPayload()
+                {
+                    Clip = UpgradePickup,
+                    PitchWobble = 0.1f,
+                    Location = transform.position
+                }
+            );
             return;
         }
 
-        var upgrade = data.Behavior.CreateForOwner(gameObject);
+        var upgrade = data.Behavior.CreateForOwner(this);
         upgrades[data.Class] = new UpgradeStorage() { Data = data, Upgrade = upgrade };
         SeedUpgrade(upgrade);
 
@@ -136,11 +158,12 @@ public class PlayerEquipmentController : MonoBehaviour
         return Vector3.one;
     }
 
-    public UpgradePipeline CreatePipeline(Gun equipment)
+    public UpgradePipeline CreatePipeline(Gun equipment, UpgradePipelineData existing = null)
     {
         return new UpgradePipeline(
             upgrades.Values.Select(storage => storage.Upgrade),
-            new UpgradePipelineData() { CameraShake = impulseSource, PlayerStats = Stats },
+            existing
+                ?? new UpgradePipelineData() { CameraShake = impulseSource, PlayerStats = Stats },
             equipment
         );
     }
@@ -181,11 +204,6 @@ public class PlayerEquipmentController : MonoBehaviour
 
     void Awake()
     {
-        var test = 5;
-        for (int i = 1; i < test; i++)
-        {
-            Debug.Log(Curves.GetRequiredXP(i));
-        }
         Instance = this;
         audioManager = SingletonLoader.Get<AudioManager>();
         playerMovement = GetComponent<PlayerMovement>();
@@ -203,16 +221,34 @@ public class PlayerEquipmentController : MonoBehaviour
 
         Money.ValueChanged += (current, delta) =>
         {
-            XPMaterial.SetFloat("_NormalizedValue", normalizedXP);
+            XPMaterial.SetFloat("_Amount", normalizedXP);
             eventManager.Publish(new MoneyChangedEvent() { Gained = delta });
+            int levelBefore = level;
             while (Money >= requiredXP)
             {
                 level++;
                 SingletonLoader
                     .Get<EventManager>()
-                    .Publish(new PlayerLeveledEvent() { Controller = this });
+                    .Publish(new PlayerLeveledEvent() { Controller = this, ToLevel = level });
+            }
+            if (levelBefore != level)
+            {
+                // TODO: put this back in
+                // SingletonLoader
+                //     .Get<AudioManager>()
+                //     .Play(
+                //         new AudioPayload()
+                //         {
+                //             Clip = Resources.Load<AudioClip>("Audio/bell"),
+                //             Is2D = true,
+                //             PitchWobble = 0.1f
+                //         }
+                //     );
             }
         };
+
+        Money.Set(Curves.GetRequiredXP(level - 1));
+        XPMaterial.SetFloat("_Amount", normalizedXP);
 
         Health.Data.ValueChanged += (current, delta) =>
         {
@@ -222,6 +258,10 @@ public class PlayerEquipmentController : MonoBehaviour
                 OnDeath();
             }
         };
+        foreach (var upgradeType in DefaultUpgrades)
+        {
+            gameObject.AddComponent(upgradeType);
+        }
         foreach (var upgrade in GetComponents<Upgrade>())
         {
             upgrades[upgrade.GetType()] = new UpgradeStorage() { Upgrade = upgrade };
@@ -313,6 +353,23 @@ public class PlayerEquipmentController : MonoBehaviour
             return;
         var lookData = mouseLook.LookData;
         lookingAt = null;
+
+        Equipment.OverrideStart = Tuple.Create(false, Vector3.zero);
+
+        if (
+            Physics.Raycast(
+                mouseLook.LookData.StartPoint,
+                (Equipment.Barrel.transform.position - mouseLook.LookData.StartPoint).normalized,
+                Vector3.Distance(
+                    Equipment.Barrel.transform.position,
+                    mouseLook.LookData.StartPoint
+                ),
+                LayerMask.GetMask("Default")
+            )
+        )
+        {
+            Equipment.OverrideStart = Tuple.Create(true, mouseLook.LookData.EndPoint);
+        }
 
         if (
             Physics.Raycast(

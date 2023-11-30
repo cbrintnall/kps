@@ -118,7 +118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Height: 10
   BreakOffDistance: 3
-  MonitorRadius: 0.5
+  MonitorRadius: 0.47
   Speed: 0.25
   Damage: 3
   Strategy: 1

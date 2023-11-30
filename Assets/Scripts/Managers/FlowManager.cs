@@ -45,6 +45,7 @@ public enum GameState
 {
     MAIN_MENU,
     PAUSE_MENU,
+    INTRO,
     PRE_GAME,
     IN_GAME
 }
@@ -68,22 +69,23 @@ public class FlowManager : MonoBehaviour
     [ConsoleMethod("reload", "Reloads the round")]
     public static void Restart()
     {
-        SingletonLoader.Get<FlowManager>().SetState(GameState.PRE_GAME);
+        SingletonLoader.Get<FlowManager>().SetState(GameState.INTRO);
     }
 
     void Awake()
     {
         var eventManager = SingletonLoader.Get<EventManager>();
 
-        eventManager.Subscribe<PlayGameEvent>(data => SetState(GameState.PRE_GAME));
+        eventManager.Subscribe<PlayGameEvent>(data => SetState(GameState.INTRO));
+        eventManager.Subscribe<DoorKickedEvent>(data => SetState(GameState.PRE_GAME));
         eventManager.Subscribe<StartWavesEvent>(data => SetState(GameState.IN_GAME));
 
         GameData = JsonConvert.DeserializeObject<GameData>(
             Resources.Load<TextAsset>("settings").text
         );
 
-        MainMenuMusic = Resources.Load<AudioClip>("Audio/RemoveThese/mainmenu");
-        PreGameMusic = Resources.Load<AudioClip>("Audio/RemoveThese/pregame");
+        MainMenuMusic = Resources.Load<AudioClip>("Audio/pregame");
+        PreGameMusic = Resources.Load<AudioClip>("Audio/pregame");
         InGameMusic = Resources.Load<AudioClip>("Audio/RemoveThese/ingame");
     }
 
@@ -95,7 +97,7 @@ public class FlowManager : MonoBehaviour
                 SetState(GameState.MAIN_MENU);
                 break;
             case "ObsidianLibrary":
-                SetState(GameState.PRE_GAME);
+                SetState(GameState.INTRO);
                 break;
         }
     }
@@ -116,7 +118,7 @@ public class FlowManager : MonoBehaviour
             case GameState.PAUSE_MENU:
                 break;
             case GameState.PRE_GAME:
-                musicManager.Play(PreGameMusic, 0.5f);
+                musicManager.Play(PreGameMusic);
                 break;
         }
 

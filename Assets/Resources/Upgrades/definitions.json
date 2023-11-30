@@ -1,75 +1,5 @@
 [
   {
-    "Class": "DamageIncrease",
-    "Description": "Increases each shot's damage by {PercentageIncrease:0%}.",
-    "Name": "Increase Damage",
-    "Tiers": [
-      {
-        "Rarity": "common",
-        "Cost": 15,
-        "Stats": {
-          "PercentageIncrease": 0.05
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 40,
-        "Stats": {
-          "PercentageIncrease": 0.1
-        }
-      },
-      {
-        "Rarity": "rare",
-        "Cost": 100,
-        "Stats": {
-          "PercentageIncrease": 0.18
-        }
-      },
-      {
-        "Rarity": "legendary",
-        "Cost": 200,
-        "Stats": {
-          "PercentageIncrease": 0.25
-        }
-      }
-    ]
-  },
-  {
-    "Class": "CooldownDecrease",
-    "Description": "Decreases the time between each shot by {ValueDecrease} seconds.",
-    "Name": "Cooldown Reduction",
-    "Tiers": [
-      {
-        "Rarity": "common",
-        "Cost": 15,
-        "Stats": {
-          "ValueDecrease": 0.05
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 40,
-        "Stats": {
-          "ValueDecrease": 0.09
-        }
-      },
-      {
-        "Rarity": "rare",
-        "Cost": 80,
-        "Stats": {
-          "ValueDecrease": 0.13
-        }
-      },
-      {
-        "Rarity": "legendary",
-        "Cost": 150,
-        "Stats": {
-          "ValueDecrease": 0.2
-        }
-      }
-    ]
-  },
-  {
     "Class": "SpinningWeapons",
     "Description": "You summon a flurry of {Count} swords that spin around you, dealing {DamageEach} whenever striking an enemy.",
     "Name": "Flurry Of Blades",
@@ -148,6 +78,46 @@
         "Stats": {
           "Chance": 0.1,
           "Path": "Upgrades/Bullets/GrenadeBullet"
+        }
+      }
+    ]
+  },
+  {
+    "Prefix": "saw",
+    "Class": "RandomBulletChance",
+    "Description": "Increases your chance by {Chance:0%} to shoot an additional saw which bounces around dealing damage.",
+    "Name": "Saw Storm",
+    "Tiers": [
+      {
+        "Rarity": "common",
+        "Cost": 10,
+        "Stats": {
+          "Chance": 0.02,
+          "Path": "Upgrades/Bullets/Saw"
+        }
+      },
+      {
+        "Rarity": "uncommon",
+        "Cost": 25,
+        "Stats": {
+          "Chance": 0.04,
+          "Path": "Upgrades/Bullets/Saw"
+        }
+      },
+      {
+        "Rarity": "rare",
+        "Cost": 75,
+        "Stats": {
+          "Chance": 0.08,
+          "Path": "Upgrades/Bullets/Saw"
+        }
+      },
+      {
+        "Rarity": "legendary",
+        "Cost": 200,
+        "Stats": {
+          "Chance": 0.1,
+          "Path": "Upgrades/Bullets/Saw"
         }
       }
     ]

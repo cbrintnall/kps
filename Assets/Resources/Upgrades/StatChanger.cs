@@ -1,6 +1,13 @@
 using System.Diagnostics;
 using System.Reflection;
 
+/// <summary>
+/// A dummy upgrade, since all upgrades inherit from a certain class
+///
+/// The behavior applies the fields to this and then immediately applies
+/// the stat upgrades. This is used to encapsulate all stat upgrades, like
+/// health, damage, explosive size etc.
+/// </summary>
 public class StatChanger : Upgrade
 {
     public string FieldName;
@@ -26,12 +33,15 @@ public class StatChanger : Upgrade
 
         if (value is StatFloat sf)
         {
-            sf.Incr(Amount, IsPercentage ? StatOperation.Percent : StatOperation.Value);
+            sf.Incr(
+                (float)Amount / (IsPercentage ? 100.0f : 1.0f),
+                IsPercentage ? StatOperation.Percent : StatOperation.Value
+            );
         }
         else if (value is StatInt si)
         {
             Debug.Assert(!IsPercentage);
-            si.Incr(Amount);
+            si.Incr(Amount, StatOperation.Value);
         }
     }
 }
