@@ -86,14 +86,18 @@ public class SettingsMenu : MonoBehaviour
         }
     }
 
-    void Open()
+    public void Open()
     {
+        if (!Root.activeInHierarchy)
+            Root.SetActive(true);
         playerInputManager.PushCursor(CursorLockMode.Confined);
         playerInputManager.TogglePause(true);
     }
 
-    void Close()
+    public void Close()
     {
+        if (Root.activeInHierarchy)
+            Root.SetActive(false);
         playerInputManager.PopCursor();
         playerInputManager.TogglePause(false);
         Root.SetActive(false);

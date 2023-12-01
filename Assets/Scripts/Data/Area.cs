@@ -203,13 +203,13 @@ public class Area : MonoBehaviour, ISpawn
 
     public void DoSpawn(Transform target)
     {
-        target.position = transform.TransformPoint(GetRandomLocation());
+        target.position = GetRandomLocation();
     }
 
     public Vector3 GetRandomLocation()
     {
         var pt = PickRandomTriangle().RandomPoint();
-        return new Vector3(pt.x, 0.0f, pt.y);
+        return transform.TransformPoint(new Vector3(pt.x, 0.0f, pt.y));
     }
 
     private void Recalculate()

@@ -72,6 +72,7 @@ public class PlayerEquipmentController : MonoBehaviour
     [Header("Audio")]
     public AudioClip UpgradePickup;
     public AudioClip HitSound;
+    public AudioClip CritSound;
 
     private CinemachineImpulseSource impulseSource;
     private MouseLook mouseLook;

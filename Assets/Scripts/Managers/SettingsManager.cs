@@ -19,6 +19,7 @@ public class SettingsManager : MonoBehaviour
 
     AudioMixer mixer;
 
+    public int Highscore => PlayerPrefs.GetInt("highscore", 0);
     public bool Fullscreen => Convert.ToBoolean(PlayerPrefs.GetInt("fullscreen", 1));
     public Tuple<int, int>[] Resolutions =>
         Screen.resolutions.Select(res => Tuple.Create(res.width, res.height)).ToArray();
@@ -119,6 +120,12 @@ public class SettingsManager : MonoBehaviour
         int truefov = Mathf.Clamp(val, 50, 140);
         _cachedFov = truefov;
         PlayerPrefs.SetInt("FOV", truefov);
+        PlayerPrefs.Save();
+    }
+
+    public void SetHighScore(int val)
+    {
+        PlayerPrefs.SetInt("highscore", val);
         PlayerPrefs.Save();
     }
 

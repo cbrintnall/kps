@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public enum HomingStrategy
 {
@@ -18,6 +15,10 @@ public class HomingMissile : MonoBehaviour
     public int Damage = 3;
     public HomingStrategy Strategy = HomingStrategy.TARGETPOINT;
     public GameObject TargetPointFX;
+
+    [Header("Explosion data")]
+    public Explosion Explosion;
+    public int ExplosionSize;
 
     public Transform Target;
     public Vector3 TargetPoint;
@@ -45,7 +46,14 @@ public class HomingMissile : MonoBehaviour
             var pt = Instantiate(TargetPointFX);
             pt.transform.position = TargetPoint + Vector3.up * 0.25f;
             tp = pt;
-            tp.transform.localScale = Vector3.one * MonitorRadius * 4;
+            if (Explosion != null)
+            {
+                tp.transform.localScale *= ExplosionSize;
+            }
+            else
+            {
+                tp.transform.localScale = Vector3.one * MonitorRadius * 4;
+            }
         }
     }
 
@@ -60,6 +68,11 @@ public class HomingMissile : MonoBehaviour
                 ResolveTargetPoint();
                 break;
         }
+    }
+
+    void OnDestroy()
+    {
+        Destroy(tp);
     }
 
     void ResolveTargetPoint()
@@ -77,29 +90,12 @@ public class HomingMissile : MonoBehaviour
             {
                 broke = true;
             }
-            if (broke)
-            {
-                foreach (
-                    var hit in Physics.OverlapSphere(
-                        transform.position,
-                        2.0f,
-                        LayerMask.GetMask("Player", "Default")
-                    )
-                )
-                {
-                    if (hit.TryGetComponent(out Health health))
-                    {
-                        health.Damage(Damage);
-                    }
+        }
 
-                    if (tp)
-                    {
-                        Destroy(tp);
-                    }
-                    Destroy(gameObject);
-                    return;
-                }
-            }
+        if (Vector3.Distance(transform.position, nexttarget) < 2.0f)
+        {
+            CheckExplosion();
+            Destroy(gameObject);
         }
 
         transform.position += dir * Speed;
@@ -145,6 +141,7 @@ public class HomingMissile : MonoBehaviour
                         health.Damage(Damage);
                     }
 
+                    CheckExplosion();
                     Destroy(gameObject);
                 }
 
@@ -156,6 +153,7 @@ public class HomingMissile : MonoBehaviour
                     )
                 )
                 {
+                    CheckExplosion();
                     Destroy(gameObject);
                     return;
                 }
@@ -163,6 +161,15 @@ public class HomingMissile : MonoBehaviour
         }
 
         transform.position += dir * Speed;
+    }
+
+    void CheckExplosion()
+    {
+        if (Explosion != null)
+        {
+            var explosion = Instantiate(Explosion, transform.position, Quaternion.identity);
+            explosion.Size = ExplosionSize;
+        }
     }
 
     void OnDrawGizmos()

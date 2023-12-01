@@ -18,7 +18,7 @@ public class GrenadeBullet : Bullet
 
         // Normally against this, making an exception here.
         ExplosionDelay = PlayerEquipmentController.Instance.Stats.ExplosionDelay;
-        Damage = PlayerEquipmentController.Instance.Stats.GrenadeExplosiveDamage;
+        Damage = PlayerEquipmentController.Instance.Stats.ExplosionDamage;
     }
 
     public override void Shoot()
@@ -63,7 +63,7 @@ public class GrenadeBullet : Bullet
         );
 
         explosion.Layers = LayerMask.GetMask("Enemy");
-        explosion.Damage = PlayerEquipmentController.Instance.Stats.GrenadeExplosiveDamage;
+        explosion.Damage = PlayerEquipmentController.Instance.Stats.ExplosionDamage;
         explosion.Size = PlayerEquipmentController.Instance.Stats.ExplosionSize;
         explosion.Owner = PlayerEquipmentController.Instance.gameObject;
         Destroy(gameObject);

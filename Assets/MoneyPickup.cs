@@ -11,26 +11,19 @@ public class MoneyPickup : MonoBehaviour
 
     private PlayerEquipmentController target;
     private float targetTime;
-    private RoundManager roundManager;
 
     void Start()
     {
-        roundManager = FindObjectOfType<RoundManager>();
-        SingletonLoader
-            .Get<EventManager>()
-            .Subscribe<GameStateChangedEvent>(data =>
-            {
-                if (data.NewState != GameState.IN_GAME)
-                {
-                    Destroy(gameObject);
-                }
-            });
+        gameObject.AddComponent<DestroyOnRoundEnd>();
         target = PlayerEquipmentController.Instance;
     }
 
     void Update()
     {
-        if (PlayerEquipmentController.Instance.Health.Dead)
+        if (
+            PlayerEquipmentController.Instance == null
+            || PlayerEquipmentController.Instance.Health.Dead
+        )
             Destroy(gameObject);
 
         if (

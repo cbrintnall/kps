@@ -301,85 +301,13 @@ MonoBehaviour:
   Equipment: {fileID: 7709976338523695068}
   Legs: {fileID: 2527507268647263541}
   Handler: {fileID: 2643087629998819096}
-  Stats:
-    RocketDamage:
-      Max: 2147483647
-      Min: 0
-      Current: 3
-    HitScanDamage:
-      Max: 2147483647
-      Min: 0
-      Current: 3
-    GrenadeExplosiveDamage:
-      Max: 2147483647
-      Min: 0
-      Current: 2
-    GrenadeHitDamage:
-      Max: 2147483647
-      Min: 0
-      Current: 1
-    AllyDamageBonus:
-      Max: 2147483647
-      Min: 0
-      Current: 0
-    PistolCooldown:
-      Max: 15
-      Min: 0.001
-      Current: 1.25
-    ChargeSpeed:
-      Max: Infinity
-      Min: 0
-      Current: 0.01
-    CriticalChance:
-      Max: Infinity
-      Min: 0
-      Current: 0.05
-    CriticalMultiplier:
-      Max: Infinity
-      Min: 0
-      Current: 1.1
-    TurretDamage:
-      Max: 2147483647
-      Min: 0
-      Current: 1
-    ExplosionDelay:
-      Max: Infinity
-      Min: 0.3
-      Current: 1.5
-    ExplosionSize:
-      Max: Infinity
-      Min: 1
-      Current: 6
-    ExplosionDamage:
-      Max: 999999
-      Min: 0
-      Current: 3
-    EnemyPowerupDropChance:
-      Max: 1
-      Min: 0
-      Current: 0.1
-    PierceAmount:
-      Max: 999
-      Min: 1
-      Current: 1
-    ExplodeOnEnemyDeathChance:
-      Max: 100
-      Min: 0
-      Current: 0
-    KickExplosion:
-      Max: 100
-      Min: 0
-      Current: 0
-    MaxSawBounces:
-      Max: 100
-      Min: 1
-      Current: 3
   HealthMaterial: {fileID: 2100000, guid: b910d9bb33d2d2442ad43eab081fa7a4, type: 2}
   XPMaterial: {fileID: 2100000, guid: 0a7284147ec0c40498b07abcf2118e92, type: 2}
   Health: {fileID: 778358602821026027}
   level: 1
   UpgradePickup: {fileID: 8300000, guid: ea1f138e1095cfc48a35a702b707b525, type: 3}
   HitSound: {fileID: 8300000, guid: 51380c1f8c4aac1479037b4ec1491654, type: 3}
+  CritSound: {fileID: 8300000, guid: a395f5ff3ffd7f043933c17dbe1fe2b4, type: 3}
 --- !u!114 &778358602821026027
 MonoBehaviour:
   m_ObjectHideFlags: 0

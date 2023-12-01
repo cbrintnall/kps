@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 public class SingingEnemy : Enemy
 {
-    static List<Transform> points = new();
+    static Area[] areas;
 
     public StatFloat ShootCooldown = 5.0f;
     public ParticleSystem System;
@@ -14,21 +14,51 @@ public class SingingEnemy : Enemy
     public Spline Spline;
 
     TimeSince attack;
+    bool singing;
 
     void Start()
     {
+        if (areas == null)
+        {
+            areas = FindObjectsOfType<Area>();
+        }
+
         var target = new GameObject($"{name}-target");
 
-        target.transform.position =
-            EnemyMaster.RangedPoints.Random().position
-            + new Vector3(Random.Range(1.0f, 5.0f), 0.0f, Random.Range(1.0f, 5.0f));
+        target.transform.position = areas.Random().GetRandomLocation();
 
         this.target = target.transform;
+    }
+
+    void OnDestroy()
+    {
+        if (target != null)
+        {
+            Destroy(target.gameObject);
+        }
+    }
+
+    // this is bad, dont follow this
+    protected override void UpdateMoving()
+    {
+        if (!singing)
+        {
+            base.UpdateMoving();
+        }
+        else
+        {
+            UpdateAtTarget();
+        }
     }
 
     protected override void UpdateAtTarget()
     {
         base.UpdateAtTarget();
+
+        if (!singing)
+        {
+            singing = true;
+        }
 
         if (target)
         {
@@ -73,5 +103,11 @@ public class SingingEnemy : Enemy
                 PitchWobble = 0.1f
             }
         );
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawSphere(target.transform.position, 0.5f);
     }
 }

@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 4513313142129213494}
   - component: {fileID: 7218410512548598621}
   - component: {fileID: 1051408487692405616}
-  - component: {fileID: 5458132622224542730}
   - component: {fileID: 5977603240345058623}
+  - component: {fileID: 5474578465692146076}
   m_Layer: 13
   m_Name: NoteMissile
   m_TagString: Untagged
@@ -119,11 +119,14 @@ MonoBehaviour:
   Height: 10
   BreakOffDistance: 3
   MonitorRadius: 0.47
-  Speed: 0.25
+  Speed: 0.5
   Damage: 3
   Strategy: 1
   TargetPointFX: {fileID: 8448747087937323111, guid: c940334d5a5b4bd4189bd34049571d44,
     type: 3}
+  Explosion: {fileID: 9027908171997827130, guid: 0317db3c39946894e8f112a36d4fc6aa,
+    type: 3}
+  ExplosionSize: 3
   Target: {fileID: 0}
   TargetPoint: {x: 0, y: 0, z: 0}
 --- !u!54 &7218410512548598621
@@ -266,18 +269,6 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!114 &5458132622224542730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6168545836375999003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0c84605d88b9224db45d53831a5ebea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &5977603240345058623
 AudioSource:
   m_ObjectHideFlags: 0
@@ -374,6 +365,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5474578465692146076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6168545836375999003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c84605d88b9224db45d53831a5ebea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8234147956422883296
 GameObject:
   m_ObjectHideFlags: 0

@@ -122,7 +122,7 @@ public abstract class Gun : MonoBehaviour
                 audioManager.Play(
                     new AudioPayload()
                     {
-                        Clip = Controller.HitSound,
+                        Clip = didCrit ? Controller.CritSound : Controller.HitSound,
                         Is2D = true,
                         PitchWobble = didCrit ? 1.0f : 0.0f
                     }

@@ -17,7 +17,6 @@ public class RoundManager : MonoBehaviour
     public int KPS => masters.Sum(m => m.KPS);
 
     private Coroutine roundCoroutine;
-    private PlayerInputManager playerInputManager;
     private UpgradesManager upgradesManager;
     private EnemyMaster[] masters;
     private FlowManager flowManager;
@@ -32,12 +31,17 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
-        playerInputManager = SingletonLoader.Get<PlayerInputManager>();
         upgradesManager = SingletonLoader.Get<UpgradesManager>();
         TimeLeft = RoundTimeSeconds;
         masters = FindObjectsOfType<EnemyMaster>();
         flowManager = SingletonLoader.Get<FlowManager>();
         RoundTimeSeconds = CalculateRoundTime(1);
+        SingletonLoader
+            .Get<EventManager>()
+            .Subscribe<PlayerDeathEvent>(ev =>
+            {
+                Active = false;
+            });
     }
 
     int CalculateRoundTime(int round) =>

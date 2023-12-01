@@ -73,6 +73,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     public int Deficit => TargetValue - CurrentValue;
     public List<EnemySequence> Sequences = new();
     public int KPS => Mathf.RoundToInt(killsPerSecond);
+    public int Score => killCount;
 
     // This should eventually become a curve, dictated by difficulty
     public float TargetIncreaseSeconds =>
@@ -87,6 +88,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     int sequenceCount = 0;
     EnemySequence currentSequence;
     RoundManager roundManager;
+    int killCount;
 
     [IngameDebugConsole.ConsoleMethod("spawn", "Spawns monster with ID")]
     public static void ForceSpawn(string id)
@@ -245,11 +247,19 @@ public class EnemyMaster : MonoBehaviour, IReloadable
 
         health.Data.ValueChanged += (int current, int delta) =>
         {
-            if (current == 0)
+            if (current <= 0)
             {
                 CurrentValue -= payload.Value;
                 ActiveEnemies.Remove(enemy);
                 killedInLastSecond++;
+
+                if (
+                    PlayerEquipmentController.Instance != null
+                    && !PlayerEquipmentController.Instance.Health.Dead
+                )
+                {
+                    killCount++;
+                }
             }
         };
 

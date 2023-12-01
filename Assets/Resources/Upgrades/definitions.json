@@ -159,11 +159,55 @@
     ]
   },
   {
+    "Prefix": "fanthehammer",
+    "Class": "SprayUpgrade",
+    "Description": "Shoot six bullets in rapid succession.",
+    "Name": "Fan The Hammer",
+    "Behavior": "SprayPatternBehavior",
+    "Tiers": [
+      {
+        "Rarity": "rare",
+        "Cost": 20,
+        "Stats": {
+          "Data": {
+            "Delay": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.0
+            },
+            "BulletPattern": [
+              {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+              }
+            ],
+            "PerBurst": {
+              "min": 0,
+              "max": 2147483647,
+              "base": 6
+            },
+            "PerBulletDirectionVariance": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "BurstCooldown": {
+              "min": 0.0,
+              "max": 3.4028234663852886E+38,
+              "base": 0.05
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
     "Prefix": "vtrishot",
     "Class": "SprayUpgrade",
     "Description": "Shoots three bullets in a vertical line.",
     "Name": "Vertical Tri-Shot",
-    "Behavior": "TieredUpgradeBehavior",
+    "Behavior": "SprayPatternBehavior",
     "Tiers": [
       {
         "Rarity": "common",
@@ -217,7 +261,7 @@
     "Class": "SprayUpgrade",
     "Description": "Shoots three bullets in a horizontal line.",
     "Name": "Horizontal Tri-Shot",
-    "Behavior": "TieredUpgradeBehavior",
+    "Behavior": "SprayPatternBehavior",
     "Tiers": [
       {
         "Rarity": "common",
@@ -271,7 +315,7 @@
     "Class": "SprayUpgrade",
     "Description": "Shoots a second bullet immediately after shooting the initial bullet.",
     "Name": "Stutter Step",
-    "Behavior": "TieredUpgradeBehavior",
+    "Behavior": "SprayPatternBehavior",
     "Tiers": [
       {
         "Rarity": "common",
@@ -315,7 +359,7 @@
     "Class": "SprayUpgrade",
     "Description": "Shoots four bullets in a 2 by 2 pattern.",
     "Name": "Chunk Shot",
-    "Behavior": "TieredUpgradeBehavior",
+    "Behavior": "SprayPatternBehavior",
     "Tiers": [
       {
         "Rarity": "uncommon",
