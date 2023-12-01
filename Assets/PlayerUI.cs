@@ -8,8 +8,6 @@ using UnityEngine;
 
 public class PlayerUI : MonoBehaviour
 {
-    const string UPLOAD_TXT = "Press 'F12' to upload logs";
-
     public DeathPanel DeathPanel;
     public AudioClip LogsSuccessSound;
     public TextMeshProUGUI UpgradeText;
@@ -91,6 +89,8 @@ public class PlayerUI : MonoBehaviour
 
     void UploadLogs(string message)
     {
+        return;
+
         using (var client = new WebClient())
         {
             var form = new NameValueCollection
@@ -109,7 +109,7 @@ public class PlayerUI : MonoBehaviour
             {
                 GUIUtility.systemCopyBuffer = resp;
                 LogText.text = message;
-                this.WaitThen(3.0f, () => LogText.text = UPLOAD_TXT);
+                this.WaitThen(3.0f, () => LogText.text = "");
             }
 
             SingletonLoader
