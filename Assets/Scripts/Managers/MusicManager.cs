@@ -44,4 +44,10 @@ public class MusicManager : MonoBehaviour
             target.DOFade(1.0f, fadetime);
         }
     }
+
+    public void Stop(float fadetime)
+    {
+        AudioSource target = a.isPlaying ? a : b;
+        target.DOFade(0.0f, fadetime).OnComplete(() => target.Stop());
+    }
 }

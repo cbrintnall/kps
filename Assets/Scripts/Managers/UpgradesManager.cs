@@ -22,7 +22,9 @@ public class StatUpgradeDirective : Attribute
     public string[] Requires;
     public bool IsPercent = true;
     public string Name;
-    public string Description = "Stat increase description goes here.";
+    public string StatName;
+    public string Description =
+        "{Amount:cond:<0:Decreases|Increases} {StatName} by {IsPercentage:{Amount}%|{Amount}}.";
 }
 
 public class UpgradeGroup
@@ -216,11 +218,23 @@ public class UpgradesManager : MonoBehaviour, IReloadable
         upgrades = new();
         foreach (var definition in intermediate)
         {
-            var generated = definition.ToData();
-            foreach (var upgrade in generated)
+            try
             {
-                Assert.IsFalse(upgrades.ContainsKey(upgrade.GenerateId()), "Clash for upgrade key");
-                upgrades.Add(upgrade.GenerateId(), upgrade);
+                var generated = definition.ToData();
+                foreach (var upgrade in generated)
+                {
+                    Assert.IsFalse(
+                        upgrades.ContainsKey(upgrade.GenerateId()),
+                        "Clash for upgrade key"
+                    );
+                    upgrades.Add(upgrade.GenerateId(), upgrade);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning(
+                    $"Skipped ingesting upgrade {definition.Name} due to {e.GetType()} exception."
+                );
             }
         }
 
@@ -252,16 +266,15 @@ public class UpgradesManager : MonoBehaviour, IReloadable
                 var tiers = rarities.SelectEnumerate(
                     (rarity, idx) =>
                     {
-                        return new UpgradeTierDefinition()
+                        Dictionary<string, object> stats = new Dictionary<string, object>()
                         {
-                            Rarity = rarity,
-                            Stats = new Dictionary<string, object>()
-                            {
-                                { "FieldName", duo.Item1.Name },
-                                { "Amount", duo.Item2.Values[idx] },
-                                { "IsPercentage", duo.Item2.IsPercent }
-                            }
+                            { "FieldName", duo.Item1.Name },
+                            { "Amount", duo.Item2.Values[idx] },
+                            { "IsPercentage", duo.Item2.IsPercent },
+                            { "StatName", duo.Item2.StatName }
                         };
+
+                        return new UpgradeTierDefinition() { Rarity = rarity, Stats = stats };
                     }
                 );
 

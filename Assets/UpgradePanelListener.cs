@@ -22,7 +22,7 @@ public class UpgradePanelListener : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        // canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup = GetComponent<CanvasGroup>();
         ClosePanels();
     }
 
@@ -30,7 +30,7 @@ public class UpgradePanelListener : MonoBehaviour
     {
         SingletonLoader.Get<UpgradesManager>().UpdateUpgradeList();
         gameObject.SetActive(true);
-        // canvasGroup.blocksRaycasts = true;
+        canvasGroup.blocksRaycasts = true;
         RemainingText.text = "Choices Remaining\n" + PlayerUpgradeManager.Instance.Upgrades;
         for (int i = 0; i < CreateCount; i++)
         {
@@ -56,7 +56,7 @@ public class UpgradePanelListener : MonoBehaviour
         panels = new();
         SingletonLoader.Get<PlayerInputManager>().PopCursor();
         DOTween.To(() => Time.timeScale, scale => Time.timeScale = scale, 1.0f, 0.75f);
-        // canvasGroup.blocksRaycasts = false;
+        canvasGroup.blocksRaycasts = false;
         ClosedPanels?.Invoke();
     }
 }

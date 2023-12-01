@@ -2,7 +2,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
     public float SATISFIED_DISTANCE = 2.5f;
     public GameObject Money;
@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     public bool Flying;
     public EnemyDefinition Definition
     {
+        get => definition_;
         set
         {
             try
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
                     transform.localScale =
                         Vector3.one + Vector3.one * Convert.ToInt32(additionalScale);
                 }
+                definition_ = value;
             }
             catch (Exception e)
             {
@@ -45,6 +47,7 @@ public class Enemy : MonoBehaviour
     private CharacterController characterController;
     private Vector3 targetOffset;
     private Tweener scalePunch;
+    EnemyDefinition definition_;
 
     void Awake()
     {
@@ -61,6 +64,8 @@ public class Enemy : MonoBehaviour
         SubscribeToAnimationEvents(animationEventsHandler);
     }
 
+    protected abstract void Attacked();
+
     protected virtual void SubscribeToAnimationEvents(AnimationEventsHandler handler)
     {
         handler?.GetComponent<Animator>().SetBool("Holding", false);
@@ -70,10 +75,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void BeforeDeath(HitPayload payload)
     {
-        if (
-            UnityEngine.Random.Range(1, 100)
-            > PlayerEquipmentController.Instance.Stats.ExplodeOnEnemyDeathChance
-        )
+        if (Utilities.Randf() > PlayerEquipmentController.Instance.Stats.ExplodeOnEnemyDeathChance)
             return;
 
         var explosion = Instantiate(
@@ -94,7 +96,9 @@ public class Enemy : MonoBehaviour
             var pulse = Instantiate(Resources.Load<GameObject>("FX/BloodPulse"));
             pulse.PositionFrom(this);
 
-            Instantiate(Money, transform.position, Quaternion.identity);
+            var moneys = Instantiate(Money, transform.position, Quaternion.identity);
+
+            moneys.GetComponent<MoneyPickup>().Value = Definition.Value;
 
             if (
                 Utilities.Randf() <= PlayerEquipmentController.Instance.Stats.EnemyPowerupDropChance
@@ -114,7 +118,7 @@ public class Enemy : MonoBehaviour
         {
             OnHit.Play();
             if (scalePunch == null || !scalePunch.active)
-                scalePunch = transform.DOPunchScale(Vector3.one * 1.2f, 0.2f);
+                scalePunch = transform.DOPunchScale(Vector3.one * 1.1f, 0.2f);
             if (OnHurtSound)
             {
                 SingletonLoader

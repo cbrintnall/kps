@@ -26,18 +26,20 @@ public class Door : MonoBehaviour, IInteractable
         SingletonLoader.Get<AudioManager>().Play(new AudioPayload() { Clip = Chime, Is2D = true });
         SingletonLoader.Get<EventManager>().Publish(new DoorKickedEvent());
 
-        broken = true;
-        var rb = GetComponent<Rigidbody>();
+        Break(payload);
 
-        gameObject.layer = LayerMask.NameToLayer("Nothing");
         foreach (Door door in Others)
         {
-            var otherrb = door.GetComponent<Rigidbody>();
-            otherrb.isKinematic = false;
-            otherrb.AddForce(payload.LookDir * HitForce, ForceMode.Impulse);
-            otherrb.gameObject.layer = LayerMask.NameToLayer("Nothing");
+            door.Break(payload);
         }
+    }
+
+    protected void Break(InteractionPayload payload)
+    {
+        broken = true;
+        var rb = GetComponent<Rigidbody>();
         rb.isKinematic = false;
         rb.AddForce(payload.LookDir.normalized * HitForce, ForceMode.Impulse);
+        this.WaitThen(15.0f, () => Destroy(gameObject));
     }
 }

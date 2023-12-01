@@ -239,9 +239,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Skull: {fileID: 977485247}
   SkullCamera: {fileID: 775426770}
-  OptionsRoot: {fileID: 208355445}
-  Offset: 15
-  OffsetSpeed: 3
   SkullLookSpeed: 2
 --- !u!82 &332171879
 AudioSource:

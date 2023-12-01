@@ -12,6 +12,7 @@ public class PlayerUI : MonoBehaviour
 
     public DeathPanel DeathPanel;
     public AudioClip LogsSuccessSound;
+    public TextMeshProUGUI UpgradeText;
     public TextMeshProUGUI LogText;
     public TextMeshProUGUI LevelText;
 
@@ -39,7 +40,12 @@ public class PlayerUI : MonoBehaviour
 
         Application.logMessageReceived += (string condition, string stackTrace, LogType type) =>
         {
-            logs.Add($"\n[{DateTime.Now} | {type}]: {condition}\n---\n{stackTrace}\n");
+            string line = $"\n[{DateTime.Now} | {type}]: {condition}\n---";
+            if (type == LogType.Error || type == LogType.Assert)
+            {
+                line += $"\n{stackTrace}";
+            }
+
             if (type == LogType.Error)
             {
                 errorCount++;
@@ -62,6 +68,24 @@ public class PlayerUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F12))
         {
             UploadLogs("Uploaded, thank you!");
+        }
+
+        var upgrades = PlayerUpgradeManager.Instance;
+        if (upgrades.Upgrades > 0)
+        {
+            UpgradeText.gameObject.SetActive(true);
+            if (upgrades.Upgrades > 1)
+            {
+                UpgradeText.text = $"{upgrades.Upgrades} Upgrades Remaining, press \"T\"";
+            }
+            else
+            {
+                UpgradeText.text = $"{upgrades.Upgrades} Upgrade Remaining, press \"T\"";
+            }
+        }
+        else
+        {
+            UpgradeText.gameObject.SetActive(false);
         }
     }
 

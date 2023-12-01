@@ -76,7 +76,6 @@ public class FlowManager : MonoBehaviour
     {
         var eventManager = SingletonLoader.Get<EventManager>();
 
-        eventManager.Subscribe<PlayGameEvent>(data => SetState(GameState.INTRO));
         eventManager.Subscribe<DoorKickedEvent>(data => SetState(GameState.PRE_GAME));
         eventManager.Subscribe<StartWavesEvent>(data => SetState(GameState.IN_GAME));
 
@@ -90,6 +89,16 @@ public class FlowManager : MonoBehaviour
     }
 
     void Start()
+    {
+        SyncStateToScene();
+
+        SceneManager.activeSceneChanged += (old, newScene) =>
+        {
+            SyncStateToScene();
+        };
+    }
+
+    private void SyncStateToScene()
     {
         switch (SceneManager.GetActiveScene().name)
         {
@@ -114,6 +123,9 @@ public class FlowManager : MonoBehaviour
                 break;
             case GameState.IN_GAME:
                 musicManager.Play(InGameMusic);
+                break;
+            case GameState.INTRO:
+                musicManager.Stop(1.0f);
                 break;
             case GameState.PAUSE_MENU:
                 break;

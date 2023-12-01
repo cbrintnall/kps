@@ -1,6 +1,7 @@
 using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 // Taken and modified from: https://github.com/IsaiahKelly/quake3-movement-for-unity/tree/master
 [RequireComponent(typeof(CharacterController))]
@@ -19,7 +20,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Stats")]
     public float MoveSpeed = 1.0f;
 
+    [Header("Audio")]
+    public AudioClip WalkSound;
+    public AudioClip FallSound;
+    public AudioClip LandSound;
+
     private CharacterController characterController;
+    private AudioManager audioManager;
 
     [System.Serializable]
     public class MovementSettings
@@ -60,6 +67,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private MovementSettings m_AirSettings = new MovementSettings(7, 2, 2);
 
+    [SerializeField]
+    private float m_walkCadence = 0.25f;
+
     /// <summary>
     /// Returns player's current speed.
     /// </summary>
@@ -85,10 +95,13 @@ public class PlayerMovement : MonoBehaviour
     private FovController fovController;
     private PlayerEquipmentController equipmentController;
     private PlayerInputManager playerInputManager;
+    private float m_airTime;
+    private TimeSince m_walkTs;
 
     void Awake()
     {
         Instance = this;
+        audioManager = SingletonLoader.Get<AudioManager>();
     }
 
     private void Start()
@@ -103,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         m_MoveInput = new Vector3(playerInputManager.MoveDir.x, 0, playerInputManager.MoveDir.y);
-        float maxSpeed = 0.0f;
+        float maxSpeed;
 
         QueueJump();
 
@@ -111,8 +124,24 @@ public class PlayerMovement : MonoBehaviour
         if (m_Character.isGrounded)
         {
             GroundMove();
-            m_TimeOffGround = 0.0f;
             maxSpeed = m_GroundSettings.MaxSpeed;
+            if (m_TimeOffGround > 0.0f)
+            {
+                OnLanded(m_TimeOffGround);
+            }
+            m_TimeOffGround = 0.0f;
+            if (m_walkTs > m_walkCadence)
+            {
+                audioManager.Play(
+                    new AudioPayload()
+                    {
+                        Clip = WalkSound,
+                        Is2D = true,
+                        Volume = 0.2f
+                    }
+                );
+                m_walkTs = 0.0f;
+            }
             Animator.SetBool("Moving", m_MoveInput.sqrMagnitude > 0);
         }
         else
@@ -121,6 +150,7 @@ public class PlayerMovement : MonoBehaviour
             m_TimeOffGround += Time.deltaTime;
             maxSpeed = m_AirSettings.MaxSpeed;
             Animator.SetBool("Moving", false);
+            m_walkTs = 0.0f;
         }
 
         // Move the character.
@@ -134,6 +164,14 @@ public class PlayerMovement : MonoBehaviour
 
         fovController.AdditionalFov =
             Mathf.InverseLerp(0.0f, maxSpeed, Speed * Time.deltaTime) * 10.0f;
+    }
+
+    private void OnLanded(float airtime)
+    {
+        if (airtime > 2.0f)
+        {
+            // audioManager.Play(new AudioPayload() { Clip = LandSound, Is2D = true });
+        }
     }
 
     // Queues the next jump.

@@ -21,7 +21,7 @@ public class TargetPoint : MonoBehaviour
             )
         )
         {
-            transform.position = hit.point + Vector3.up;
+            transform.position = hit.point + Vector3.up * .01f;
         }
     }
 }

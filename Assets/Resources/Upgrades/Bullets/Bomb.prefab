@@ -121,6 +121,8 @@ MonoBehaviour:
   Targets:
     serializedVersion: 2
     m_Bits: 128
+  TargetPoint: {fileID: 1904630800900404673}
+  ExplosionSize: 5
   Damage: 0
 --- !u!1001 &1534183591842598277
 PrefabInstance:
@@ -232,17 +234,17 @@ PrefabInstance:
     - target: {fileID: 5450619658908056034, guid: c940334d5a5b4bd4189bd34049571d44,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.118319
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5450619658908056034, guid: c940334d5a5b4bd4189bd34049571d44,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5450619658908056034, guid: c940334d5a5b4bd4189bd34049571d44,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -115.57525
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5450619658908056034, guid: c940334d5a5b4bd4189bd34049571d44,
         type: 3}
@@ -295,3 +297,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4690232492094431324}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1904630800900404673 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6591464479172007325, guid: c940334d5a5b4bd4189bd34049571d44,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690232492094431324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97ae39a9f7b5b664582313bd549527e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

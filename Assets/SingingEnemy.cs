@@ -51,22 +51,27 @@ public class SingingEnemy : Enemy
         if (attack > ShootCooldown)
         {
             attack = 0;
-            var missile = Instantiate(
-                Missile,
-                transform.position + Vector3.up * 3.0f,
-                Quaternion.identity
-            );
-
-            missile.Target = PlayerEquipmentController.Instance.transform;
-
-            this.PlayAtMe(
-                new AudioPayload()
-                {
-                    Clip = Notes.Random(),
-                    Location = transform.position,
-                    PitchWobble = 0.1f
-                }
-            );
+            Attacked();
         }
+    }
+
+    protected override void Attacked()
+    {
+        var missile = Instantiate(
+            Missile,
+            transform.position + Vector3.up * 3.0f,
+            Quaternion.identity
+        );
+
+        missile.Target = PlayerEquipmentController.Instance.transform;
+
+        this.PlayAtMe(
+            new AudioPayload()
+            {
+                Clip = Notes.Random(),
+                Location = transform.position,
+                PitchWobble = 0.1f
+            }
+        );
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BulletChanceData
 {
-    public HashSet<Bullet> Existing = new();
+    public Dictionary<Bullet, int> Counts = new();
 }
 
 public class RandomBulletChance : Upgrade
@@ -23,10 +23,20 @@ public class RandomBulletChance : Upgrade
 
         var custom = pipelineData.GetCustom<BulletChanceData>();
 
-        if (Utilities.Randf() > Chance || custom.Existing.Contains(Prefab))
+        if (custom.Counts.TryGetValue(Prefab, out int count))
+        {
+            if (count > 1)
+                return;
+        }
+        else
+        {
+            custom.Counts[Prefab] = 0;
+        }
+
+        if (Utilities.Randf() > Chance)
             return;
 
-        custom.Existing.Add(Prefab);
+        custom.Counts[Prefab]++;
 
         Gun.Shoot(new ShootRequestPayload() { PipelineData = pipelineData, BulletPrefab = Prefab });
     }

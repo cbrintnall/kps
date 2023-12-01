@@ -17,7 +17,7 @@ public class ShootPattern : MonoBehaviour
     public SprayData Data;
 
     Coroutine activeBurst;
-    int PerShot => Data.BulletPattern.Length;
+    public int PerShot => Data.BulletPattern.Length;
 
     [Button("Copy Output")]
     void SyncOutput()

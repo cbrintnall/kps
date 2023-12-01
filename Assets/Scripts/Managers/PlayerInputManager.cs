@@ -1,11 +1,11 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 // TODO: finish this class
 public class PlayerAction<T>
     where T : unmanaged
 {
+    public virtual string Representation => "";
     public event Action<T> Changed;
     public T Value;
     public bool Started;

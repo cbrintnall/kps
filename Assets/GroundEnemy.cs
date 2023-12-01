@@ -27,7 +27,7 @@ public class GroundEnemy : Enemy
         };
     }
 
-    protected virtual void Attacked()
+    protected override void Attacked()
     {
         attack = 0.0f;
 

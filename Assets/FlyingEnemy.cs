@@ -1,21 +1,28 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingEnemy : GroundEnemy
+public class FlyingEnemy : Enemy
 {
-    public float HeightOffset = 200.0f;
+    public Vector2 HeightOffsetRange = new Vector2(20.0f, 40.0f);
+    public float AttackCooldown = 3.0f;
     public Bomb BombPrefab;
+
+    TimeSince attacked;
 
     void Start()
     {
+        target = PlayerEquipmentController.Instance.transform;
         Animator.SetBool("Flying", true);
-        transform.position += Vector3.up * HeightOffset;
+        transform.position +=
+            Vector3.up * UnityEngine.Random.Range(HeightOffsetRange.x, HeightOffsetRange.y);
     }
 
     protected override void UpdateAtTarget()
     {
-        if (attack > 3.5f)
+        if (attacked > AttackCooldown)
         {
-            attack = 0.0f;
+            attacked = 0.0f;
             Attacked();
         }
     }

@@ -9,7 +9,7 @@ public class ExplosiveKick : Upgrade
         if (data.Health.Length == 0)
             return;
 
-        if (Random.Range(1, 100) > PlayerEquipmentController.Instance.Stats.KickExplosion)
+        if (Utilities.Randf() > PlayerEquipmentController.Instance.Stats.KickExplosion)
             return;
 
         var explosion = Instantiate(

@@ -40,8 +40,7 @@ public class MoneyPickup : MonoBehaviour
             ) <= PICKUP_DISTANCE
         )
         {
-            int value = (roundManager.KPS + 1) * Value;
-            PlayerEquipmentController.Instance.Money.Incr(value, StatOperation.Value);
+            PlayerEquipmentController.Instance.Money.Incr(Value, StatOperation.Value);
 
             SingletonLoader
                 .Get<AudioManager>()

@@ -91,6 +91,7 @@ public class ShootingTurret : MonoBehaviour
         return (
                 (Faction.Alliances & Alliance.PLAYER) > 0
                     ? PlayerEquipmentController.Instance.Stats.AllyDamageBonus
+                        + PlayerEquipmentController.Instance.Stats.TurretDamage
                     : 0
             ) + Damage;
     }

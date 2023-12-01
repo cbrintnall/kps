@@ -20,15 +20,4 @@ public class Revolver : Gun
 
         return bullet;
     }
-
-    protected override void OnShot()
-    {
-        base.OnShot();
-
-        if (ShootPatterns.Count == 0)
-            return;
-
-        pattern = (pattern + 1) % ShootPatterns.Count;
-        ShootPatterns[pattern].Shoot((variance) => Shoot(variance, null), ShootFX);
-    }
 }

@@ -16,7 +16,7 @@ public static class Curves
         );
     }
 
-    public static float GetTargetRateIncreaseTime(int elapsedTime, int b = 5000, int z = 4)
+    public static float GetTargetRateIncreaseTime(int elapsedTime, int b = 5000, int z = 10)
     {
         return 1.0f / Mathf.Log10((elapsedTime * (elapsedTime / b)) + z);
     }

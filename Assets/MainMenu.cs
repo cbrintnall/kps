@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
 
     public void Play()
     {
-        new PlayGameEvent().Emit();
+        SingletonLoader.Get<EventManager>().Publish(new PlayGameEvent());
         SceneManager.LoadScene("ObsidianLibrary");
     }
 

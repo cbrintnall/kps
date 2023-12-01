@@ -37,12 +37,26 @@ public class EventManager : MonoBehaviour
         if (!subscribers.ContainsKey(typeof(T)))
             return;
 
+        List<Delegate> removals = new();
         foreach (var subscriber in subscribers[typeof(T)])
         {
             if (subscriber is Action<T> subscribed)
             {
-                subscribed(data);
+                try
+                {
+                    subscribed(data);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"Subscribed threw exception {e.GetType()}, removing.");
+                    removals.Add(subscriber);
+                }
             }
+        }
+
+        foreach (var removal in removals)
+        {
+            subscribers[typeof(T)].Remove(removal);
         }
     }
 }

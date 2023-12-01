@@ -11,6 +11,7 @@ using System.Reflection;
 public class StatChanger : Upgrade
 {
     public string FieldName;
+    public string StatName;
     public int Amount;
     public bool IsPercentage;
 

@@ -7,18 +7,17 @@ using UnityEngine;
 public class FovController : MonoBehaviour
 {
     public float AdditionalFov = 0.0f;
-
-    private float FOV;
     private CinemachineVirtualCamera vCam;
+    SettingsManager settingsManager;
 
     void Awake()
     {
         vCam = GetComponent<CinemachineVirtualCamera>();
-        FOV = vCam.m_Lens.FieldOfView;
+        settingsManager = SingletonLoader.Get<SettingsManager>();
     }
 
     void Update()
     {
-        vCam.m_Lens.FieldOfView = FOV + AdditionalFov;
+        vCam.m_Lens.FieldOfView = settingsManager.FOV + AdditionalFov;
     }
 }

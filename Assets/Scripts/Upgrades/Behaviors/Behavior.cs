@@ -56,6 +56,11 @@ public class UpgradeBehavior
     {
         bool canSell = true;
 
+        if (PlayerEquipmentController.Instance == null)
+        {
+            return false;
+        }
+
         if (Data.Requires != null && Data.Requires.Length > 0)
         {
             canSell = Data.Requires.All(

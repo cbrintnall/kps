@@ -22,7 +22,7 @@ public class Powerup : MonoBehaviour
     public GameObject Bomb;
 
     public int HealAmount => GameSettings.PowerupStats.HealAmount;
-    public float SpeedDuration => GameSettings.PowerupStats.SpeedMultiplier;
+    public float SpeedDuration => GameSettings.PowerupStats.SpeedTime;
     public float SpeedMultiplier => GameSettings.PowerupStats.SpeedMultiplier;
     public int BombDamage => GameSettings.PowerupStats.ExplosionDamage;
     public float BombSize => GameSettings.PowerupStats.ExplosionSize;

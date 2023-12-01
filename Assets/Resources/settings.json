@@ -13,7 +13,7 @@
     "HealAmount": 5,
     "ExplosionSize": 30.0,
     "ExplosionDamage": 15,
-    "SpeedTime": 10.0,
+    "SpeedTime": 5.0,
     "SpeedMultiplier": 0.5
   },
   "UpgradeColors": {

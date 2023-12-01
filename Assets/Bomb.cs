@@ -3,7 +3,20 @@ using UnityEngine;
 public class Bomb : MonoBehaviour
 {
     public LayerMask Targets;
+    public TargetPoint TargetPoint;
+    public float ExplosionSize = 5.0f;
     public int Damage;
+
+    void Start()
+    {
+        TargetPoint.transform.SetParent(null);
+        TargetPoint.transform.localScale *= ExplosionSize;
+    }
+
+    void OnDestroy()
+    {
+        Destroy(TargetPoint.gameObject);
+    }
 
     void OnTriggerEnter(Collider _)
     {
@@ -14,7 +27,7 @@ public class Bomb : MonoBehaviour
         );
         explosion.Damage = Damage;
         explosion.Layers = Targets;
-        explosion.Size = 5.0f;
+        explosion.Size = ExplosionSize;
         Destroy(gameObject);
     }
 }

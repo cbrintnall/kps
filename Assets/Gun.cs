@@ -39,7 +39,7 @@ public abstract class Gun : MonoBehaviour
     [Header("Components")]
     public Transform Barrel;
     public Animator Animator;
-    public List<ShootPattern> ShootPatterns = new();
+    public ShootPattern Pattern;
 
     [Header("Audio")]
     public AudioClip OnShoot;
@@ -62,7 +62,7 @@ public abstract class Gun : MonoBehaviour
         ShotFlare.SetActive(false);
         audioManager = SingletonLoader.Get<AudioManager>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
-        ShootPatterns.AddRange(GetComponents<ShootPattern>());
+        AddPattern(GetComponent<ShootPattern>());
     }
 
     void Start()
@@ -71,7 +71,11 @@ public abstract class Gun : MonoBehaviour
         SingletonLoader.Get<PlayerInputManager>().PushCursor(CursorLockMode.Locked);
     }
 
-    public void AddPattern(ShootPattern pattern) => ShootPatterns.Add(pattern);
+    public void AddPattern(ShootPattern pattern)
+    {
+        Destroy(Pattern);
+        Pattern = pattern;
+    }
 
     public void Use()
     {
@@ -179,9 +183,26 @@ public abstract class Gun : MonoBehaviour
         return bullet;
     }
 
-    protected virtual void OnShot()
+    public virtual void OnShot(ShootRequestPayload request = null)
     {
         charge = 0.0f;
+        Pattern.Shoot(
+            (variance) =>
+            {
+                ShootRequestPayload usedPayload = request;
+                if (request != null)
+                {
+                    request.Variance = variance;
+                }
+                else
+                {
+                    usedPayload = new ShootRequestPayload() { Variance = variance };
+                }
+
+                return Shoot(usedPayload);
+            },
+            ShootFX
+        );
     }
 
     protected virtual void ShootFX()
@@ -196,7 +217,7 @@ public abstract class Gun : MonoBehaviour
         impulseSource.GenerateImpulse();
 
         ShotFlare.SetActive(true);
-        this.WaitThen(0.05f, () => ShotFlare.SetActive(false));
+        this.WaitThen(0.1f, () => ShotFlare.SetActive(false));
     }
 
     void Update()

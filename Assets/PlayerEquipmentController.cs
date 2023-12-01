@@ -67,11 +67,11 @@ public class PlayerEquipmentController : MonoBehaviour
     public Material HealthMaterial;
     public Material XPMaterial;
     public Health Health;
+    public int level = 1;
 
     [Header("Audio")]
     public AudioClip UpgradePickup;
     public AudioClip HitSound;
-    public int level = 1;
 
     private CinemachineImpulseSource impulseSource;
     private MouseLook mouseLook;
@@ -83,6 +83,7 @@ public class PlayerEquipmentController : MonoBehaviour
     private bool amDead;
     private int requiredXP => Curves.GetRequiredXP(level);
     private float smoothedMoney = 0.0f;
+    private float airTime;
     private float normalizedXP =>
         Mathf.InverseLerp(
             (float)Mathf.Max(Curves.GetRequiredXP(level - 1), 0.0f),
@@ -361,6 +362,7 @@ public class PlayerEquipmentController : MonoBehaviour
             return;
         var lookData = mouseLook.LookData;
         lookingAt = null;
+        Crosshair.Instance.Hint.text = "";
 
         Equipment.OverrideStart = Tuple.Create(false, Vector3.zero);
 
@@ -392,6 +394,7 @@ public class PlayerEquipmentController : MonoBehaviour
             if (hit.collider.TryGetComponent(out IInteractable interactable))
             {
                 lookingAt = interactable;
+                Crosshair.Instance.Hint.text = "'F'";
             }
         }
     }
