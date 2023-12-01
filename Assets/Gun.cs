@@ -114,7 +114,8 @@ public abstract class Gun : MonoBehaviour
                     new DamagePayload()
                     {
                         Amount = damage,
-                        Owner = PlayerEquipmentController.Instance.gameObject
+                        Owner = PlayerEquipmentController.Instance.gameObject,
+                        WasCrit = didCrit
                     }
                 );
 

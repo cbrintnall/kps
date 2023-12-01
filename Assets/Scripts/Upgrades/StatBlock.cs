@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 /// <summary>
 /// A large class holding all the stats relevant to a given player
 /// </summary>
-[Serializable]
 public class StatBlock
 {
     [Header("Base Damage")]
@@ -17,9 +16,9 @@ public class StatBlock
         Name = "Damage",
         StatName = "damage"
     )]
-    public StatInt HitScanDamage = 1;
-    public StatInt GrenadeExplosiveDamage = 2;
-    public StatInt GrenadeHitDamage = 1;
+    public StatInt HitScanDamage = new StatInt(10, 1000, 10);
+    public StatInt GrenadeExplosiveDamage = 20;
+    public StatInt GrenadeHitDamage = 10;
 
     [StatUpgradeDirective(
         IsPercent = false,
@@ -47,7 +46,7 @@ public class StatBlock
         StatName = "critical chance"
     )]
     public StatFloat CriticalChance = 0.05f;
-    public StatFloat CriticalMultiplier = 1.1f;
+    public StatFloat CriticalMultiplier = 1.5f;
 
     [StatUpgradeDirective(
         IsPercent = false,
@@ -55,7 +54,7 @@ public class StatBlock
         Name = "Turret Damage",
         StatName = "turret damage"
     )]
-    public StatInt TurretDamage = 1;
+    public StatInt TurretDamage = 5;
 
     [Header("Timing")]
     public StatFloat ExplosionDelay = new StatFloat(1.5f, float.PositiveInfinity, 0.3f);
@@ -75,7 +74,7 @@ public class StatBlock
         Name = "Exposive Damage",
         StatName = "explosive damage"
     )]
-    public StatInt ExplosionDamage = new StatInt(3, 999999, 0);
+    public StatInt ExplosionDamage = new StatInt(8, 999999, 0);
 
     [Header("Drop chances")]
     [StatUpgradeDirective(

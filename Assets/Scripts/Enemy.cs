@@ -118,7 +118,7 @@ public abstract class Enemy : MonoBehaviour
         {
             OnHit.Play();
             if (scalePunch == null || !scalePunch.active)
-                scalePunch = transform.DOPunchScale(Vector3.one * 1.1f, 0.2f);
+                scalePunch = transform.DOPunchScale(Vector3.one * 1.05f, 0.2f);
             if (OnHurtSound)
             {
                 SingletonLoader

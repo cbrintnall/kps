@@ -111,10 +111,10 @@ public class PlayerInputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.BackQuote))
-        {
-            TogglePause(!Paused);
-        }
+        // if (Input.GetKeyDown(KeyCode.BackQuote))
+        // {
+        //     TogglePause(!Paused);
+        // }
 
         Cancel.UpdateValue(Input.GetKey(KeyCode.Escape));
 

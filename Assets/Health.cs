@@ -8,12 +8,14 @@ public class HitPayload
     public int Amount;
     public int Dealt;
     public int Remaining;
+    public bool Crit;
 }
 
 public class DamagePayload
 {
     public GameObject Owner;
     public int Amount;
+    public bool WasCrit;
 }
 
 public class HealPayload
@@ -42,7 +44,8 @@ public class Health : MonoBehaviour
             {
                 Amount = payload.Amount,
                 Owner = payload.Owner,
-                Remaining = Data.Current
+                Remaining = Data.Current,
+                Crit = payload.WasCrit
             }
         );
     }

@@ -1,49 +1,5 @@
 [
   {
-    "Class": "SpinningWeapons",
-    "Description": "You summon a flurry of {Count} swords that spin around you, dealing {DamageEach} whenever striking an enemy.",
-    "Name": "Flurry Of Blades",
-    "Behavior": "TieredUpgradeBehavior",
-    "Tiers": [
-      {
-        "Rarity": "common",
-        "Cost": 20,
-        "Stats": {
-          "WeaponCount": 3,
-          "DamageEach": 1,
-          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 50,
-        "Stats": {
-          "WeaponCount": 5,
-          "DamageEach": 1,
-          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
-        }
-      },
-      {
-        "Rarity": "rare",
-        "Cost": 200,
-        "Stats": {
-          "WeaponCount": 6,
-          "DamageEach": 2,
-          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
-        }
-      },
-      {
-        "Rarity": "legendary",
-        "Cost": 400,
-        "Stats": {
-          "WeaponCount": 12,
-          "DamageEach": 2,
-          "Path": "Upgrades/TouchWeapons/SpinningWeapon"
-        }
-      }
-    ]
-  },
-  {
     "Class": "RandomBulletChance",
     "Description": "Increases your chance by {Chance:0%} to shoot an additional grenade, exploding on impact and dealing 3 damage.",
     "Name": "Explosive Drive",
@@ -477,46 +433,6 @@
         "Cost": 300,
         "Stats": {
           "Force": 150.0
-        }
-      }
-    ]
-  },
-  {
-    "Class": "HealPerSecond",
-    "Description": "The surrounding light fills your hollow soul, healing you for an additional {Amount} every {Time} seconds.",
-    "Name": "Heals For The Soul",
-    "Behavior": "TieredUpgradeBehavior",
-    "Tiers": [
-      {
-        "Rarity": "common",
-        "Cost": 30,
-        "Stats": {
-          "Amount": 1.0,
-          "Time": 7.5
-        }
-      },
-      {
-        "Rarity": "uncommon",
-        "Cost": 70,
-        "Stats": {
-          "Amount": 3.0,
-          "Time": 7.5
-        }
-      },
-      {
-        "Rarity": "rare",
-        "Cost": 120,
-        "Stats": {
-          "Amount": 5.0,
-          "Time": 7.5
-        }
-      },
-      {
-        "Rarity": "legendary",
-        "Cost": 300,
-        "Stats": {
-          "Amount": 8.0,
-          "Time": 7.5
         }
       }
     ]

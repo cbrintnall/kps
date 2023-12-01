@@ -14,7 +14,7 @@
       "primaryColor": "#3271a8",
       "secondaryColor": "#a85c32",
       "stats": {
-        "Health": 3,
+        "Health": 10,
         "Damage": 1,
         "MoveSpeed": 6.0
       }
@@ -27,7 +27,7 @@
       "primaryColor": "#8455bd",
       "secondaryColor": "#fcee6a",
       "stats": {
-        "Health": 6,
+        "Health": 20,
         "Damage": 1,
         "MoveSpeed": 3.2
       }
@@ -38,7 +38,7 @@
       "prefab": "Enemies/SingingEnemy",
       "type": "SingingEnemy",
       "stats": {
-        "Health": 3,
+        "Health": 10,
         "Damage": 1,
         "MoveSpeed": 5.0
       }
@@ -51,7 +51,7 @@
       "primaryColor": "#232323",
       "secondaryColor": "#BF0202",
       "stats": {
-        "Health": 1,
+        "Health": 4,
         "Damage": 6,
         "MoveSpeed": 17.0
       }
@@ -64,9 +64,9 @@
       "primaryColor": "#E3E3E3",
       "secondaryColor": "#fcee6a",
       "stats": {
-        "Health": 1,
+        "Health": 4,
         "Damage": 3,
-        "MoveSpeed": 10.0
+        "MoveSpeed": 19.0
       }
     },
     {
@@ -77,9 +77,9 @@
       "primaryColor": "#3271a8",
       "secondaryColor": "#a85c32",
       "stats": {
-        "Health": 3,
+        "Health": 10,
         "Damage": 1,
-        "MoveSpeed": 6.0
+        "MoveSpeed": 8.0
       }
     },
     {
@@ -90,7 +90,7 @@
       "primaryColor": "#631010",
       "secondaryColor": "#fcee6a",
       "stats": {
-        "Health": 50,
+        "Health": 75,
         "Damage": 10,
         "MoveSpeed": 2.0,
         "Scale": 0.5
