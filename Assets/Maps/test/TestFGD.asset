@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a9c3285f9ebbf4c9457843b92d2da3, type: 3}
+  m_Name: TestFGD
+  m_EditorClassIdentifier: 
+  config:
+    exportModels: 1
+    worldspawn:
+      className: worldspawn
+      classType: 1
+      editorSize:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 16, y: 16, z: 16}
+      editorColor:
+        serializedVersion: 2
+        rgba: 4278190335
+      editorHelp: 
+      entityPrefab: {fileID: 0}
+      meshPrefab: {fileID: 0}
+      objScale: 0
+      baseIncludes: []
+      properties: []
+    includeFgds: []
+    entityTypes:
+    - className: PlayerSpawn
+      classType: 0
+      editorSize:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+      editorColor:
+        serializedVersion: 2
+        rgba: 0
+      editorHelp: 
+      entityPrefab: {fileID: 1000326060424456411, guid: f9483f8c4630ad4488a6b15d13a84344,
+        type: 3}
+      meshPrefab: {fileID: 0}
+      objScale: 0
+      baseIncludes: []
+      properties: []
+    entityBases: []
+    lastSavePath: C:/Users/chris/OneDrive/Desktop/TrenchBroom/games/IDOL/IDOL.fgd

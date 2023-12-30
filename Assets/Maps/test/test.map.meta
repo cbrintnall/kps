@@ -1,0 +1,55 @@
+fileFormatVersion: 2
+guid: 432793f60d56973418b96dc00942efc6
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: d478d1a633c2c4e4294e2a05e84e44fd, type: 3}
+  externalConfig: {fileID: 11400000, guid: 528a3bfb19a6fba46af804c3fe897c8d, type: 2}
+  config:
+    scalingFactor: 0.03125
+    snappingThreshold: 1
+    defaultSmoothingAngle: 80
+    removeHiddenFaces: 1
+    addTangents: 1
+    addLightmapUV2: 1
+    meshCompression: 0
+    bakeVertexColorAO: 0
+    occlusionLength: 25
+    cullTextures:
+    - sky
+    - trigger
+    - skip
+    - hint
+    - nodraw
+    - null
+    - clip
+    - origin
+    colliderMode: 3
+    nonsolidEntities:
+    - illusionary
+    triggerEntities:
+    - trigger
+    - water
+    findMaterials: 1
+    globalTexelScale: 1
+    defaultTexSize: 128
+    defaultMaterial: {instanceID: 0}
+    materialOverrides: []
+    mergeToWorld:
+    - func_group
+    - func_detail
+    staticEntities:
+    - worldspawn
+    - func_wall
+    layer: 0
+    castShadows: 2
+    addScopaEntityComponent: 1
+    callOnEntityImport: 1
+    entityPrefab: {instanceID: 0}
+    meshPrefab: {instanceID: 0}
+    entityOverrides: []
+    fgdAsset: {instanceID: 0}

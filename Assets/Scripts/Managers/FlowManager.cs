@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using IngameDebugConsole;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -71,6 +72,14 @@ public class FlowManager : MonoBehaviour
         SingletonLoader.Get<FlowManager>().SetState(GameState.INTRO);
     }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void OnGameStart()
+    {
+#if UNITY_EDITOR
+        SceneManager.LoadScene("ObsidianLibrary");
+#endif
+    }
+
     void Awake()
     {
         var eventManager = SingletonLoader.Get<EventManager>();
@@ -85,6 +94,18 @@ public class FlowManager : MonoBehaviour
         MainMenuMusic = Resources.Load<AudioClip>("Audio/pregame");
         PreGameMusic = Resources.Load<AudioClip>("Audio/pregame");
         InGameMusic = Resources.Load<AudioClip>("Audio/RemoveThese/ingame");
+
+        SceneManager.activeSceneChanged += OnSceneChanged;
+    }
+
+    void OnSceneChanged(Scene old, Scene newer)
+    {
+        var roomMaster = FindObjectOfType<RoomMaster>();
+
+        if (roomMaster != null)
+        {
+            roomMaster.StartRoom();
+        }
     }
 
     void Start()

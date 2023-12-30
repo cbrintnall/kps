@@ -93,10 +93,14 @@ public class PlayerMovement : MonoBehaviour
     private Transform m_Tran;
     private float m_TimeOffGround = 0.0f;
     private FovController fovController;
-    private PlayerEquipmentController equipmentController;
     private PlayerInputManager playerInputManager;
-    private float m_airTime;
     private TimeSince m_walkTs;
+
+    public void DoJump(float force)
+    {
+        m_PlayerVelocity = Vector3.up * force;
+        m_Character.Move(m_PlayerVelocity * Time.deltaTime);
+    }
 
     void Awake()
     {
@@ -107,7 +111,6 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         m_Tran = transform;
-        equipmentController = GetComponent<PlayerEquipmentController>();
         m_Character = GetComponent<CharacterController>();
         fovController = Camera.GetComponent<FovController>();
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();

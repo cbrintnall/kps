@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
 {
-    public float SATISFIED_DISTANCE = 2.5f;
     public GameObject Money;
     public ParticleSystem OnHit;
     public StatFloat MoveSpeed = 4.0f;
@@ -12,6 +11,7 @@ public abstract class Enemy : MonoBehaviour
     public Animator Animator;
     public Canvas Canvas;
     public bool Flying;
+    public Transform Target => target;
     public EnemyDefinition Definition
     {
         get => definition_;
@@ -44,22 +44,17 @@ public abstract class Enemy : MonoBehaviour
     protected Transform target;
     protected AnimationEventsHandler animationEventsHandler;
     protected AudioManager audioManager;
-    private CharacterController characterController;
-    private Vector3 targetOffset;
     private Tweener scalePunch;
+    private EnemyMover mover;
     EnemyDefinition definition_;
 
     void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        mover = GetComponent<EnemyMover>();
         animationEventsHandler = Animator.gameObject.GetComponent<AnimationEventsHandler>();
         audioManager = SingletonLoader.Get<AudioManager>();
         GetComponent<Health>().OnDamaged += OnHealthHit;
-        targetOffset = new Vector3(
-            UnityEngine.Random.insideUnitCircle.x,
-            0.0f,
-            UnityEngine.Random.insideUnitCircle.y
-        );
+
         target = PlayerEquipmentController.Instance.transform;
         SubscribeToAnimationEvents(animationEventsHandler);
     }
@@ -137,33 +132,14 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void UpdateMoving()
     {
-        if (target)
+        if (mover.AtTarget)
         {
-            var dir = (target.position + targetOffset - transform.position).normalized;
-            transform.forward = new Vector3(dir.x, 0.0f, dir.z);
+            UpdateAtTarget();
         }
-
-        if (target != null)
+        else
         {
-            float distance = Vector3.Distance(
-                new Vector3(transform.position.x, 0.0f, transform.position.z),
-                new Vector3(target.position.x, 0.0f, target.position.z)
-            );
-
-            if (distance > SATISFIED_DISTANCE)
-            {
-                characterController.Move(transform.forward * MoveSpeed * Time.fixedDeltaTime);
-                Animator?.SetBool("Moving", true);
-            }
-            else
-            {
-                UpdateAtTarget();
-                Animator?.SetBool("Moving", false);
-            }
+            mover.Move();
         }
-
-        if (!Flying)
-            characterController.Move(Vector3.down * 9.8f);
     }
 
     void FixedUpdate()

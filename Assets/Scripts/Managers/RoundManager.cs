@@ -27,6 +27,12 @@ public class RoundManager : MonoBehaviour
         FindObjectOfType<RoundManager>().EndCurrentRound();
     }
 
+    [IngameDebugConsole.ConsoleMethod("startround", "Ends the current round")]
+    public static void StartTheRound()
+    {
+        FindObjectOfType<RoundManager>().StartRound();
+    }
+
     void Awake() { }
 
     void Start()
@@ -64,6 +70,7 @@ public class RoundManager : MonoBehaviour
         Round.Incr(1, StatOperation.Value);
         Active = true;
         masters.ForEach(spawner => spawner.enabled = true);
+        SingletonLoader.Get<EventManager>().Publish(new StartWavesEvent());
     }
 
     public void EndCurrentRound()

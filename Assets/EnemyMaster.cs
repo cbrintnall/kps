@@ -105,10 +105,6 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     void Awake()
     {
         roundManager = FindObjectOfType<RoundManager>();
-        RangedPoints = GameObject
-            .FindGameObjectsWithTag("ranged")
-            .Select(go => go.transform)
-            .ToList();
         ActiveEnemies = new();
         Reload();
         TargetValue = Data.StartValue;

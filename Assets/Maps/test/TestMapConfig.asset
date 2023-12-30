@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cea1913b3d1d63b45b0c5af2a1c16a16, type: 3}
+  m_Name: TestMapConfig
+  m_EditorClassIdentifier: 
+  config:
+    scalingFactor: 0.03125
+    snappingThreshold: 1
+    defaultSmoothingAngle: 80
+    removeHiddenFaces: 1
+    addTangents: 1
+    addLightmapUV2: 1
+    meshCompression: 0
+    bakeVertexColorAO: 0
+    occlusionLength: 25
+    cullTextures:
+    - sky
+    - trigger
+    - skip
+    - hint
+    - nodraw
+    - null
+    - clip
+    - origin
+    colliderMode: 3
+    nonsolidEntities:
+    - illusionary
+    triggerEntities:
+    - trigger
+    - water
+    findMaterials: 1
+    globalTexelScale: 1
+    defaultTexSize: 128
+    defaultMaterial: {fileID: 2100000, guid: c25565a534a8dea489028a22416c8a2b, type: 2}
+    materialOverrides: []
+    mergeToWorld:
+    - func_group
+    - func_detail
+    staticEntities:
+    - worldspawn
+    - func_wall
+    layer: 0
+    castShadows: 2
+    addScopaEntityComponent: 1
+    callOnEntityImport: 1
+    entityPrefab: {fileID: 0}
+    meshPrefab: {fileID: 0}
+    entityOverrides: []
+    fgdAsset: {fileID: 0}
