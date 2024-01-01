@@ -29,15 +29,20 @@ public class Health : MonoBehaviour
 
     public StatInt Data;
     public bool Dead => Data.Current <= 0;
+    public bool Invincible;
 
     public void Damage(int amount)
     {
+        if (Invincible)
+            return;
         Data.Incr(-amount, StatOperation.Value);
         OnDamaged?.Invoke(new HitPayload() { Amount = amount, Remaining = Data.Current });
     }
 
     public void Damage(DamagePayload payload)
     {
+        if (Invincible)
+            return;
         Data.Incr(-payload.Amount, StatOperation.Value);
         OnDamaged?.Invoke(
             new HitPayload()

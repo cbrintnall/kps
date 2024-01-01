@@ -6,57 +6,37 @@ public abstract class Enemy : MonoBehaviour
 {
     public GameObject Money;
     public ParticleSystem OnHit;
-    public StatFloat MoveSpeed = 4.0f;
-    public StatInt Damage = 3;
     public Animator Animator;
     public Canvas Canvas;
     public bool Flying;
     public Transform Target => target;
-    public EnemyDefinition Definition
-    {
-        get => definition_;
-        set
-        {
-            try
-            {
-                if (value == null)
-                    return;
-
-                Damage.Set(Convert.ToInt32(value.Stats["Damage"]));
-                MoveSpeed.Set(Convert.ToSingle(value.Stats["MoveSpeed"]));
-                GetComponent<Health>().Data.Set(Convert.ToInt32(value.Stats["Health"]));
-                if (value.Stats.TryGetValue("Scale", out object additionalScale))
-                {
-                    transform.localScale =
-                        Vector3.one + Vector3.one * Convert.ToInt32(additionalScale);
-                }
-                definition_ = value;
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"Error grabbing stats for enemy: {e}");
-            }
-        }
-    }
-
+    public EnemyDefinition Definition;
     public AudioClip OnHurtSound;
+    public Health Health { get; private set; }
+    public int Damage => Definition.Stats.Damage;
+    public float MoveSpeed => Definition.Stats.MoveSpeed;
 
     protected Transform target;
     protected AnimationEventsHandler animationEventsHandler;
     protected AudioManager audioManager;
     private Tweener scalePunch;
     private EnemyMover mover;
-    EnemyDefinition definition_;
 
     void Awake()
     {
         mover = GetComponent<EnemyMover>();
         animationEventsHandler = Animator.gameObject.GetComponent<AnimationEventsHandler>();
         audioManager = SingletonLoader.Get<AudioManager>();
-        GetComponent<Health>().OnDamaged += OnHealthHit;
+        Health = GetComponent<Health>();
+        Health.OnDamaged += OnHealthHit;
 
         target = PlayerEquipmentController.Instance.transform;
         SubscribeToAnimationEvents(animationEventsHandler);
+    }
+
+    void Start()
+    {
+        Health.Data.Set(Definition.Stats.Health);
     }
 
     protected abstract void Attacked();
@@ -134,6 +114,7 @@ public abstract class Enemy : MonoBehaviour
     {
         if (mover.AtTarget)
         {
+            transform.forward = (target.transform.position - transform.position).normalized;
             UpdateAtTarget();
         }
         else

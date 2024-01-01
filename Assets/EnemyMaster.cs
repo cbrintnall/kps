@@ -20,19 +20,6 @@ public class EnemyData
     public float MinCoefficient;
 }
 
-public class EnemyDefinition
-{
-    public GameObject Prefab;
-    public Type Component;
-    public int Value;
-    public Color PrimaryColor;
-    public Color SecondaryColor;
-    public Dictionary<string, object> Stats = new();
-    public int StartsAt = 0;
-
-    public string GenerateId() => Value.ToString();
-}
-
 public class EnemySequence
 {
     public EnemyDefinition Enemy;
@@ -94,12 +81,12 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     public static void ForceSpawn(string id)
     {
         var master = FindObjectOfType<EnemyMaster>();
-        var payload = master.Data.Definitions.Where(def => def.GenerateId() == id).FirstOrDefault();
+        // var payload = master.Data.Definitions.Where(def => def.GenerateId() == id).FirstOrDefault();
 
-        if (payload != null)
-        {
-            master.SpawnPayload(payload);
-        }
+        // if (payload != null)
+        // {
+        //     master.SpawnPayload(payload);
+        // }
     }
 
     void Awake()
@@ -113,7 +100,7 @@ public class EnemyMaster : MonoBehaviour, IReloadable
     EnemySequence BuildSequence()
     {
         var target = Data.Definitions
-            .Where(def => def.StartsAt <= roundManager.TimeLeft)
+            // .Where(def => def.StartsAt <= roundManager.TimeLeft)
             .Where(def => def.Value * Data.MinSequenceSize < TargetValue)
             .Random();
 

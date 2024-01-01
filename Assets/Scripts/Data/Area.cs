@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Triangulator
@@ -209,7 +210,8 @@ public class Area : MonoBehaviour, ISpawn
     public Vector3 GetRandomLocation()
     {
         var pt = PickRandomTriangle().RandomPoint();
-        return transform.TransformPoint(new Vector3(pt.x, 0.0f, pt.y));
+        // return transform.TransformPoint(new Vector3(pt.x, 0.0f, pt.y));
+        return transform.TransformPoint(new Vector3(pt.x, points.Average(pt => pt.y), pt.y));
     }
 
     private void Recalculate()
@@ -249,6 +251,29 @@ public class Area : MonoBehaviour, ISpawn
         }
 
         return triangles.Last();
+    }
+
+    [Button]
+    void SnapPointsToGround()
+    {
+        for (int i = 0; i < points.Length; i++)
+        {
+            var pt = points[i];
+            if (
+                Physics.Raycast(
+                    transform.TransformPoint(pt),
+                    Vector3.down,
+                    out RaycastHit hit,
+                    float.PositiveInfinity,
+                    LayerMask.GetMask("Default")
+                )
+            )
+            {
+                pt = hit.point;
+            }
+
+            points[i] = transform.InverseTransformPoint(pt);
+        }
     }
 
     void OnDrawGizmos()

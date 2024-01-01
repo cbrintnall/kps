@@ -14,7 +14,6 @@ public class MoneyPickup : MonoBehaviour
 
     void Start()
     {
-        gameObject.AddComponent<DestroyOnRoundEnd>();
         target = PlayerEquipmentController.Instance;
     }
 

@@ -6,12 +6,19 @@ using UnityEngine;
 
 public class ConVar : System.Attribute { }
 
+public class DrawVar
+{
+    public string Name;
+    public Func<object> Callback;
+}
+
 [Singleton]
 public class DebugManager : MonoBehaviour
 {
     public static bool DebugEnabled;
 
     Dictionary<Action, TimeSince> timedDraw = new();
+    List<DrawVar> debugDraw = new();
 
     private static bool ParseObject(string input, out object output)
     {
@@ -64,6 +71,36 @@ public class DebugManager : MonoBehaviour
                 info.SetValue(null, value);
             }
         }
+    }
+
+    public void AddDrawVar(DrawVar v)
+    {
+        debugDraw.Add(v);
+    }
+
+    void OnGUI()
+    {
+        GUI.BeginGroup(new Rect(0, 0, 300, 1000));
+        int cnt = 0;
+        List<DrawVar> toRemove = new();
+        foreach (var var in debugDraw)
+        {
+            try
+            {
+                GUI.Label(new Rect(0, 16 * cnt, 300, 16), $"{var.Name}={var.Callback()}");
+                cnt++;
+            }
+            catch (Exception e)
+            {
+                toRemove.Add(var);
+            }
+        }
+
+        foreach (var var in toRemove)
+        {
+            debugDraw.Remove(var);
+        }
+        GUI.EndGroup();
     }
 
     void Awake()

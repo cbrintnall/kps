@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26920a269743dff42a6b0f3db705e0fd, type: 3}
+  m_Name: ObsidianLibrary_WaveOne
+  m_EditorClassIdentifier: 
+  Groups:
+  - {fileID: 11400000, guid: 9a316769e3ad9374589b98e32faa07a9, type: 2}

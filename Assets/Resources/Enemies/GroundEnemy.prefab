@@ -5019,9 +5019,10 @@ GameObject:
   - component: {fileID: 5860096778104892660}
   - component: {fileID: 7201380965130494712}
   - component: {fileID: 6386795443122845683}
-  - component: {fileID: 5518197610994539087}
   - component: {fileID: 2181490508249290924}
   - component: {fileID: 2985701102455726875}
+  - component: {fileID: 45722293563121266}
+  - component: {fileID: 5061623563969496903}
   m_Layer: 6
   m_Name: GroundEnemy
   m_TagString: enemy
@@ -5061,17 +5062,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Money: {fileID: 661362883223099981, guid: d527c25ec06d4eb45afd83dcdae4ce7d, type: 3}
   OnHit: {fileID: 3097780029065283270}
-  MoveSpeed:
-    Max: Infinity
-    Min: 0
-    Current: 15
-  Damage:
-    Max: 2147483647
-    Min: 0
-    Current: 1
   Animator: {fileID: 8569133262331575364}
   Canvas: {fileID: 1538391478690417242}
   Flying: 0
+  Definition: {fileID: 0}
   OnHurtSound: {fileID: 8300000, guid: b385773b65c13014b80b157f366cd41c, type: 3}
   SwingSounds:
   - {fileID: 8300000, guid: 84dfae3a2ca525342945b6b89d7b4a33, type: 3}
@@ -5094,6 +5088,7 @@ MonoBehaviour:
     Max: 2147483647
     Min: 0
     Current: 5
+  Invincible: 0
 --- !u!114 &6386795443122845683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5107,32 +5102,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Text: {fileID: 7669769042043501983, guid: dc70d44060bbd2d4d8a8c18ea2eb07c5, type: 3}
---- !u!143 &5518197610994539087
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5695155049666429459}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 1
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.96, z: 0}
 --- !u!195 &2181490508249290924
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5140,16 +5109,16 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5695155049666429459}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
-  m_Radius: 0.99
+  m_Radius: 1.1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -5167,6 +5136,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d204a3bbcaef74686c4d9e9c4335b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &45722293563121266
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5695155049666429459}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &5061623563969496903
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5695155049666429459}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.68
+  m_Height: 2.08
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.81, z: 0}
 --- !u!1001 &7583343247625104977
 PrefabInstance:
   m_ObjectHideFlags: 0

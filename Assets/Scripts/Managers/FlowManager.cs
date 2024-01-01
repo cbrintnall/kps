@@ -98,15 +98,7 @@ public class FlowManager : MonoBehaviour
         SceneManager.activeSceneChanged += OnSceneChanged;
     }
 
-    void OnSceneChanged(Scene old, Scene newer)
-    {
-        var roomMaster = FindObjectOfType<RoomMaster>();
-
-        if (roomMaster != null)
-        {
-            roomMaster.StartRoom();
-        }
-    }
+    void OnSceneChanged(Scene old, Scene newer) { }
 
     void Start()
     {

@@ -1,9 +1,10 @@
 #if UNITY_EDITOR
+using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Area))]
-public class AreaEditor : Editor
+public class AreaEditor : OdinEditor
 {
     private void OnSceneGUI()
     {
