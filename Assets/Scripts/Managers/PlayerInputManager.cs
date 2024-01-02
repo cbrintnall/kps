@@ -48,6 +48,7 @@ public class PlayerBinaryAction : PlayerAction<bool>
 [@Singleton]
 public class PlayerInputManager : MonoBehaviour
 {
+    public PlayerBinaryAction Sliding = new();
     public PlayerBinaryAction OnInteract = new();
     public PlayerBinaryAction OnPrimaryAction = new();
     public PlayerBinaryAction OnSecondaryAction = new();
@@ -96,6 +97,7 @@ public class PlayerInputManager : MonoBehaviour
         if (pauseInput)
         {
             lastTimeScale = Time.timeScale;
+            Sliding.Reset();
             OpenUpgrades.Reset();
             OnInteract.Reset();
             OnPrimaryAction.Reset();
@@ -124,6 +126,7 @@ public class PlayerInputManager : MonoBehaviour
         LookDir = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         MoveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+        Sliding.UpdateValue(Input.GetKey(KeyCode.LeftControl));
         OpenUpgrades.UpdateValue(Input.GetKey(KeyCode.T));
         OnSecondaryAction.UpdateValue(Input.GetMouseButton(1));
         OnPrimaryAction.UpdateValue(Input.GetMouseButton(0));

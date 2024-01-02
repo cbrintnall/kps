@@ -15,6 +15,7 @@ public class DrawVar
 [Singleton]
 public class DebugManager : MonoBehaviour
 {
+    public const float DRAW_VAR_HEIGHT = 24.0f;
     public static bool DebugEnabled;
 
     Dictionary<Action, TimeSince> timedDraw = new();
@@ -87,7 +88,10 @@ public class DebugManager : MonoBehaviour
         {
             try
             {
-                GUI.Label(new Rect(0, 16 * cnt, 300, 16), $"{var.Name}={var.Callback()}");
+                GUI.Label(
+                    new Rect(0, DRAW_VAR_HEIGHT * cnt, 300, DRAW_VAR_HEIGHT),
+                    $"{var.Name}={var.Callback()}"
+                );
                 cnt++;
             }
             catch (Exception e)

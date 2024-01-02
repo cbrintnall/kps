@@ -7,10 +7,24 @@ public class RoomMaster : MonoBehaviour
     public bool RoomFinished => spawners.All(spawner => spawner.Finished);
     public bool WaveIsFinished => spawners.All(spawner => spawner.ActiveWaveFinished);
 
+    [HorizontalGroup("Debug", Title = "Debug")]
+    [SerializeField]
+    [Tooltip(
+        "Shouldn't be used in live - useful for testing constant combat, causes the spawners to never stop and loops around."
+    )]
+    bool loops;
+
+    [HorizontalGroup("Debug")]
+    [SerializeField]
+    [Tooltip("Causes the spawners to never trigger, the opposite of 'loops'.")]
+    bool dontSpawn;
+
+    [VerticalGroup("Dependencies")]
     [SerializeField]
     [RequiredListLength(MinLength = 1)]
     AreaSpawner[] spawners;
 
+    [VerticalGroup("Dependencies")]
     [SerializeField]
     [Required]
     PlayerTrigger startTrigger;
@@ -20,7 +34,9 @@ public class RoomMaster : MonoBehaviour
     void Awake()
     {
         spawners = GetComponentsInChildren<AreaSpawner>();
-        startTrigger.PlayerEntered += (_) => StartRoom();
+
+        if (!dontSpawn)
+            startTrigger.PlayerEntered += (_) => StartRoom();
 
         foreach (var spawner in spawners)
         {
@@ -41,7 +57,15 @@ public class RoomMaster : MonoBehaviour
         {
             if (RoomFinished)
             {
-                Debug.Log("Room done");
+                if (loops)
+                {
+                    wave = -1;
+                    DoWave();
+                }
+                else
+                {
+                    Debug.Log("Room done");
+                }
             }
             else
             {

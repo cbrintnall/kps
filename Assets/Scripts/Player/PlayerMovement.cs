@@ -1,7 +1,12 @@
 using Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Timeline;
+
+public enum PlayerMoveState
+{
+    GROUNDED,
+    IN_AIR,
+    SLIDING
+}
 
 // Taken and modified from: https://github.com/IsaiahKelly/quake3-movement-for-unity/tree/master
 [RequireComponent(typeof(CharacterController))]
@@ -25,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip FallSound;
     public AudioClip LandSound;
 
-    private CharacterController characterController;
     private AudioManager audioManager;
 
     [System.Serializable]
@@ -34,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
         public float MaxSpeed;
         public float Acceleration;
         public float Deceleration;
+        public float Gravity;
 
         public MovementSettings(float maxSpeed, float accel, float decel)
         {
@@ -46,9 +51,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField]
     private float m_Friction = 6;
-
-    [SerializeField]
-    private float m_Gravity = 20;
 
     [SerializeField]
     private float m_JumpForce = 8;
@@ -68,7 +70,16 @@ public class PlayerMovement : MonoBehaviour
     private MovementSettings m_AirSettings = new MovementSettings(7, 2, 2);
 
     [SerializeField]
+    private MovementSettings m_SlidingSettings = new MovementSettings(7, 2, 2);
+
+    [SerializeField]
     private float m_walkCadence = 0.25f;
+
+    [SerializeField]
+    private float m_wallTouchGravityMultiplier = 0.3f;
+
+    [SerializeField]
+    float m_wallJumpMultiplier = 1.5f;
 
     /// <summary>
     /// Returns player's current speed.
@@ -94,7 +105,13 @@ public class PlayerMovement : MonoBehaviour
     private float m_TimeOffGround = 0.0f;
     private FovController fovController;
     private PlayerInputManager playerInputManager;
+
+    [SerializeField]
+    private WallJumpDetector wallData;
     private TimeSince m_walkTs;
+    private Vector3 m_lastUsedNormal;
+    private Vector3 m_wallNormal => wallData.Data.Normal;
+    private bool m_isTouchingWall => wallData.Data.Hitting;
 
     public void DoJump(float force)
     {
@@ -106,7 +123,22 @@ public class PlayerMovement : MonoBehaviour
     {
         Instance = this;
         audioManager = SingletonLoader.Get<AudioManager>();
+        DebugManager debugManager = SingletonLoader.Get<DebugManager>();
+
+        debugManager.AddDrawVar(
+            new DrawVar() { Name = "Dot with wall", Callback = () => CanWallJump(m_wallNormal) }
+        );
+
+        debugManager.AddDrawVar(
+            new DrawVar() { Name = "Player touching wall", Callback = () => m_isTouchingWall }
+        );
     }
+
+    bool CanWallJump(Vector3 normal) =>
+        Mathf.Max(
+            Mathf.Abs(Vector3.Dot(Vector3.forward, normal)),
+            Mathf.Abs(Vector3.Dot(Vector3.right, normal))
+        ) >= 0.9f;
 
     private void Start()
     {
@@ -116,45 +148,37 @@ public class PlayerMovement : MonoBehaviour
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();
     }
 
+    private PlayerMoveState DetermineMoveState()
+    {
+        if (playerInputManager.Sliding)
+        {
+            return PlayerMoveState.SLIDING;
+        }
+
+        return m_Character.isGrounded ? PlayerMoveState.GROUNDED : PlayerMoveState.IN_AIR;
+    }
+
     private void Update()
     {
         m_MoveInput = new Vector3(playerInputManager.MoveDir.x, 0, playerInputManager.MoveDir.y);
-        float maxSpeed;
 
         QueueJump();
 
         // Set movement state.
-        if (m_Character.isGrounded)
+        switch (DetermineMoveState())
         {
-            GroundMove();
-            maxSpeed = m_GroundSettings.MaxSpeed;
-            if (m_TimeOffGround > 0.0f)
-            {
-                OnLanded(m_TimeOffGround);
-            }
-            m_TimeOffGround = 0.0f;
-            if (m_walkTs > m_walkCadence)
-            {
-                audioManager.Play(
-                    new AudioPayload()
-                    {
-                        Clip = WalkSound,
-                        Is2D = true,
-                        Volume = 0.2f
-                    }
-                );
-                m_walkTs = 0.0f;
-            }
-            Animator.SetBool("Moving", m_MoveInput.sqrMagnitude > 0);
+            case PlayerMoveState.GROUNDED:
+                DoGroundState();
+                break;
+            case PlayerMoveState.IN_AIR:
+                DoAirState();
+                break;
+            case PlayerMoveState.SLIDING:
+                DoSlideState();
+                break;
         }
-        else
-        {
-            AirMove();
-            m_TimeOffGround += Time.deltaTime;
-            maxSpeed = m_AirSettings.MaxSpeed;
-            Animator.SetBool("Moving", false);
-            m_walkTs = 0.0f;
-        }
+
+        ApplyJump();
 
         // Move the character.
         m_Character.Move(m_PlayerVelocity * Time.deltaTime);
@@ -164,17 +188,63 @@ public class PlayerMovement : MonoBehaviour
             -m_MoveInput.x * DUTCH_AMT,
             Time.deltaTime * DUTCH_SPEED
         );
-
-        fovController.AdditionalFov =
-            Mathf.InverseLerp(0.0f, maxSpeed, Speed * Time.deltaTime) * 10.0f;
     }
 
-    private void OnLanded(float airtime)
+    private void DoSlideState()
     {
-        if (airtime > 2.0f)
+        Animator.SetBool("Moving", false);
+        ApplyFriction(0, m_SlidingSettings);
+
+        var wishdir = new Vector3(
+            UnityEngine.Camera.main.transform.forward.x,
+            0.0f,
+            UnityEngine.Camera.main.transform.forward.z
+        );
+        wishdir.Normalize();
+
+        var wishspeed = wishdir.magnitude;
+        wishspeed *= m_SlidingSettings.MaxSpeed;
+
+        Accelerate(wishdir, wishspeed, m_SlidingSettings.Acceleration);
+
+        float grav = Mathf.Max(
+            m_SlidingSettings.Gravity,
+            Mathf.Min(m_TimeOffGround * FALL_SCALAR, m_JumpForce * m_SlidingSettings.Gravity)
+        );
+
+        // Reset the gravity velocity
+        m_PlayerVelocity.y = -grav * Time.deltaTime;
+    }
+
+    private void DoGroundState()
+    {
+        GroundMove();
+        m_TimeOffGround = 0.0f;
+        if (m_walkTs > m_walkCadence)
         {
-            // audioManager.Play(new AudioPayload() { Clip = LandSound, Is2D = true });
+            audioManager.Play(
+                new AudioPayload()
+                {
+                    Clip = WalkSound,
+                    Is2D = true,
+                    Volume = 0.2f
+                }
+            );
+            m_walkTs = 0.0f;
         }
+        Animator.SetBool("Moving", m_MoveInput.sqrMagnitude > 0);
+
+        fovController.AdditionalFov =
+            Mathf.InverseLerp(0.0f, m_GroundSettings.MaxSpeed, Speed * Time.deltaTime) * 10.0f;
+    }
+
+    private void DoAirState()
+    {
+        AirMove();
+        m_lastUsedNormal = Vector3.zero;
+        m_TimeOffGround += Time.deltaTime;
+        Animator.SetBool("Moving", false);
+        m_walkTs = 0.0f;
     }
 
     // Queues the next jump.
@@ -211,6 +281,7 @@ public class PlayerMovement : MonoBehaviour
         wishdir.Normalize();
         // CPM Air control.
         float wishspeed2 = wishspeed;
+        //test
         if (Vector3.Dot(m_PlayerVelocity, wishdir) < 0)
         {
             accel = m_AirSettings.Deceleration;
@@ -226,10 +297,23 @@ public class PlayerMovement : MonoBehaviour
             AirControl(wishdir, wishspeed2);
         }
 
+        float grav = Mathf.Max(
+            m_AirSettings.Gravity,
+            Mathf.Min(m_TimeOffGround * FALL_SCALAR, m_JumpForce * 5.0f)
+        );
+
+        if (m_isTouchingWall && !m_Character.isGrounded)
+        {
+            grav *= m_wallTouchGravityMultiplier;
+        }
+
+        if (Physics.Raycast(Camera.transform.position, Vector3.up, 1.0f))
+        {
+            grav *= 2.0f;
+        }
+
         // Apply gravity
-        m_PlayerVelocity.y -=
-            Mathf.Max(m_Gravity, Mathf.Min(m_TimeOffGround * FALL_SCALAR, m_JumpForce * 5.0f))
-            * Time.deltaTime;
+        m_PlayerVelocity.y -= grav * Time.deltaTime;
     }
 
     // Air control occurs when the player is in the air, it allows players to move side
@@ -273,11 +357,11 @@ public class PlayerMovement : MonoBehaviour
         // Do not apply friction if the player is queueing up the next jump
         if (!m_JumpQueued)
         {
-            ApplyFriction(1.0f);
+            ApplyFriction(1.0f, m_GroundSettings);
         }
         else
         {
-            ApplyFriction(0);
+            ApplyFriction(0, m_GroundSettings);
         }
 
         var wishdir = Vector3.zero;
@@ -297,16 +381,42 @@ public class PlayerMovement : MonoBehaviour
         Accelerate(wishdir, wishspeed, m_GroundSettings.Acceleration);
 
         // Reset the gravity velocity
-        m_PlayerVelocity.y = -m_Gravity * Time.deltaTime;
+        m_PlayerVelocity.y = -m_GroundSettings.Gravity * Time.deltaTime;
+    }
 
+    void ApplyJump()
+    {
         if (m_JumpQueued)
         {
-            m_PlayerVelocity.y = m_JumpForce;
+            bool wallJumping = false;
+            Vector3 jumpDirection = Vector3.up * m_JumpForce;
+            if (m_isTouchingWall && CanWallJump(m_wallNormal) && !m_Character.isGrounded)
+            {
+                if (m_wallNormal != m_lastUsedNormal)
+                {
+                    m_lastUsedNormal = m_wallNormal;
+                    jumpDirection =
+                        ((Vector3.up + m_wallNormal) / 2.0f).normalized
+                        * m_JumpForce
+                        * m_wallJumpMultiplier;
+
+                    m_PlayerVelocity = jumpDirection;
+                }
+            }
+            else if (!m_Character.isGrounded)
+            {
+                // If not touching wall and we're in the air, no double jump fucko
+                jumpDirection = Vector3.zero;
+            }
+
+            if (!wallJumping)
+                m_PlayerVelocity += jumpDirection;
+
             m_JumpQueued = false;
         }
     }
 
-    private void ApplyFriction(float t)
+    private void ApplyFriction(float t, MovementSettings movementSettings)
     {
         // Equivalent to VectorCopy();
         Vector3 vec = m_PlayerVelocity;
@@ -318,7 +428,7 @@ public class PlayerMovement : MonoBehaviour
         if (m_Character.isGrounded)
         {
             float control =
-                speed < m_GroundSettings.Deceleration ? m_GroundSettings.Deceleration : speed;
+                speed < movementSettings.Deceleration ? movementSettings.Deceleration : speed;
             drop = control * m_Friction * Time.deltaTime * t;
         }
 
