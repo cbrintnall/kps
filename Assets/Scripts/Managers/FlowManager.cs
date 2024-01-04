@@ -76,7 +76,7 @@ public class FlowManager : MonoBehaviour
     static void OnGameStart()
     {
 #if UNITY_EDITOR
-        SceneManager.LoadScene("ObsidianLibrary");
+        SceneManager.LoadScene("MapLoader");
 #endif
     }
 

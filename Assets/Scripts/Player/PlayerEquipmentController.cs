@@ -6,6 +6,7 @@ using Cinemachine;
 using IngameDebugConsole;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerLeveledEvent : BaseEvent
 {
@@ -59,6 +60,9 @@ public class PlayerEquipmentController : MonoBehaviour
         typeof(ExplosiveKick)
     };
 
+    [SerializeField]
+    Transform rightHandWeaponSpot;
+
     public StatInt Money = 0;
     public Gun Equipment;
     public Animator Legs;
@@ -83,17 +87,12 @@ public class PlayerEquipmentController : MonoBehaviour
     private PlayerMovement playerMovement;
     private bool amDead;
     private int requiredXP => Curves.GetRequiredXP(level);
-    private float smoothedMoney = 0.0f;
-    private float airTime;
     private float normalizedXP =>
         Mathf.InverseLerp(
             (float)Mathf.Max(Curves.GetRequiredXP(level - 1), 0.0f),
             (float)requiredXP,
             (float)Money
         );
-
-    // Mathf.RoundToInt(Mathf.Log10((level + 1) * 100) * (Mathf.Pow(level + 1, 2.0f) / 10.0f))
-    // + Mathf.RoundToInt(Mathf.Log10(level * 100) * (Mathf.Pow(level, 2.0f) / 10.0f));
 
     [ConsoleMethod("die", "insta kills you, dumby")]
     public static void Die()
@@ -215,7 +214,6 @@ public class PlayerEquipmentController : MonoBehaviour
         audioManager = SingletonLoader.Get<AudioManager>();
         playerMovement = GetComponent<PlayerMovement>();
         mouseLook = GetComponent<MouseLook>();
-        Equipment.Controller = this;
         impulseSource = GetComponent<CinemachineImpulseSource>();
         Handler.LegSwung += DoInteraction;
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();
@@ -277,7 +275,6 @@ public class PlayerEquipmentController : MonoBehaviour
             };
             SeedUpgrade(upgrade);
         }
-        PickupWeapon(Equipment);
     }
 
     void SeedUpgrade(Upgrade upgrade)
@@ -285,14 +282,23 @@ public class PlayerEquipmentController : MonoBehaviour
         upgrade.OnPickup(this);
     }
 
-    void PickupWeapon(Gun equipment)
+    public void PickupWeapon(Gun equipment)
     {
         Equipment = equipment;
+        Equipment.Controller = this;
+        Equipment.transform.SetParent(rightHandWeaponSpot);
+        Equipment.gameObject.SetLayerForMeAndChildren(LayerMask.NameToLayer("FirstPerson"));
+        Equipment.transform.LocalReset();
+        Equipment.NotifyPickedUp();
     }
 
-    void GiveMoney(int amt)
+    void DropWeapon()
     {
-        Money.Incr(amt, StatOperation.Value);
+        if (!Equipment)
+            return;
+
+        Equipment.NotifyDropped(GetGroundPosition());
+        Equipment = null;
     }
 
     // Update is called once per frame
@@ -303,6 +309,12 @@ public class PlayerEquipmentController : MonoBehaviour
 
         if (Equipment)
         {
+            if (playerInputManager.DropWeapon)
+            {
+                DropWeapon();
+                return;
+            }
+
             if (playerInputManager.OnPrimaryAction)
             {
                 Equipment.Use();
@@ -363,23 +375,11 @@ public class PlayerEquipmentController : MonoBehaviour
             return;
         var lookData = mouseLook.LookData;
         lookingAt = null;
-        Crosshair.Instance.Hint.text = "";
+        // Crosshair.Instance.Hint.text = "";
 
-        Equipment.OverrideStart = Tuple.Create(false, Vector3.zero);
-
-        if (
-            Physics.Raycast(
-                mouseLook.LookData.StartPoint,
-                (Equipment.Barrel.transform.position - mouseLook.LookData.StartPoint).normalized,
-                Vector3.Distance(
-                    Equipment.Barrel.transform.position,
-                    mouseLook.LookData.StartPoint
-                ),
-                LayerMask.GetMask("Default")
-            )
-        )
+        if (Equipment != null)
         {
-            Equipment.OverrideStart = Tuple.Create(true, mouseLook.LookData.EndPoint);
+            FixedUpdateEquipment();
         }
 
         if (
@@ -397,6 +397,26 @@ public class PlayerEquipmentController : MonoBehaviour
                 lookingAt = interactable;
                 Crosshair.Instance.Hint.text = "'F'";
             }
+        }
+    }
+
+    void FixedUpdateEquipment()
+    {
+        Equipment.OverrideStart = Tuple.Create(false, Vector3.zero);
+
+        if (
+            Physics.Raycast(
+                mouseLook.LookData.StartPoint,
+                (Equipment.Barrel.transform.position - mouseLook.LookData.StartPoint).normalized,
+                Vector3.Distance(
+                    Equipment.Barrel.transform.position,
+                    mouseLook.LookData.StartPoint
+                ),
+                LayerMask.GetMask("Default")
+            )
+        )
+        {
+            Equipment.OverrideStart = Tuple.Create(true, mouseLook.LookData.EndPoint);
         }
     }
 

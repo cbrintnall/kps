@@ -22,6 +22,15 @@ public abstract class Enemy : MonoBehaviour
     private Tweener scalePunch;
     private EnemyMover mover;
 
+    [IngameDebugConsole.ConsoleMethod("killall", "kills all enemies")]
+    public static void KillAllEnemies()
+    {
+        foreach (var enemy in FindObjectsOfType<Enemy>())
+        {
+            enemy.Health.InstaKill();
+        }
+    }
+
     void Awake()
     {
         mover = GetComponent<EnemyMover>();

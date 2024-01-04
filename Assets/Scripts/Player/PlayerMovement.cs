@@ -113,6 +113,12 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 m_wallNormal => wallData.Data.Normal;
     private bool m_isTouchingWall => wallData.Data.Hitting;
 
+    public void Warp(Vector3 pt)
+    {
+        transform.position = pt;
+        Physics.SyncTransforms();
+    }
+
     public void DoJump(float force)
     {
         m_PlayerVelocity = Vector3.up * force;
@@ -220,7 +226,7 @@ public class PlayerMovement : MonoBehaviour
     {
         GroundMove();
         m_TimeOffGround = 0.0f;
-        if (m_walkTs > m_walkCadence)
+        if (m_walkTs > m_walkCadence && playerInputManager.MoveDir != Vector2.zero)
         {
             audioManager.Play(
                 new AudioPayload()

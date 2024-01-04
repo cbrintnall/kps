@@ -56,6 +56,7 @@ public class PlayerInputManager : MonoBehaviour
     public PlayerBinaryAction StartRound = new();
     public PlayerBinaryAction Cancel = new();
     public PlayerBinaryAction OpenUpgrades = new();
+    public PlayerBinaryAction DropWeapon = new();
     public Vector2 MoveDir;
     public Vector3 LookDir;
     public bool Paused;
@@ -104,6 +105,7 @@ public class PlayerInputManager : MonoBehaviour
             OnSecondaryAction.Reset();
             Jumping.Reset();
             StartRound.Reset();
+            DropWeapon.Reset();
             LookDir = Vector2.zero;
             MoveDir = Vector3.zero;
         }
@@ -126,6 +128,7 @@ public class PlayerInputManager : MonoBehaviour
         LookDir = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         MoveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+        DropWeapon.UpdateValue(Input.GetKey(KeyCode.G));
         Sliding.UpdateValue(Input.GetKey(KeyCode.LeftControl));
         OpenUpgrades.UpdateValue(Input.GetKey(KeyCode.T));
         OnSecondaryAction.UpdateValue(Input.GetMouseButton(1));

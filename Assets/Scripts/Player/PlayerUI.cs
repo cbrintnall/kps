@@ -26,6 +26,11 @@ public class PlayerUI : MonoBehaviour
         flowManager = SingletonLoader.Get<FlowManager>();
         var eventManager = SingletonLoader.Get<EventManager>();
 
+        eventManager.Subscribe<PlayerSpawnedEvent>(data =>
+        {
+            gameObject.SetActive(true);
+        });
+
         eventManager.Subscribe<PlayerDeathEvent>(data =>
         {
             Instantiate(DeathPanel, transform);
@@ -54,6 +59,8 @@ public class PlayerUI : MonoBehaviour
                 }
             }
         };
+
+        gameObject.SetActive(false);
     }
 
     void Start()

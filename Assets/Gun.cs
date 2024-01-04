@@ -67,8 +67,21 @@ public abstract class Gun : MonoBehaviour
 
     void Start()
     {
-        ts = Controller.Stats.PistolCooldown.Current;
         SingletonLoader.Get<PlayerInputManager>().PushCursor(CursorLockMode.Locked);
+    }
+
+    public void NotifyPickedUp()
+    {
+        ts = Controller.Stats.PistolCooldown.Current;
+    }
+
+    public void NotifyDropped(Vector3 dropPoint)
+    {
+        gameObject.SetLayerForMeAndChildren(LayerMask.NameToLayer("Default"));
+        var pickup = new GameObject($"{name}-pickup").AddComponent<WeaponPickup>();
+        pickup.transform.position = dropPoint;
+        transform.SetParent(pickup.transform);
+        transform.LocalReset();
     }
 
     public void AddPattern(ShootPattern pattern)

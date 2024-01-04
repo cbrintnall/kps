@@ -30,13 +30,13 @@ public class PlayerUpgradeManager : MonoBehaviour
 
     void Start()
     {
-        UpgradePanelListener.Instance.ClosedPanels += () =>
-        {
-            if (Upgrades > 0)
-            {
-                UpgradePanelListener.Instance.OpenPanels();
-            }
-        };
+        // UpgradePanelListener.Instance.ClosedPanels += () =>
+        // {
+        //     if (Upgrades > 0)
+        //     {
+        //         UpgradePanelListener.Instance.OpenPanels();
+        //     }
+        // };
     }
 
     void Update()

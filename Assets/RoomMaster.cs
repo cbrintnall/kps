@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class RoomMaster : MonoBehaviour
 {
     public bool RoomFinished => spawners.All(spawner => spawner.Finished);
     public bool WaveIsFinished => spawners.All(spawner => spawner.ActiveWaveFinished);
+    public event Action FinishedRoom;
 
     [HorizontalGroup("Debug", Title = "Debug")]
     [SerializeField]
@@ -64,7 +66,7 @@ public class RoomMaster : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Room done");
+                    FinishedRoom?.Invoke();
                 }
             }
             else

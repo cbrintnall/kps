@@ -96,4 +96,43 @@ public static class Utilities
         yield return new WaitForEndOfFrame();
         cb();
     }
+
+    public static Bounds CalculateBounds(this GameObject go)
+    {
+        Bounds bounds = new();
+
+        if (go.TryGetComponent(out Renderer r))
+        {
+            bounds = r.bounds;
+        }
+
+        foreach (var renderer in go.GetComponentsInChildren<Renderer>())
+        {
+            bounds.Encapsulate(renderer.bounds);
+        }
+
+        return bounds;
+    }
+
+    public static void SetLayerForMeAndChildren(this GameObject go, int layer)
+    {
+        go.layer = layer;
+        foreach (Transform child in go.transform)
+        {
+            child.gameObject.layer = layer;
+            SetLayerForMeAndChildren(child.gameObject, layer);
+        }
+    }
+
+    public static void LocalReset(this Transform transform)
+    {
+        transform.localPosition = Vector3.zero;
+        transform.localScale = Vector3.one;
+        transform.localRotation = Quaternion.identity;
+    }
+
+    public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
+    {
+        return Quaternion.Euler(angles) * (point - pivot) + pivot;
+    }
 }
