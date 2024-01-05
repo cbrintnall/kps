@@ -8,8 +8,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Data/Rooms/Room")]
 public class RoomDefinition : ScriptableObject
 {
-    [ValueDropdown("GetScenes")]
+    // [ValueDropdown("GetScenes")]
     public string Scene;
+    public WorldContainer World;
 
     IList GetScenes()
     {

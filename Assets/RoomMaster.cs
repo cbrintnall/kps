@@ -37,7 +37,7 @@ public class RoomMaster : MonoBehaviour
     {
         spawners = GetComponentsInChildren<AreaSpawner>();
 
-        if (!dontSpawn)
+        if (!dontSpawn && startTrigger != null)
             startTrigger.PlayerEntered += (_) => StartRoom();
 
         foreach (var spawner in spawners)

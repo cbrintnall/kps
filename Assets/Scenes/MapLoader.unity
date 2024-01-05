@@ -799,11 +799,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27337729cf754b84eb079a997e5330bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1000326060424456411, guid: f9483f8c4630ad4488a6b15d13a84344, type: 3}
+  startRoom: {fileID: 11400000, guid: 33fc6b7aadfd377468df808627506e82, type: 2}
+  roomCount: 4
+  player: {fileID: 7581051379348846378, guid: f9483f8c4630ad4488a6b15d13a84344, type: 3}
   Rooms:
   - {fileID: 11400000, guid: f6dd86fcf2e38f843bf3250db42d8e2b, type: 2}
   - {fileID: 11400000, guid: 6878f5bcc47df1840ae182423b017269, type: 2}
-  loop: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

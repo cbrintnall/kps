@@ -1,8 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 
 public class WorldContainer : MonoBehaviour
 {
@@ -15,10 +15,21 @@ public class WorldContainer : MonoBehaviour
     [HideInInspector]
     public string Id;
 
-    [HideInInspector]
+    public bool IsStart;
+
+    [SerializeField]
+    GameObject geometryRoot;
+
+    [BoxGroup("Generation")]
+    [SerializeField]
+    bool customDoors;
+
+    [BoxGroup("Generation")]
+    [HideIf("@!customDoors")]
     public RoomDoor ExitDoor;
 
-    [HideInInspector]
+    [BoxGroup("Generation")]
+    [HideIf("@!customDoors")]
     public RoomDoor EntranceDoor;
 
     [BoxGroup("Generation")]
@@ -26,27 +37,32 @@ public class WorldContainer : MonoBehaviour
     [SerializeField]
     List<RoomDoor> linkableDoors;
 
+    void Awake()
+    {
+        StaticBatchingUtility.Combine(geometryRoot);
+    }
+
     public void Start()
     {
         Bounds = gameObject.CalculateBounds();
 
+        if (customDoors)
+            return;
+
         Debug.Assert(linkableDoors.Count >= 1);
+    }
 
-        var doorsCopy = linkableDoors.ToList();
-        if (linkableDoors.Count == 1)
+    public void DoPlayerSpawn(Player player)
+    {
+        if (!IsStart)
         {
-            EntranceDoor = linkableDoors.First();
+            Debug.LogWarning($"Attempted to spawn player in non-start room");
+            return;
         }
-        else
-        {
-            ExitDoor = doorsCopy.Random();
 
-            if (linkableDoors.Count >= 2)
-            {
-                doorsCopy.Remove(ExitDoor);
-                EntranceDoor = doorsCopy.Random();
-            }
-        }
+        Debug.Assert(EntranceDoor != null);
+
+        player.Movement.Warp(EntranceDoor.transform.position + Vector3.up * 1.0f);
     }
 
     /// <summary>
@@ -54,11 +70,15 @@ public class WorldContainer : MonoBehaviour
     /// Links the calling objects exit to the provided objects entrance
     /// </summary>
     /// <param name="world"></param>
-    public void LinkToWorld(WorldContainer world)
+    public IEnumerator LinkToWorld(WorldContainer world)
     {
+        transform.forward = -world.EntranceDoor.transform.forward;
+        yield return new WaitForSeconds(10.0f);
         Vector3 translation = world.EntranceDoor.transform.position - ExitDoor.transform.position;
         transform.position += translation;
-        // GameObject doorPivot = new GameObject($"DoorPivot");
-        transform.RotateAround(world.EntranceDoor.transform.position, Vector3.up, 270.0f);
+        yield return new WaitForSeconds(10.0f);
+        // transform.RotateAround(world.EntranceDoor.transform.position, Vector3.up, 270.0f);
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(10.0f);
     }
 }

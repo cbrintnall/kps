@@ -217,7 +217,6 @@ public class PlayerEquipmentController : MonoBehaviour
         impulseSource = GetComponent<CinemachineImpulseSource>();
         Handler.LegSwung += DoInteraction;
         playerInputManager = SingletonLoader.Get<PlayerInputManager>();
-        DebugLogConsole.AddCommandInstance("money", "Gives money", "GiveMoney", this, "amount");
         Health = GetComponent<Health>();
         HealthMaterial.SetFloat("_NormalizedValue", Health.Data.Normalized);
         XPMaterial.SetFloat("_NormalizedValue", normalizedXP);

@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: ObsidianLibrary_RoomDefinition
   m_EditorClassIdentifier: 
   Scene: ObsidianLibrary
+  World: {fileID: 2931935362569320384, guid: e044c3b0ce01c6446b8eda208bf9d3c9, type: 3}

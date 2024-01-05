@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: TestRoom
   m_EditorClassIdentifier: 
   Scene: TestRoom
+  World: {fileID: 4525801009435717461, guid: 8ff4a2388972bc14e9a6c3337a15a9a8, type: 3}
